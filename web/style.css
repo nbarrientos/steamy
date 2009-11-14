@@ -1,0 +1,34 @@
+#wrapper
+{
+  width: 90%;
+  margin: 10px auto;
+  background-color: #EEE8AA;
+  border: 1px solid gray;
+}
+
+#header
+{
+  padding: .5em;
+  background-color: #F4A460;
+  border-bottom: 1px solid gray;
+  text-align: center;
+}
+
+#main
+{
+  padding: 5px;
+}
+
+#footer
+{
+  border-top: 1px solid gray;
+  clear: both;
+  margin: 0;
+  padding: .5em;
+  font-style: italic;
+}
+
+img
+{
+  border: none;
+}
