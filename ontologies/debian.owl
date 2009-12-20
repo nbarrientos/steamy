@@ -1,0 +1,318 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY debian "http://idi.fundacionctic.org/steamy/debian.owl#" >
+]>
+
+
+<rdf:RDF xmlns="http://idi.fundacionctic.org/steamy/debian.owl#"
+     xml:base="http://idi.fundacionctic.org/steamy/debian.owl"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:debian="http://idi.fundacionctic.org/steamy/debian.owl#">
+    <owl:Ontology rdf:about="">
+        <rdfs:label xml:lang="en">Debian Ontology</rdfs:label>
+        <rdfs:label xml:lang="es"
+            >Ontolog&#237;a de Debian</rdfs:label>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#alternative -->
+
+    <owl:ObjectProperty rdf:about="#alternative">
+        <rdfs:domain rdf:resource="#DisjunctivePackageConstraint"/>
+        <rdfs:range rdf:resource="#SimplePackageConstraint"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#architecture -->
+
+    <owl:ObjectProperty rdf:about="#architecture">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:range rdf:resource="#Architecture"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#binary -->
+
+    <owl:ObjectProperty rdf:about="#binary">
+        <rdf:type rdf:resource="&owl;InverseFunctionalProperty"/>
+        <rdfs:range rdf:resource="#Binary"/>
+        <rdfs:domain rdf:resource="#Source"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#binaryPackageRelationship -->
+
+    <owl:ObjectProperty rdf:about="#binaryPackageRelationship">
+        <rdfs:domain rdf:resource="#Binary"/>
+        <rdfs:subPropertyOf rdf:resource="#packageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#build -->
+
+    <owl:ObjectProperty rdf:about="#build">
+        <rdf:type rdf:resource="&owl;InverseFunctionalProperty"/>
+        <rdfs:domain rdf:resource="#Binary"/>
+        <rdfs:range rdf:resource="#BinaryBuild"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#conflicts -->
+
+    <owl:ObjectProperty rdf:about="#conflicts">
+        <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#depends -->
+
+    <owl:ObjectProperty rdf:about="#depends">
+        <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#distribution -->
+
+    <owl:ObjectProperty rdf:about="#distribution">
+        <rdfs:range rdf:resource="#Distribution"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#enhances -->
+
+    <owl:ObjectProperty rdf:about="#enhances">
+        <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#exceptInArchitecture -->
+
+    <owl:ObjectProperty rdf:about="#exceptInArchitecture">
+        <rdfs:range rdf:resource="#Architecture"/>
+        <rdfs:domain rdf:resource="#SimplePackageConstraint"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#onlyInArchitecture -->
+
+    <owl:ObjectProperty rdf:about="#onlyInArchitecture">
+        <rdfs:range rdf:resource="#Architecture"/>
+        <rdfs:domain rdf:resource="#SimplePackageConstraint"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#packageRelationship -->
+
+    <owl:ObjectProperty rdf:about="#packageRelationship">
+        <rdfs:range rdf:resource="#DisjunctivePackageConstraint"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#pre-depends -->
+
+    <owl:ObjectProperty rdf:about="#pre-depends">
+        <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#recommends -->
+
+    <owl:ObjectProperty rdf:about="#recommends">
+        <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#sourcePackageRelationship -->
+
+    <owl:ObjectProperty rdf:about="#sourcePackageRelationship">
+        <rdfs:domain rdf:resource="#Source"/>
+        <rdfs:subPropertyOf rdf:resource="#packageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#suggests -->
+
+    <owl:ObjectProperty rdf:about="#suggests">
+        <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#versionNumber -->
+
+    <owl:ObjectProperty rdf:about="#versionNumber">
+        <rdfs:range rdf:resource="#VersionNumber"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#constraintOperator -->
+
+    <owl:DatatypeProperty rdf:about="#constraintOperator"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#debianRevision -->
+
+    <owl:DatatypeProperty rdf:about="#debianRevision">
+        <rdfs:label xml:lang="en">debian revision</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >Zero assumed if not value is given.</rdfs:comment>
+        <rdfs:domain rdf:resource="#VersionNumber"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#epoch -->
+
+    <owl:DatatypeProperty rdf:about="#epoch">
+        <rdfs:domain rdf:resource="#VersionNumber"/>
+        <rdfs:range rdf:resource="&xsd;nonNegativeInteger"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#packageName -->
+
+    <owl:DatatypeProperty rdf:about="#packageName"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#upstreamVersion -->
+
+    <owl:DatatypeProperty rdf:about="#upstreamVersion">
+        <rdfs:domain rdf:resource="#VersionNumber"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#Architecture -->
+
+    <owl:Class rdf:about="#Architecture"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#Binary -->
+
+    <owl:Class rdf:about="#Binary"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#BinaryBuild -->
+
+    <owl:Class rdf:about="#BinaryBuild"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#DisjunctivePackageConstraint -->
+
+    <owl:Class rdf:about="#DisjunctivePackageConstraint"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#Distribution -->
+
+    <owl:Class rdf:about="#Distribution"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#SimplePackageConstraint -->
+
+    <owl:Class rdf:about="#SimplePackageConstraint"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#Source -->
+
+    <owl:Class rdf:about="#Source"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#VersionNumber -->
+
+    <owl:Class rdf:about="#VersionNumber"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#all -->
+
+    <owl:Thing rdf:about="#all">
+        <rdf:type rdf:resource="#Architecture"/>
+    </owl:Thing>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 2.2.1.1138) http://owlapi.sourceforge.net -->
+
