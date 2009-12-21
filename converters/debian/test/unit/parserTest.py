@@ -9,7 +9,8 @@ class ParserTest(unittest.TestCase):
     self.parser = Parser()
     self.binaryPackage = {}
     self.binaryPackage['Package'] = "mutt"
-    self.binaryPackage['Depends'] = "libgnutls13"
+    self.binaryPackage['Depends'] = "exim4 (>> 0.5.4-5) | mail-transport-agent, mutt"
+    self.binaryPackage['Recommends'] = "locales, mime-support, bastet"
   
   def tearDown(self):
     pass
@@ -20,7 +21,8 @@ class ParserTest(unittest.TestCase):
     self.assertEqual("mutt", self.parser.parsePackage(self.binaryPackage))
 
   def testParseDepends(self):
-    pass
+    deps = self.parser.parseDepends(self.binaryPackage)
+    self.assertEqual(2, deps.len())
     
   # Tools
 
@@ -59,3 +61,6 @@ class ParserTest(unittest.TestCase):
   def testParseBinaryPackage(self):
     p = self.parser.parseBinaryPackage(self.binaryPackage)
     self.assertEqual("mutt", p.package)
+    self.assertNotEqual(None, p.depends)
+    self.assertEqual(2, p.depends.len())
+    self.assertEqual(3, p.recommends.len())

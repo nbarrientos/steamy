@@ -11,6 +11,8 @@ class Parser():
   def parseBinaryPackage(self, raw):
     binaryPackage = BinaryPackage()
     binaryPackage.package = self.parsePackage(raw)
+    binaryPackage.depends = self.parseDepends(raw)
+    binaryPackage.recommends = self.parseRecommends(raw)
     return binaryPackage
 
   # Fields
@@ -18,6 +20,12 @@ class Parser():
   def parsePackage(self, raw):
     return raw['Package']
 
+  def parseDepends(self, raw):
+    return self.parseConstraints(raw['Depends'])
+  
+  def parseRecommends(self, raw):
+    return self.parseConstraints(raw['Recommends'])
+  
   def parseVersionNumber(self, raw):
     pass
 

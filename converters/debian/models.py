@@ -3,6 +3,7 @@ class BinaryPackage():
     self.package = None
     self.version = None
     self.depends = []
+    self.recommends = []
 
 class Constraints():
   def __init__(self):
@@ -13,6 +14,9 @@ class Constraints():
 
   def get(self, index):
     return self.orconstraints[index]
+
+  def len(self):
+    return len(self.orconstraints)
 
   def __repr__(self):
     return "Constraints: %s" % str(self.orconstraints)
