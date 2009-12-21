@@ -10,6 +10,7 @@ class ParserTest(unittest.TestCase):
     self.binaryPackage = {}
     self.binaryPackage['Package'] = "mutt"
     self.binaryPackage['Version'] = "1:2.4+svn5677-1"
+    self.binaryPackage['Architecture'] = "all"
     self.binaryPackage['Depends'] = "exim4 (>> 0.5.4-5) | mail-transport-agent, mutt"
     self.binaryPackage['Recommends'] = "locales, mime-support, bastet"
   
@@ -82,3 +83,4 @@ class ParserTest(unittest.TestCase):
     self.assertEqual(3, p.recommends.len())
     self.assertEqual("2.4+svn5677", p.version.upstream_version)
     self.assertEqual("1", p.version.debian_version)
+    self.assertEqual("all", p.architecture.name)

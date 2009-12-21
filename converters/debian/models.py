@@ -2,8 +2,12 @@ class BinaryPackage():
   def __init__(self):
     self.package = None
     self.version = None
+    self.architecture = None
     self.depends = []
     self.recommends = []
+
+  def asUri(self, base):
+    return "%s/binary/%s" % (base, self.package)
 
 class Architecture():
   def __init__(self, arch):

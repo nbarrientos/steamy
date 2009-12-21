@@ -16,6 +16,7 @@ class Parser():
     binaryPackage.version = self.parseVersion(raw)
     binaryPackage.depends = self.parseDepends(raw)
     binaryPackage.recommends = self.parseRecommends(raw)
+    binaryPackage.architecture = self.parseArchitecture(raw)
     return binaryPackage
 
   # Fields
@@ -24,13 +25,22 @@ class Parser():
     return raw['Package']
 
   def parseDepends(self, raw):
-    return self.parseConstraints(raw['Depends'])
+    if 'Depends' in raw:
+      return self.parseConstraints(raw['Depends'])
+    else:
+      return None
   
   def parseRecommends(self, raw):
-    return self.parseConstraints(raw['Recommends'])
+    if 'Recommends' in raw:
+      return self.parseConstraints(raw['Recommends'])
+    else:
+      return None
 
   def parseVersion(self, raw):
     return self.parseVersionNumber(raw['Version'])
+
+  def parseArchitecture(self, raw):
+    return Architecture(raw['Architecture'])
 
   # Tools
 
