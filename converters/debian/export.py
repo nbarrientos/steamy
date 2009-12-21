@@ -33,6 +33,12 @@ class Triplifier():
         node = self.triplifyOrConstraint(ord)
         self.g.add((ref, DEB['depends'], node))
 
+    # Recommends
+    if package.recommends:
+      for orr in package.recommends:
+        node = self.triplifyOrConstraint(orr)
+        self.g.add((ref, DEB['recommends'], node))
+
   def triplifyBinaryPackageBuild(self, build, base):
     ref = URIRef(build.asURI(base))
     self.g.add((ref, RDF.type, DEB['Build']))
