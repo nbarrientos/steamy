@@ -14,6 +14,9 @@ class Constraints():
   def get(self, index):
     return self.orconstraints[index]
 
+  def __repr__(self):
+    return "Constraints: %s" % str(self.orconstraints)
+
 class OrConstraint():
   def __init__(self):
     self.constraints = []
@@ -24,11 +27,20 @@ class OrConstraint():
   def get(self, index):
     return self.constraints[index]
 
+  def __repr__(self):
+    return "OrConstraint: %s" % str(self.constraints)
+
 class Constraint():
   def __init__(self):
     self.package = None
     self.operator = None
     self.version = None
+
+  def __repr__(self):
+    if self.operator and self.version:
+      return "%s (%s %s)" % (self.package, self.operator, self.version)
+    else:
+      return "%s" % self.package
 
 class VersionNumber():
   def __init__(self, baseURI):
