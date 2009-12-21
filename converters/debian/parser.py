@@ -1,5 +1,7 @@
 import re
 
+from debian_bundle.changelog import Version
+
 from models import *
 
 class Parser():
@@ -11,6 +13,7 @@ class Parser():
   def parseBinaryPackage(self, raw):
     binaryPackage = BinaryPackage()
     binaryPackage.package = self.parsePackage(raw)
+    binaryPackage.version = self.parseVersion(raw)
     binaryPackage.depends = self.parseDepends(raw)
     binaryPackage.recommends = self.parseRecommends(raw)
     return binaryPackage
@@ -25,11 +28,14 @@ class Parser():
   
   def parseRecommends(self, raw):
     return self.parseConstraints(raw['Recommends'])
-  
-  def parseVersionNumber(self, raw):
-    pass
+
+  def parseVersion(self, raw):
+    return self.parseVersionNumber(raw['Version'])
 
   # Tools
+
+  def parseVersionNumber(self, raw):
+    return Version(raw.strip())
 
   def parseConstraints(self, raw):
     constraints = Constraints()

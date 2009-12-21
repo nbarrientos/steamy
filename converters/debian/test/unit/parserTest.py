@@ -9,6 +9,7 @@ class ParserTest(unittest.TestCase):
     self.parser = Parser()
     self.binaryPackage = {}
     self.binaryPackage['Package'] = "mutt"
+    self.binaryPackage['Version'] = "1:2.4+svn5677-1"
     self.binaryPackage['Depends'] = "exim4 (>> 0.5.4-5) | mail-transport-agent, mutt"
     self.binaryPackage['Recommends'] = "locales, mime-support, bastet"
   
@@ -25,6 +26,18 @@ class ParserTest(unittest.TestCase):
     self.assertEqual(2, deps.len())
     
   # Tools
+
+  def testParseVersionNumberNoEpoch(self):
+    ver = self.parser.parseVersionNumber("1.0-1")
+    self.assertEqual(None, ver.epoch)
+    self.assertEqual("1.0", ver.upstream_version)
+    self.assertEqual("1", ver.debian_version)
+
+  def testParseVersionNumberEpoch(self):
+    ver = self.parser.parseVersionNumber("1:1.0+svn20080909-1.1")
+    self.assertEqual("1", ver.epoch)
+    self.assertEqual("1.0+svn20080909", ver.upstream_version)
+    self.assertEqual("1.1", ver.debian_version)
 
   def testParseConstraints(self):
     input = "exim4 (>> 0.5.4-5) | mail-transport-agent, mutt"
@@ -64,3 +77,5 @@ class ParserTest(unittest.TestCase):
     self.assertNotEqual(None, p.depends)
     self.assertEqual(2, p.depends.len())
     self.assertEqual(3, p.recommends.len())
+    self.assertEqual("2.4+svn5677", p.version.upstream_version)
+    self.assertEqual("1", p.version.debian_version)
