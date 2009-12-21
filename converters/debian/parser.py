@@ -10,6 +10,9 @@ class Parser():
 
   # Full package information
 
+  def parseSourcePackage(self, raw):
+    pass # FIXME
+
   def parseBinaryPackage(self, raw):
     binaryPackage = BinaryPackage()
     binaryPackage.package = self.parsePackage(raw)

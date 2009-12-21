@@ -12,6 +12,9 @@ class Triplifier():
     self.g.bind("rdf", RDF)
     self.g.bind("deb", DEB)
 
+  def triplifySourcePackage(self, package):
+    pass # FIMXE
+
   def triplifyBinaryPackage(self, package):
     ref = URIRef(package.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['Binary']))
