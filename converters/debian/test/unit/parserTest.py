@@ -50,9 +50,9 @@ class ParserTest(unittest.TestCase):
     self.assertEqual("mutt", ors.get(1).get(0).package)
 
   def testParseOrConstraint(self):
-    input = "exim4 (>> 0.5.4-5) | mail-transport-agent"
+    input = "exim4 (>> 0.5.4-5) | mail-transport-agent | swaml"
     ord = self.parser.parseOrConstraint(input)
-    self.assertEqual(2, len(ord.constraints))
+    self.assertEqual(3, len(ord.constraints))
     self.assertEqual("exim4", ord.get(0).package)
     self.assertEqual(">>", ord.get(0).operator)
     self.assertEqual("mail-transport-agent", ord.get(1).package)
@@ -61,15 +61,18 @@ class ParserTest(unittest.TestCase):
     input = "libgnutls13"
     d = self.parser.parseConstraint(input)
     self.assertEqual(input, d.package)
+    self.assertEqual(None, d.version)
   
   def testParseConstraintComplex(self):
     input = "libidn11 (>= 0.5.18)"
     d = self.parser.parseConstraint(input)
     self.assertEqual("libidn11", d.package)
     self.assertEqual(">=", d.operator)
-    #self.assertEqual(0, d.version.epoch) # FIXME
+    self.assertEqual(None, d.version.epoch)
+    self.assertEqual("0.5.18", d.version.upstream_version)
+    self.assertEqual(None, d.version.debian_version)
    
-  # Full Packages
+  # Full Package
 
   def testParseBinaryPackage(self):
     p = self.parser.parseBinaryPackage(self.binaryPackage)

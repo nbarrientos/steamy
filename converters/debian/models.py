@@ -5,6 +5,13 @@ class BinaryPackage():
     self.depends = []
     self.recommends = []
 
+class Architecture():
+  def __init__(self, arch):
+    self.name = arch
+
+  def asUri(self, base):
+    return "%s/arch/%s" % (base, self.name)
+
 class Constraints():
   def __init__(self):
     self.orconstraints = []

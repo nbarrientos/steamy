@@ -64,6 +64,6 @@ class Parser():
 
     if len(split) > 1:
       constraint.operator = split[1]
-      constraint.version = split[2] #FIXME
+      constraint.version = self.parseVersionNumber(split[2])
 
     return constraint
