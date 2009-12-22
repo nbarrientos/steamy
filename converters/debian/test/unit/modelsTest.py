@@ -37,3 +37,17 @@ class ArchitectureTest(unittest.TestCase):
 
   def testToStr(self):
     self.assertEqual("i386", str(self.arch))
+
+class ConstraintTest(unittest.TestCase):
+
+  def testAsUri(self):
+    c = Constraint()
+    c.package = "testpackage"
+    c.operator = ">>"
+    c.version = "2.5-2"
+
+    baseUri = "http://example.org"
+    expected = baseUri + "/constraint/" +\
+               hashlib.sha1("testpackage>>2.5-2").hexdigest()
+
+    self.assertEqual(expected, c.asUri(baseUri))

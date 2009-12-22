@@ -1,3 +1,5 @@
+import hashlib
+
 from debian_bundle.changelog import Version
 
 class BinaryPackage():
@@ -67,6 +69,10 @@ class Constraint():
     self.package = None
     self.operator = None
     self.version = None
+
+  def asUri(self, base):
+    tail = "%s%s%s" % (self.package, self.operator, self.version)
+    return "%s/constraint/%s" % (base, hashlib.sha1(tail).hexdigest())
 
   def __repr__(self):
     if self.operator and self.version:
