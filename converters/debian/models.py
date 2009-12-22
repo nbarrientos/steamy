@@ -1,3 +1,5 @@
+from debian_bundle.changelog import Version
+
 class BinaryPackage():
   def __init__(self):
     self.package = None
@@ -26,6 +28,10 @@ class Architecture():
 
   def __repr__(self):
     return str(self.name)
+
+class VersionNumber(Version):
+  def asUri(self, base):
+    return "%s/version/%s" % (base, str(self))
 
 class Constraints():
   def __init__(self):
