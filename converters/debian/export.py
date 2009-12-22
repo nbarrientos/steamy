@@ -13,26 +13,78 @@ class Triplifier():
     self.g.bind("deb", DEB)
 
   def triplifyBinaryPackage(self, package):
-    packageURI = URIRef(package.asURI(self.baseURI))
-    self.g.add((packageURI, RDF.type, DEB['Binary']))
+    ref = URIRef(package.asURI(self.baseURI))
+    self.g.add((ref, RDF.type, DEB['Binary']))
 
-    self.triplifyBinaryPackageBuild(package.build, package.asURI(self.baseURI))
-    
-    # Package - Build
-    buildURI = URIRef(package.build.asURI(package.asURI(self.baseURI)))
-    self.g.add((packageURI, DEB['build'], buildURI))
+    # Package
+    self.g.add((ref, DEB['packageName'], Literal(str(package.package))))
+
+    # Version
+    versionRef = self.triplifyVersionNumber(package.version)
+    self.g.add((ref, DEB['versionNumber'], versionRef))
+
+    # Build
+    buildRef = self.triplifyBinaryPackageBuild(package.build, package.asURI(self.baseURI))
+    self.g.add((ref, DEB['build'], buildRef))
+
+    # Depends
+    if package.depends:
+      for ord in package.depends:
+        node = self.triplifyOrConstraint(ord)
+        self.g.add((ref, DEB['depends'], node))
 
   def triplifyBinaryPackageBuild(self, build, base):
-    buildURI = URIRef(build.asURI(base))
-    self.g.add((buildURI, RDF.type, DEB['Build']))
+    ref = URIRef(build.asURI(base))
+    self.g.add((ref, RDF.type, DEB['Build']))
    
     # Architecture
-    self.triplifyArchitecture(build.architecture)
-    self.g.add((buildURI, DEB['architecture'], URIRef(build.architecture.asURI(self.baseURI))))
+    archRef = self.triplifyArchitecture(build.architecture)
+    self.g.add((ref, DEB['architecture'], archRef))
+
+    return ref
 
   def triplifyArchitecture(self, arch):
-    self.g.add((URIRef(arch.asURI(self.baseURI)), RDF.type, DEB['Architecture']))
+    ref = URIRef(arch.asURI(self.baseURI))
+    self.g.add((ref, RDF.type, DEB['Architecture']))
+    return ref
+
+  def triplifyOrConstraint(self, orconstraint):
+    ref = BNode()
+    self.g.add((ref, RDF.type, DEB['DisjunctivePackageConstraint']))
+
+    for constraint in orconstraint.constraints:
+      node = self.triplifyConstraint(constraint)
+      self.g.add((ref, DEB['alternative'], node))
+
+    return ref
+
+  def triplifyConstraint(self, constraint):
+    ref = URIRef(constraint.asURI(self.baseURI))
+    self.g.add((ref, RDF.type, DEB['SimplePackageConstraint']))
+
+    self.g.add((ref, DEB['packageName'], Literal(str(constraint.package))))
+
+    if constraint.operator and constraint.version:
+      self.g.add((ref, DEB['constraintOperator'], Literal(str(constraint.operator))))
+      versionRef = self.triplifyVersionNumber(constraint.version)
+      self.g.add((ref, DEB['versionNumber'], versionRef))
+
+    return ref
+
+  def triplifyVersionNumber(self, version):
+    ref = URIRef(version.asURI(self.baseURI))
+
+    if version.epoch:
+      self.g.add((ref, DEB['epoch'], Literal(str(version.epoch))))
+
+    if version.upstream_version:
+      self.g.add((ref, DEB['upstreamVersion'], Literal(str(version.upstream_version))))
     
+    if version.debian_version:
+      self.g.add((ref, DEB['debianRevision'], Literal(str(version.debian_version))))
+    
+    return ref
+
 
 class Serializer():
   def __init__(self):
