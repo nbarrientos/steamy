@@ -17,7 +17,14 @@ class Parser():
     binaryPackage.depends = self.parseDepends(raw)
     binaryPackage.recommends = self.parseRecommends(raw)
     binaryPackage.architecture = self.parseArchitecture(raw)
+    binaryPackage.build = self.parseBinaryPackageBuild(raw)
     return binaryPackage
+
+  def parseBinaryPackageBuild(self, raw):
+    binaryPackageBuild = BinaryPackageBuild()
+    binaryPackageBuild.architecture = self.parseArchitecture(raw)
+    binaryPackageBuild.installedSize = self.parseInstalledSize(raw)
+    return binaryPackageBuild
 
   # Fields
 
@@ -41,6 +48,9 @@ class Parser():
 
   def parseArchitecture(self, raw):
     return Architecture(raw['Architecture'])
+
+  def parseInstalledSize(self, raw):
+    return raw['Installed-Size']
 
   # Tools
 

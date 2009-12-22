@@ -29,3 +29,6 @@ class ArchitectureTest(unittest.TestCase):
     baseUri = "http://example.org"
     expected = baseUri + "/arch/i386"
     self.assertEqual(expected, self.arch.asUri(baseUri))
+
+  def testToStr(self):
+    self.assertEqual("i386", str(self.arch))

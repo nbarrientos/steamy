@@ -2,12 +2,20 @@ class BinaryPackage():
   def __init__(self):
     self.package = None
     self.version = None
-    self.architecture = None
     self.depends = []
     self.recommends = []
+    self.build = None
 
   def asUri(self, base):
     return "%s/binary/%s" % (base, self.package)
+
+class BinaryPackageBuild():
+  def __init__(self):
+    self.architecture = None
+    self.installedSize = None
+
+  def asUri(self, base):
+    return "%s/%s" % (base, self.architecture)
 
 class Architecture():
   def __init__(self, arch):
@@ -15,6 +23,9 @@ class Architecture():
 
   def asUri(self, base):
     return "%s/arch/%s" % (base, self.name)
+
+  def __repr__(self):
+    return str(self.name)
 
 class Constraints():
   def __init__(self):

@@ -13,6 +13,7 @@ class ParserTest(unittest.TestCase):
     self.binaryPackage['Architecture'] = "all"
     self.binaryPackage['Depends'] = "exim4 (>> 0.5.4-5) | mail-transport-agent, mutt"
     self.binaryPackage['Recommends'] = "locales, mime-support, bastet"
+    self.binaryPackage['Installed-Size'] = "108"
   
   def tearDown(self):
     pass
@@ -25,6 +26,17 @@ class ParserTest(unittest.TestCase):
   def testParseDepends(self):
     deps = self.parser.parseDepends(self.binaryPackage)
     self.assertEqual(2, deps.len())
+
+  def testParseInstalledSize(self):
+    self.assertEqual("108", self.parser.parseInstalledSize(self.binaryPackage))
+
+  def testParseArchitecture(self):
+    self.assertEqual("all", str(self.parser.parseArchitecture(self.binaryPackage)))
+
+  def testParseBinaryPackageBuild(self):
+    build = self.parser.parseBinaryPackageBuild(self.binaryPackage)
+    self.assertEqual("all", build.architecture.name)
+    self.assertEqual("108", build.installedSize)
     
   # Tools
 
@@ -83,4 +95,5 @@ class ParserTest(unittest.TestCase):
     self.assertEqual(3, p.recommends.len())
     self.assertEqual("2.4+svn5677", p.version.upstream_version)
     self.assertEqual("1", p.version.debian_version)
-    self.assertEqual("all", p.architecture.name)
+    self.assertEqual("all", p.build.architecture.name)
+    self.assertEqual("108", p.build.installedSize)
