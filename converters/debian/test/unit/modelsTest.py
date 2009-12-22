@@ -16,11 +16,11 @@ class VersionNumberTest(unittest.TestCase):
       versionObject = VersionNumber(v)
       self.assertEqual(v, str(versionObject))
 
-  def testAsUri(self):
+  def testAsURI(self):
     v = VersionNumber("1.0-1")
-    baseUri = "http://example.org"
-    expected = baseUri + "/version/1.0-1"
-    self.assertEqual(expected, v.asUri(baseUri))
+    baseURI = "http://example.org"
+    expected = baseURI + "/version/1.0-1"
+    self.assertEqual(expected, v.asURI(baseURI))
 
 class ArchitectureTest(unittest.TestCase):
 
@@ -30,24 +30,24 @@ class ArchitectureTest(unittest.TestCase):
   def testInit(self):
     self.assertEqual("i386", self.arch.name)
 
-  def testAsUri(self):
-    baseUri = "http://example.org"
-    expected = baseUri + "/arch/i386"
-    self.assertEqual(expected, self.arch.asUri(baseUri))
+  def testAsURI(self):
+    baseURI = "http://example.org"
+    expected = baseURI + "/arch/i386"
+    self.assertEqual(expected, self.arch.asURI(baseURI))
 
   def testToStr(self):
     self.assertEqual("i386", str(self.arch))
 
 class ConstraintTest(unittest.TestCase):
 
-  def testAsUri(self):
+  def testAsURI(self):
     c = Constraint()
     c.package = "testpackage"
     c.operator = ">>"
     c.version = "2.5-2"
 
-    baseUri = "http://example.org"
-    expected = baseUri + "/constraint/" +\
+    baseURI = "http://example.org"
+    expected = baseURI + "/constraint/" +\
                hashlib.sha1("testpackage>>2.5-2").hexdigest()
 
-    self.assertEqual(expected, c.asUri(baseUri))
+    self.assertEqual(expected, c.asURI(baseURI))

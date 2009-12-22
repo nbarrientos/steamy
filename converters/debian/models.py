@@ -10,7 +10,7 @@ class BinaryPackage():
     self.recommends = []
     self.build = None
 
-  def asUri(self, base):
+  def asURI(self, base):
     return "%s/binary/%s" % (base, self.package)
 
 class BinaryPackageBuild():
@@ -18,21 +18,21 @@ class BinaryPackageBuild():
     self.architecture = None
     self.installedSize = None
 
-  def asUri(self, base):
+  def asURI(self, base):
     return "%s/%s" % (base, self.architecture)
 
 class Architecture():
   def __init__(self, arch):
     self.name = arch
 
-  def asUri(self, base):
+  def asURI(self, base):
     return "%s/arch/%s" % (base, self.name)
 
   def __repr__(self):
     return str(self.name)
 
 class VersionNumber(Version):
-  def asUri(self, base):
+  def asURI(self, base):
     return "%s/version/%s" % (base, str(self))
 
 class Constraints():
@@ -70,7 +70,7 @@ class Constraint():
     self.operator = None
     self.version = None
 
-  def asUri(self, base):
+  def asURI(self, base):
     tail = "%s%s%s" % (self.package, self.operator, self.version)
     return "%s/constraint/%s" % (base, hashlib.sha1(tail).hexdigest())
 

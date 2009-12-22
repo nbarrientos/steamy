@@ -4,34 +4,34 @@ RDF = Namespace(u"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
 
 class Triplifier():
-  def __init__(self, graph, baseUri):
+  def __init__(self, graph, baseURI):
     self.g = graph
-    self.baseUri = baseUri
+    self.baseURI = baseURI
     
     # Namespace Binding
     self.g.bind("rdf", RDF)
     self.g.bind("deb", DEB)
 
   def triplifyBinaryPackage(self, package):
-    packageUri = URIRef(package.asUri(self.baseUri))
-    self.g.add((packageUri, RDF.type, DEB['Binary']))
+    packageURI = URIRef(package.asURI(self.baseURI))
+    self.g.add((packageURI, RDF.type, DEB['Binary']))
 
-    self.triplifyBinaryPackageBuild(package.build, package.asUri(self.baseUri))
+    self.triplifyBinaryPackageBuild(package.build, package.asURI(self.baseURI))
     
     # Package - Build
-    buildUri = URIRef(package.build.asUri(package.asUri(self.baseUri)))
-    self.g.add((packageUri, DEB['build'], buildUri))
+    buildURI = URIRef(package.build.asURI(package.asURI(self.baseURI)))
+    self.g.add((packageURI, DEB['build'], buildURI))
 
   def triplifyBinaryPackageBuild(self, build, base):
-    buildUri = URIRef(build.asUri(base))
-    self.g.add((buildUri, RDF.type, DEB['Build']))
+    buildURI = URIRef(build.asURI(base))
+    self.g.add((buildURI, RDF.type, DEB['Build']))
    
     # Architecture
     self.triplifyArchitecture(build.architecture)
-    self.g.add((buildUri, DEB['architecture'], URIRef(build.architecture.asUri(self.baseUri))))
+    self.g.add((buildURI, DEB['architecture'], URIRef(build.architecture.asURI(self.baseURI))))
 
   def triplifyArchitecture(self, arch):
-    self.g.add((URIRef(arch.asUri(self.baseUri)), RDF.type, DEB['Architecture']))
+    self.g.add((URIRef(arch.asURI(self.baseURI)), RDF.type, DEB['Architecture']))
     
 
 class Serializer():
