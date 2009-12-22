@@ -1,13 +1,34 @@
 import sys
+import logging
 
+from optparse import OptionParser
 from debian_bundle import deb822
 from rdflib.Graph import ConjunctiveGraph
 
 from parser import Parser
 from export import Triplifier, Serializer
 
+def init():
+  configLogger()
+  parseArgs()
+
+def configLogger():
+  logging.basicConfig(level=logging.DEBUG)
+
+def parseArgs():
+  usage = "usage: %prog [options]"
+  parser = OptionParser(usage)
+  parser.add_option("-p", "--packages", dest="packages", help="read Packages from FILENAME")
+  parser.add_option("-s", "--source", dest="sources", help="read Sources from FILENAME")
+
+  (options, args) = parser.parse_args()
+
+  if options.packages:
+    logging.debug("Parsing package data from %s" % options.packages)
+    processPackages(options.packages)
+
 # FIMXE: Use a class instead
-def run(packagesFile):
+def processPackages(packagesFile):
 
   # FIXME: Refactor to init
   graph = ConjunctiveGraph()
@@ -48,5 +69,4 @@ def openOutputFile(path):
     print 'Error opening output file for writting.'
 
 if __name__ == "__main__":
-  args = sys.argv[1:]
-  run(args[0]) # FIXME: Usage and parameters parsing
+  init()
