@@ -86,8 +86,7 @@ class Triplifier():
     if version.epoch:
       self.g.add((ref, DEB['epoch'], Literal(str(version.epoch))))
 
-    if version.upstream_version:
-      self.g.add((ref, DEB['upstreamVersion'], Literal(str(version.upstream_version))))
+    self.g.add((ref, DEB['upstreamVersion'], Literal(str(version.upstream_version))))
     
     if version.debian_version:
       self.g.add((ref, DEB['debianRevision'], Literal(str(version.debian_version))))
