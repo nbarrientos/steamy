@@ -10,6 +10,11 @@ class VersionNumberTest(unittest.TestCase):
     self.assertEqual("1.2~svn54", v.upstream_version)
     self.assertEqual("1.5", v.debian_version)
 
+    v = VersionNumber("1.2")
+    self.assertEqual(None, v.epoch)
+    self.assertEqual("1.2", v.upstream_version)
+    self.assertEqual(None, v.debian_version)
+
   def testToStr(self):
     versionStrings = ("1.0-1","1:1.2.5+svn20091203", "1.1-1.1")
     for v in versionStrings:

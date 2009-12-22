@@ -6,8 +6,8 @@ class BinaryPackage():
   def __init__(self):
     self.package = None
     self.version = None
-    self.depends = []
-    self.recommends = []
+    self.depends = None
+    self.recommends = None
     self.build = None
 
   def asURI(self, base):
@@ -50,6 +50,9 @@ class Constraints():
 
   def __repr__(self):
     return "Constraints: %s" % str(self.orconstraints)
+
+  def __iter__(self):
+    return self.orconstraints.__iter__()
 
 class OrConstraint():
   def __init__(self):

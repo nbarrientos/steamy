@@ -34,14 +34,10 @@ class Parser():
   def parseDepends(self, raw):
     if 'Depends' in raw:
       return self.parseConstraints(raw['Depends'])
-    else:
-      return None
   
   def parseRecommends(self, raw):
     if 'Recommends' in raw:
       return self.parseConstraints(raw['Recommends'])
-    else:
-      return None
 
   def parseVersion(self, raw):
     return self.parseVersionNumber(raw['Version'])
@@ -55,7 +51,7 @@ class Parser():
   # Tools
 
   def parseVersionNumber(self, raw):
-    return Version(raw.strip())
+    return VersionNumber(raw.strip())
 
   def parseConstraints(self, raw):
     constraints = Constraints()
