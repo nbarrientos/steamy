@@ -82,7 +82,8 @@ class Triplifier():
 
   def triplifyVersionNumber(self, version):
     ref = URIRef(version.asURI(self.baseURI))
-
+    self.g.add((ref, RDF.type, DEB['VersionNumber']))
+    
     if version.epoch:
       self.g.add((ref, DEB['epoch'], Literal(str(version.epoch))))
 
