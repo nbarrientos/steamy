@@ -42,6 +42,7 @@ class BaseParser():
 
     return constraint
 
+
 class SourcesParser(BaseParser):
   def __init__(self):
     pass
@@ -49,11 +50,18 @@ class SourcesParser(BaseParser):
   def parseSourcePackage(self, raw):
     pass # FIXME
 
+  def parseBinary(self, raw):
+    binaries = []
+
+    for bin in raw['Binary'].split(","):
+      binaries.append(BinaryPackageLite(bin.strip(), self.parseVersionNumber(raw['Version'])))
+
+    return binaries
+
+
 class PackagesParser(BaseParser):
   def __init__(self):
     pass
-
-  # Full package information
 
   def parseBinaryPackage(self, raw):
     binaryPackage = BinaryPackage()

@@ -7,16 +7,19 @@ class SourcePackage():
     self.package = None
     self.binary = None
 
-class BinaryPackage():
+class BinaryPackageLite():
+  def __init__(self, package=None, version=None):
+    self.package = package
+    self.version = version
+
+  def asURI(self, base):
+    return "%s/binary/%s/%s" % (base, self.package, self.version)
+
+class BinaryPackage(BinaryPackageLite):
   def __init__(self):
-    self.package = None
-    self.version = None
     self.depends = None
     self.recommends = None
     self.build = None
-
-  def asURI(self, base):
-    return "%s/binary/%s" % (base, self.package)
 
 class BinaryPackageBuild():
   def __init__(self):

@@ -43,6 +43,16 @@ class ArchitectureTest(unittest.TestCase):
   def testToStr(self):
     self.assertEqual("i386", str(self.arch))
 
+class BinaryPackageLiteTest(unittest.TestCase):
+  def testAsURI(self):
+    b = BinaryPackageLite()
+    b.package = "testpkgname"
+    b.version = VersionNumber("1.0-1")
+    baseURI = "http://example.org"
+    expected = baseURI + "/binary/testpkgname/1.0-1"
+
+    self.assertEqual(expected, b.asURI(baseURI))
+
 class ConstraintTest(unittest.TestCase):
 
   def testAsURI(self):

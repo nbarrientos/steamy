@@ -7,9 +7,20 @@ class SourcesParserTest(unittest.TestCase):
   def setUp(self):
     self.parser = SourcesParser()
     self.sourcePackage = {}
-    self.sourcePackage['Package'] = "2vcard"
+    self.sourcePackage['Package'] = "srcpkg"
+    self.sourcePackage['Binary'] = "binpkg1, binpkg2"
     self.sourcePackage['Version'] = "0.5-2"
     self.sourcePackage['Build-Depends'] = "debhelper (>= 5.0.37)"
+
+  # Fields
+
+  def testParseBinary(self):
+    bins = self.parser.parseBinary(self.sourcePackage)
+    self.assertEqual(2, len(bins))
+    self.assertEqual("binpkg1", bins[0].package)
+    self.assertEqual("0.5-2", str(bins[0].version))
+    self.assertEqual("binpkg2", bins[1].package)
+    self.assertEqual("0.5-2", str(bins[1].version))
 
   def testParseSourcePackage(self):
     pass
