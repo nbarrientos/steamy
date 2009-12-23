@@ -3,6 +3,8 @@ import re
 from debian_bundle.changelog import Version
 
 from models import *
+from errors import MissingMandatoryFieldException
+from decorators import mandatory, optional
 
 class BaseParser():
   def __init__(self):
@@ -10,9 +12,11 @@ class BaseParser():
 
   # Common Fields
 
+  @mandatory('Version')
   def parseVersion(self, raw):
     return self.parseVersionNumber(raw['Version'])
 
+  @mandatory('Package')
   def parsePackage(self, raw):
     return raw['Package']
 
@@ -95,16 +99,18 @@ class PackagesParser(BaseParser):
 
   # Fields
 
+  @optional('Depends')
   def parseDepends(self, raw):
-    if 'Depends' in raw:
-      return self.parseConstraints(raw['Depends'])
-  
+    return self.parseConstraints(raw['Depends'])
+ 
+  @optional('Recommends')
   def parseRecommends(self, raw):
-    if 'Recommends' in raw:
-      return self.parseConstraints(raw['Recommends'])
+    return self.parseConstraints(raw['Recommends'])
 
+  @mandatory('Architecture')
   def parseArchitecture(self, raw):
     return Architecture(raw['Architecture'])
 
+  @mandatory('Installed-Size')
   def parseInstalledSize(self, raw):
     return raw['Installed-Size']

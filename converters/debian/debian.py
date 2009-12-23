@@ -7,6 +7,7 @@ from rdflib.Graph import ConjunctiveGraph
 
 from parsers import PackagesParser
 from export import Triplifier, Serializer
+from errors import MissingMandatoryFieldException
 
 VERSION = "0.1alpha"
 
@@ -66,7 +67,11 @@ def processPackages(src, out, baseURI):
 
   for p in rawPackages:
     # Parse
-    parsedPackage = parser.parseBinaryPackage(p)
+    try:
+      parsedPackage = parser.parseBinaryPackage(p)
+    except MissingMandatoryFieldException, e:
+      logging.error("Unable to parse package (%s). Skipping." % str(e))
+      continue
 
     # Triplify
     triplifier.triplifyBinaryPackage(parsedPackage)

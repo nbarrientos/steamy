@@ -2,6 +2,7 @@ import unittest
 
 from models import *
 from parsers import SourcesParser, PackagesParser, BaseParser
+from errors import MissingMandatoryFieldException
 
 class SourcesParserTest(unittest.TestCase):
   def setUp(self):
@@ -56,15 +57,34 @@ class PackagesParserTest(unittest.TestCase):
   def testParsePackage(self):
     self.assertEqual("mutt", self.parser.parsePackage(self.binaryPackage))
 
+  def testParsePackageMissingField(self):
+    self.binaryPackage.pop('Package')
+    self.assertRaises(MissingMandatoryFieldException,\
+                      self.parser.parsePackage, self.binaryPackage)
+
   def testParseDepends(self):
     deps = self.parser.parseDepends(self.binaryPackage)
     self.assertEqual(2, deps.len())
 
+  def testParseDependsMissingField(self):
+    self.binaryPackage.pop('Depends')
+    self.assertEqual(None, self.parser.parseDepends(self.binaryPackage))
+
   def testParseInstalledSize(self):
     self.assertEqual("108", self.parser.parseInstalledSize(self.binaryPackage))
 
+  def testParseInstalledSizeMissingField(self):
+    self.binaryPackage.pop('Installed-Size')
+    self.assertRaises(MissingMandatoryFieldException,\
+                      self.parser.parseInstalledSize, self.binaryPackage)
+
   def testParseArchitecture(self):
     self.assertEqual("all", str(self.parser.parseArchitecture(self.binaryPackage)))
+
+  def testParseArchitectureMissingField(self):
+    self.binaryPackage.pop('Architecture')
+    self.assertRaises(MissingMandatoryFieldException,\
+                      self.parser.parseArchitecture, self.binaryPackage)
 
   def testParseBinaryPackageBuild(self):
     build = self.parser.parseBinaryPackageBuild(self.binaryPackage)
