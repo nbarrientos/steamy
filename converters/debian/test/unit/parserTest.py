@@ -1,12 +1,24 @@
 import unittest
 
 from models import *
-from parser import Parser
+from parser import SourcesParser, PackagesParser, BaseParser
 
-class ParserTest(unittest.TestCase):
+class SourcesParserTest(unittest.TestCase):
+  def setUp(self):
+    self.parser = SourcesParser()
+    self.sourcePackage = {}
+    self.sourcePackage['Package'] = "2vcard"
+    self.sourcePackage['Version'] = "0.5-2"
+    self.sourcePackage['Build-Depends'] = "debhelper (>= 5.0.37)"
+
+  def testParseSourcePackage(self):
+    pass
+
+
+class PackagesParserTest(unittest.TestCase):
   
   def setUp(self):
-    self.parser = Parser()
+    self.parser = PackagesParser()
     self.binaryPackage = {}
     self.binaryPackage['Package'] = "mutt"
     self.binaryPackage['Version'] = "1:2.4+svn5677-1"
@@ -37,8 +49,22 @@ class ParserTest(unittest.TestCase):
     build = self.parser.parseBinaryPackageBuild(self.binaryPackage)
     self.assertEqual("all", build.architecture.name)
     self.assertEqual("108", build.installedSize)
+
+  def testParseBinaryPackage(self):
+    p = self.parser.parseBinaryPackage(self.binaryPackage)
+    self.assertEqual("mutt", p.package)
+    self.assertNotEqual(None, p.depends)
+    self.assertEqual(2, p.depends.len())
+    self.assertEqual(3, p.recommends.len())
+    self.assertEqual("2.4+svn5677", p.version.upstream_version)
+    self.assertEqual("1", p.version.debian_version)
+    self.assertEqual("all", p.build.architecture.name)
+    self.assertEqual("108", p.build.installedSize)
     
-  # Tools
+
+class BaseParserTest(unittest.TestCase):
+  def setUp(self):
+    self.parser = BaseParser()
 
   def testParseVersionNumberNoEpoch(self):
     ver = self.parser.parseVersionNumber("1.0-1")
@@ -84,16 +110,3 @@ class ParserTest(unittest.TestCase):
     self.assertEqual(None, d.version.epoch)
     self.assertEqual("0.5.18", d.version.upstream_version)
     self.assertEqual(None, d.version.debian_version)
-   
-  # Full Package
-
-  def testParseBinaryPackage(self):
-    p = self.parser.parseBinaryPackage(self.binaryPackage)
-    self.assertEqual("mutt", p.package)
-    self.assertNotEqual(None, p.depends)
-    self.assertEqual(2, p.depends.len())
-    self.assertEqual(3, p.recommends.len())
-    self.assertEqual("2.4+svn5677", p.version.upstream_version)
-    self.assertEqual("1", p.version.debian_version)
-    self.assertEqual("all", p.build.architecture.name)
-    self.assertEqual("108", p.build.installedSize)

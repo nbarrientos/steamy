@@ -5,7 +5,7 @@ from optparse import OptionParser
 from debian_bundle import deb822
 from rdflib.Graph import ConjunctiveGraph
 
-from parser import Parser
+from parser import PackagesParser
 from export import Triplifier, Serializer
 
 VERSION = "0.1alpha"
@@ -58,7 +58,7 @@ def processPackages(src, out, baseURI):
   inputFile = openInputFile(src)
   outputFile = openOutputFile(out)
 
-  parser = Parser()
+  parser = PackagesParser()
   triplifier = Triplifier(graph, baseURI)
   serializer = Serializer()
 

@@ -2,6 +2,11 @@ import hashlib
 
 from debian_bundle.changelog import Version
 
+class SourcePackage():
+  def __init__(self):
+    self.package = None
+    self.binary = None
+
 class BinaryPackage():
   def __init__(self):
     self.package = None
