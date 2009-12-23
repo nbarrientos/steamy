@@ -7,93 +7,100 @@ from rdflib.Graph import ConjunctiveGraph
 
 from parsers import PackagesParser
 from export import Triplifier, Serializer
-from errors import MissingMandatoryFieldException
+from errors import MissingMandatoryFieldException 
+from errors import NoFilesException, NoBaseURIException
 
 VERSION = "0.1alpha"
 
-def init():
-  configLogger()
-  parseArgs()
+class Launcher():
+  """ Application entrypoint """
+  def __init__(self):
+    self.opts = None
 
-def configLogger():
-  logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
-
-def parseArgs():
-  parser = OptionParser(usage="%prog [options]", version="%prog " + VERSION)
-  parser.add_option("-p", "--packages", dest="packages",\
-                    metavar="FILE", help="read Packages from FILE")
-  parser.add_option("-s", "--sources", dest="sources",\
-                    metavar="FILE", help="read Sources from FILE")
-  parser.add_option("-b", "--baseURI", dest="baseURI",\
-                    metavar="URI", help="use URI as base URI for all resources")
-  parser.add_option("-P", "--packages-output", dest="packagesOutput",\
-                    default="Packages.rdf",\
-                    metavar="FILE", help="print rdflized Packages to FILE [default: %default]")
-  parser.add_option("-S", "--sources-output", dest="sourcesOutput",\
-                    default="Sources.rdf",\
-                    metavar="FILE", help="print rdflized Sources to FILE [default: %default]")
-  (options, args) = parser.parse_args()
-
-  # FIXME: Add more checks
-  if not options.packages and not options.sources:
-    logging.info("Nothing to do, did you forget -p and/or -s?")
-
-  if options.packages:
-    if options.baseURI:
-      logging.debug("Converting packages metadata from %s to %s" % \
-                    (options.packages, options.packagesOutput))
-      processPackages(options.packages, options.packagesOutput, options.baseURI)
-    else:
-      logging.error("Base URI is missing, did you forget '-b'?")
+  def run(self):
+    self.configLogger()
+    try:
+      self.parseArgs()
+    except NoFilesException:
+      logging.info("Nothing to do, did you forget -p and/or -s?")
+      exit(0)
+    except NoBaseURIException:
+      logging.error("Required base URI is missing, did you forget '-b'?")
       exit(-1)
 
-  if options.sources:
-    pass # FIXME
+    if self.opts.packages:
+        logging.info("Trying to convert metadata from %s to %s..." % \
+                      (self.opts.packages, self.opts.packagesOutput))
+        try:
+          (packagesno, triplesno) = self.processPackages()
+          logging.info("Done! %s binary packages processed and %s triples extracted" % \
+                      (packagesno,triplesno))
+        except:
+          logging.error("%s will not be processed, check application log" % self.opts.packages)
 
-# FIMXE: Use a class instead
-def processPackages(src, out, baseURI):
+    if self.opts.sources:
+      pass # FIXME
 
-  # FIXME: Refactor to init
-  graph = ConjunctiveGraph()
+  def configLogger(self):
+    logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
-  inputFile = openInputFile(src)
-  outputFile = openOutputFile(out)
+  def parseArgs(self):
+    parser = OptionParser(usage="%prog [options]", version="%prog " + VERSION)
+    parser.add_option("-p", "--packages", dest="packages",\
+                      metavar="FILE", help="read Packages from FILE")
+    parser.add_option("-s", "--sources", dest="sources",\
+                      metavar="FILE", help="read Sources from FILE")
+    parser.add_option("-b", "--baseURI", dest="baseURI",\
+                      metavar="URI", help="use URI as base URI for all resources")
+    parser.add_option("-P", "--packages-output", dest="packagesOutput",\
+                      default="Packages.rdf",\
+                      metavar="FILE", help="dump rdfized Packages to FILE [default: %default]")
+    parser.add_option("-S", "--sources-output", dest="sourcesOutput",\
+                      default="Sources.rdf",\
+                      metavar="FILE", help="dump rdfized Sources to FILE [default: %default]")
+    (self.opts, args) = parser.parse_args()
 
-  parser = PackagesParser()
-  triplifier = Triplifier(graph, baseURI)
-  serializer = Serializer()
+    # FIXME: Add more checks
+    if not self.opts.packages and not self.opts.sources:
+      raise NoFilesException()
+    elif (self.opts.packages or self.opts.packages) and not self.opts.baseURI:
+      raise NoBaseURIException()
 
-  rawPackages = deb822.Packages.iter_paragraphs(inputFile)
+  def processPackages(self):
 
-  for p in rawPackages:
-    # Parse
     try:
-      parsedPackage = parser.parseBinaryPackage(p)
-    except MissingMandatoryFieldException, e:
-      logging.error("Unable to parse package (%s). Skipping." % str(e))
-      continue
+      inputFile = open(self.opts.packages, "r")
+      outputFile = open(self.opts.packagesOutput, "w")
+    except IOError, e:
+      logging.error("Unable to open input and/or output Packages streams (%s)." % str(e))
+      raise Exception()
+   
+    counter = 0
+    graph = ConjunctiveGraph()
+    parser = PackagesParser()
+    triplifier = Triplifier(graph, self.opts.baseURI)
+    serializer = Serializer()
 
-    # Triplify
-    triplifier.triplifyBinaryPackage(parsedPackage)
+    rawPackages = deb822.Packages.iter_paragraphs(inputFile)
 
-  # Serialize all packages
-  serializer.serializeToFile(graph, outputFile)
+    for p in rawPackages:
+      # Parse
+      try:
+        parsedPackage = parser.parseBinaryPackage(p)
+        counter += 1
+      except MissingMandatoryFieldException, e:
+        logging.error("Unable to parse package (%s). Skipping this." % str(e))
+        continue
 
-  inputFile.close()
-  outputFile.close()
+      # Triplify
+      triplifier.triplifyBinaryPackage(parsedPackage)
 
-def openInputFile(path):
-  try:
-    return open(path, "r")
-  except:
-    log.error("Error opening input file for reading")
+    # Serialize all packages
+    serializer.serializeToFile(graph, outputFile)
 
-def openOutputFile(path):
-  try:
-    # TODO: does the file already exist?
-    return open(path, "w+")
-  except:
-    log.error("Error opening output file for writting")
+    inputFile.close()
+    outputFile.close()
+    return (counter, len(graph))
 
 if __name__ == "__main__":
-  init()
+  Launcher().run()
