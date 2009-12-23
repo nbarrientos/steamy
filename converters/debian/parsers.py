@@ -8,6 +8,16 @@ class BaseParser():
   def __init__(self):
     pass
 
+  # Common Fields
+
+  def parseVersion(self, raw):
+    return self.parseVersionNumber(raw['Version'])
+
+  def parsePackage(self, raw):
+    return raw['Package']
+
+  # Tools
+
   def parseVersionNumber(self, raw):
     return VersionNumber(raw.strip())
 
@@ -48,7 +58,11 @@ class SourcesParser(BaseParser):
     pass
 
   def parseSourcePackage(self, raw):
-    pass # FIXME
+    sourcePackage = SourcePackage()
+    sourcePackage.package = self.parsePackage(raw)
+    sourcePackage.binary = self.parseBinary(raw)
+    sourcePackage.version = self.parseVersion(raw)
+    return sourcePackage
 
   def parseBinary(self, raw):
     binaries = []
@@ -81,9 +95,6 @@ class PackagesParser(BaseParser):
 
   # Fields
 
-  def parsePackage(self, raw):
-    return raw['Package']
-
   def parseDepends(self, raw):
     if 'Depends' in raw:
       return self.parseConstraints(raw['Depends'])
@@ -92,13 +103,8 @@ class PackagesParser(BaseParser):
     if 'Recommends' in raw:
       return self.parseConstraints(raw['Recommends'])
 
-  def parseVersion(self, raw):
-    return self.parseVersionNumber(raw['Version'])
-
   def parseArchitecture(self, raw):
     return Architecture(raw['Architecture'])
 
   def parseInstalledSize(self, raw):
     return raw['Installed-Size']
-
-

@@ -22,8 +22,18 @@ class SourcesParserTest(unittest.TestCase):
     self.assertEqual("binpkg2", bins[1].package)
     self.assertEqual("0.5-2", str(bins[1].version))
 
+  def testParseBinarySingle(self):
+    self.sourcePackage['Binary'] = "binpkg"
+    bin = self.parser.parseBinary(self.sourcePackage)
+    self.assertEqual(1, len(bin))
+    self.assertEqual("binpkg", bin[0].package)
+    self.assertEqual("0.5-2", str(bin[0].version))
+
   def testParseSourcePackage(self):
-    pass
+    s = self.parser.parseSourcePackage(self.sourcePackage)
+    self.assertEqual("srcpkg", s.package)
+    self.assertEqual("0.5-2", str(s.version))
+    self.assertEqual(2, len(s.binary))
 
 
 class PackagesParserTest(unittest.TestCase):
