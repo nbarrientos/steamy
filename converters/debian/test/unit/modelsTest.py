@@ -43,6 +43,10 @@ class ArchitectureTest(unittest.TestCase):
   def testToStr(self):
     self.assertEqual("i386", str(self.arch))
 
+  def testEq(self):
+    self.assertEqual(Architecture("i386"), Architecture("i386"))
+    self.assertNotEqual(Architecture("i386"), Architecture("amd64"))
+
 class BinaryPackageLiteTest(unittest.TestCase):
   def testAsURI(self):
     b = BinaryPackageLite()

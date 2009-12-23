@@ -40,6 +40,9 @@ class Architecture():
   def __repr__(self):
     return str(self.name)
 
+  def __eq__(self, other):
+    return self.name.__eq__(other.name)
+
 class VersionNumber(Version):
   def asURI(self, base):
     return "%s/version/%s" % (base, str(self))
