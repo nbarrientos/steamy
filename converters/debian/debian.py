@@ -5,7 +5,7 @@ from optparse import OptionParser
 from debian_bundle import deb822
 from rdflib.Graph import ConjunctiveGraph
 
-from parser import PackagesParser
+from parsers import PackagesParser
 from export import Triplifier, Serializer
 
 VERSION = "0.1alpha"

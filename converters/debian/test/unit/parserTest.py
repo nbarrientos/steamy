@@ -1,7 +1,7 @@
 import unittest
 
 from models import *
-from parser import SourcesParser, PackagesParser, BaseParser
+from parsers import SourcesParser, PackagesParser, BaseParser
 
 class SourcesParserTest(unittest.TestCase):
   def setUp(self):
