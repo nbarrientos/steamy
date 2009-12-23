@@ -45,14 +45,24 @@ class BaseParser():
 
   def parseConstraint(self, raw):
     constraint = Constraint()
-    regex = re.compile("\(|\)")
-    split = regex.sub("", raw.strip()).split()
+    regex = re.compile(\
+      r"(?P<package>\S+)( \((?P<operator>\S+) (?P<version>\S+)\))?( \[(?P<arches>.+)\])?")
+    
+    match = regex.match(raw.strip())
 
-    constraint.package = split[0]
+    constraint.package = match.group('package')
 
-    if len(split) > 1:
-      constraint.operator = split[1]
-      constraint.version = self.parseVersionNumber(split[2])
+    if match.group('operator') and match.group('version'):
+      constraint.operator = match.group('operator')
+      constraint.version = self.parseVersionNumber(match.group('version'))
+
+    if match.group('arches'):
+      split = match.group('arches').split()
+      for arch in split:
+        if arch.startswith("!"):
+          constraint.exceptin.append(Architecture(arch[1:]))
+        else:
+          constraint.onlyin.append(Architecture(arch))
 
     return constraint
 

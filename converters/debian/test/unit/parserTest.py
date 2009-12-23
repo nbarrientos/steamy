@@ -143,7 +143,7 @@ class BaseParserTest(unittest.TestCase):
     self.assertEqual(input, d.package)
     self.assertEqual(None, d.version)
   
-  def testParseConstraintComplex(self):
+  def testParseConstraintWithVersionAndOperator(self):
     input = "libidn11 (>= 0.5.18)"
     d = self.parser.parseConstraint(input)
     self.assertEqual("libidn11", d.package)
@@ -151,3 +151,38 @@ class BaseParserTest(unittest.TestCase):
     self.assertEqual(None, d.version.epoch)
     self.assertEqual("0.5.18", d.version.upstream_version)
     self.assertEqual(None, d.version.debian_version)
+
+  def testParseConstraintKeepersExcept(self):
+    input = "libasound2-dev [!kfreebsd-i386 !kfreebsd-amd64]"
+    d = self.parser.parseConstraint(input)
+    self.assertEqual("libasound2-dev", d.package)
+    self.assertEqual(None, d.operator)
+    self.assertEqual(2, len(d.exceptin))
+    self.assertEqual(0, len(d.onlyin))
+    expectedlist = [Architecture("kfreebsd-i386"), Architecture("kfreebsd-amd64")]
+    self.assertEqual(expectedlist, d.exceptin)
+
+  def testParseConstraintKeepersOnly(self):
+    input = "libasound2-dev [kfreebsd-i386]"
+    d = self.parser.parseConstraint(input)
+    self.assertEqual("libasound2-dev", d.package)
+    self.assertEqual(None, d.operator)
+    self.assertEqual(0, len(d.exceptin))
+    self.assertEqual(1, len(d.onlyin))
+    expectedlist = [Architecture("kfreebsd-i386")]
+    self.assertEqual(expectedlist, d.onlyin)
+
+  def testParseFullConstraint(self):
+    input = "libidn11 (>= 0.5.18) [!kfreebsd-i386 !kfreebsd-amd64]"
+    d = self.parser.parseConstraint(input)
+    self.assertEqual("libidn11", d.package)
+    self.assertEqual(">=", d.operator)
+    self.assertEqual(None, d.version.epoch)
+    self.assertEqual("0.5.18", d.version.upstream_version)
+    self.assertEqual(None, d.version.debian_version)
+    self.assertEqual(2, len(d.exceptin))
+    self.assertEqual(0, len(d.onlyin))
+    expectedlist = [Architecture("kfreebsd-i386"), Architecture("kfreebsd-amd64")]
+    self.assertEqual(expectedlist, d.exceptin)
+
+

@@ -84,9 +84,14 @@ class Constraint():
     self.package = None
     self.operator = None
     self.version = None
+    self.exceptin = []
+    self.onlyin = []
 
   def asURI(self, base):
-    tail = "%s%s%s" % (self.package, self.operator, self.version)
+    tail = "%s" % self.package
+    if self.operator and self.version:
+      tail = tail + "%s%s" % (self.operator, self.version)
+    # FIMXE: Add *in
     return "%s/constraint/%s" % (base, hashlib.sha1(tail).hexdigest())
 
   def __repr__(self):
