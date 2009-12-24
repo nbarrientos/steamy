@@ -44,7 +44,7 @@ class Triplifier():
 
   def triplifyBinaryPackageBuild(self, build, base):
     ref = URIRef(build.asURI(base))
-    self.g.add((ref, RDF.type, DEB['Build']))
+    self.g.add((ref, RDF.type, DEB['BinaryBuild']))
    
     # Architecture
     archRef = self.triplifyArchitecture(build.architecture)
