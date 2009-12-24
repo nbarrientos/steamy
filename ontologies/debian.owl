@@ -85,6 +85,22 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#build-depends -->
+
+    <owl:ObjectProperty rdf:about="#build-depends">
+        <rdfs:subPropertyOf rdf:resource="#sourcePackageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#build-depends-indep -->
+
+    <owl:ObjectProperty rdf:about="#build-depends-indep">
+        <rdfs:subPropertyOf rdf:resource="#sourcePackageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#conflicts -->
 
     <owl:ObjectProperty rdf:about="#conflicts">
@@ -159,6 +175,15 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#shouldBuildIn -->
+
+    <owl:ObjectProperty rdf:about="#shouldBuildIn">
+        <rdfs:range rdf:resource="#Architecture"/>
+        <rdfs:domain rdf:resource="#Source"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#sourcePackageRelationship -->
 
     <owl:ObjectProperty rdf:about="#sourcePackageRelationship">
@@ -216,6 +241,15 @@
 
     <owl:DatatypeProperty rdf:about="#epoch">
         <rdfs:domain rdf:resource="#VersionNumber"/>
+        <rdfs:range rdf:resource="&xsd;nonNegativeInteger"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#installedSize -->
+
+    <owl:DatatypeProperty rdf:about="#installedSize">
+        <rdfs:domain rdf:resource="#BinaryBuild"/>
         <rdfs:range rdf:resource="&xsd;nonNegativeInteger"/>
     </owl:DatatypeProperty>
     
@@ -291,6 +325,12 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#VersionNumber -->
 
     <owl:Class rdf:about="#VersionNumber"/>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#Thing -->
+
+    <owl:Class rdf:about="&owl;Thing"/>
     
 
 
