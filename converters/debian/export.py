@@ -37,6 +37,12 @@ class Triplifier():
         node = self.triplifyOrConstraint(ord)
         self.g.add((ref, DEB['build-depends'], node))
 
+    # Build-Depends-Indep
+    if package.buildDependsIndep:
+      for ord in package.buildDependsIndep:
+        node = self.triplifyOrConstraint(ord)
+        self.g.add((ref, DEB['build-depends-indep'], node))
+
     # Architecture
     if package.architecture:
       for arch in package.architecture:
