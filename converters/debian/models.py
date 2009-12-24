@@ -7,8 +7,8 @@ class SourcePackage():
     self.package = None
     self.binary = None
     self.version = None
-    self.build_depends = None
-    self.build_depends_indep = None
+    self.buildDepends = None
+    self.buildDependsIndep = None
     self.architecture = None
 
   def asURI(self, base):

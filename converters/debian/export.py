@@ -32,8 +32,8 @@ class Triplifier():
         self.g.add((ref, DEB['binary'], binaryRef))
 
     # Build-Depends
-    if package.build_depends:
-      for ord in package.build_depends:
+    if package.buildDepends:
+      for ord in package.buildDepends:
         node = self.triplifyOrConstraint(ord)
         self.g.add((ref, DEB['build-depends'], node))
 

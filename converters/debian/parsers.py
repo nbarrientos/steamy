@@ -76,8 +76,8 @@ class SourcesParser(BaseParser):
     sourcePackage.package = self.parsePackage(raw)
     sourcePackage.binary = self.parseBinary(raw)
     sourcePackage.version = self.parseVersion(raw)
-    sourcePackage.build_depends = self.parseBuildDepends(raw)
-    sourcePackage.build_depends_indep = self.parseBuildDependsIndep(raw)
+    sourcePackage.buildDepends = self.parseBuildDepends(raw)
+    sourcePackage.buildDependsIndep = self.parseBuildDependsIndep(raw)
     sourcePackage.architecture = self.parseArchitecture(raw)
     return sourcePackage
 
