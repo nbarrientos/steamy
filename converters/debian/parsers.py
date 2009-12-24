@@ -80,11 +80,18 @@ class SourcesParser(BaseParser):
 
   def parseBinary(self, raw):
     binaries = []
-
     for bin in raw['Binary'].split(","):
       binaries.append(BinaryPackageLite(bin.strip(), self.parseVersionNumber(raw['Version'])))
 
     return binaries
+
+  @mandatory('Architecture')
+  def parseArchitecture(self, raw):
+    arches = []
+    for arch in raw['Architecture'].split():
+      arches.append(Architecture(arch.strip()))
+    
+    return arches
 
 
 class PackagesParser(BaseParser):
