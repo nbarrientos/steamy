@@ -114,6 +114,14 @@ class Triplifier():
       versionRef = self.triplifyVersionNumber(constraint.version)
       self.g.add((ref, DEB['versionNumber'], versionRef))
 
+    for arch in constraint.exceptin:
+      archRef = self.triplifyArchitecture(arch)
+      self.g.add((ref, DEB['exceptInArchitecture'], archRef))
+
+    for arch in constraint.onlyin:
+      archRef = self.triplifyArchitecture(arch)
+      self.g.add((ref, DEB['onlyInArchitecture'], archRef))
+
     return ref
 
   def triplifyVersionNumber(self, version):
