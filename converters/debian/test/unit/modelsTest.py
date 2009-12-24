@@ -27,6 +27,24 @@ class VersionNumberTest(unittest.TestCase):
     expected = baseURI + "/version/1.0-1"
     self.assertEqual(expected, v.asURI(baseURI))
 
+  def testComparable(self):
+    v1 = VersionNumber("1.0-1")
+    v2 = VersionNumber("1.0-2")
+    v3 = VersionNumber("1.1-1")
+    v4 = VersionNumber("1:1.0-1")
+    v5 = VersionNumber("1.0-1.1")
+    v6 = VersionNumber("1.0+svn1-1")
+
+    self.assertTrue(v1 == v1)
+    self.assertTrue(v1 < v2)
+    self.assertTrue(v1 <= v2)
+    self.assertTrue(v3 > v1)
+    self.assertTrue(v1 < v4)
+    self.assertTrue(v1 < v5)
+    self.assertTrue(v2 < v4)
+    self.assertFalse(v2 < v5)
+    self.assertTrue(v1 < v6)
+
 class ArchitectureTest(unittest.TestCase):
 
   def setUp(self):
