@@ -12,10 +12,33 @@ class Triplifier():
     self.g.bind("rdf", RDF)
     self.g.bind("deb", DEB)
 
-  def triplifySourcePackage(self, package):
-    pass # FIMXE
+  ### Sources ###
 
-  def triplifyBinaryPackage(self, package):
+  def triplifySourcePackage(self, package):
+    ref = URIRef(package.asURI(self.baseURI))
+    self.g.add((ref, RDF.type, DEB['Source']))
+
+    # Package
+    self.g.add((ref, DEB['packageName'], Literal(str(package.package))))
+
+    # Version
+    versionRef = self.triplifyVersionNumber(package.version)
+    self.g.add((ref, DEB['versionNumber'], versionRef))
+
+    # Binary
+    if package.binary:
+      for binary in package.binary:
+        binaryRef = self.triplifyBinaryPackageLite(binary)
+        self.g.add((ref, DEB['binary'], binaryRef))
+
+    # Build-Depends
+    if package.build_depends:
+      for ord in package.build_depends:
+        node = self.triplifyOrConstraint(ord)
+        self.g.add((ref, DEB['build-depends'], node))
+
+
+  def triplifyBinaryPackageLite(self, package):
     ref = URIRef(package.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['Binary']))
 
@@ -25,6 +48,13 @@ class Triplifier():
     # Version
     versionRef = self.triplifyVersionNumber(package.version)
     self.g.add((ref, DEB['versionNumber'], versionRef))
+
+    return ref
+
+  ### Packages ###
+
+  def triplifyBinaryPackage(self, package):
+    ref = self.triplifyBinaryPackageLite(package)
 
     # Build
     buildRef = self.triplifyBinaryPackageBuild(package.build, package.asURI(self.baseURI))

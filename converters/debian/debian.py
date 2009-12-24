@@ -5,7 +5,7 @@ from optparse import OptionParser
 from debian_bundle import deb822
 from rdflib.Graph import ConjunctiveGraph
 
-from parsers import PackagesParser
+from parsers import PackagesParser, SourcesParser
 from export import Triplifier, Serializer
 from errors import MissingMandatoryFieldException 
 from errors import NoFilesException, NoBaseURIException
@@ -29,17 +29,24 @@ class Launcher():
       exit(-1)
 
     if self.opts.packages:
-        logging.info("Trying to convert metadata from %s to %s..." % \
-                      (self.opts.packages, self.opts.packagesOutput))
-        try:
-          (packagesno, triplesno) = self.processPackages()
-          logging.info("Done! %s binary packages processed and %s triples extracted" % \
-                      (packagesno,triplesno))
-        except:
-          logging.error("%s will not be processed, check application log" % self.opts.packages)
+      logging.info("Trying to convert metadata from %s to %s..." % \
+                    (self.opts.packages, self.opts.packagesOutput))
+      try:
+        (packagesno, triplesno) = self.processPackages()
+        logging.info("Done! %s binary packages processed and %s triples extracted" % \
+                    (packagesno,triplesno))
+      except:
+        logging.error("%s will not be processed, check application log" % self.opts.packages)
 
     if self.opts.sources:
-      pass # FIXME
+      logging.info("Trying to convert metadata from %s to %s..." % \
+                    (self.opts.sources, self.opts.sourcesOutput))
+      try:
+        (packagesno, triplesno) = self.processSources()
+        logging.info("Done! %s source packages processed and %s triples extracted" % \
+                    (packagesno,triplesno))
+      except:
+        logging.error("%s will not be processed, check application log" % self.opts.sources)
 
   def configLogger(self):
     logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
@@ -94,6 +101,42 @@ class Launcher():
 
       # Triplify
       triplifier.triplifyBinaryPackage(parsedPackage)
+
+    # Serialize all packages
+    serializer.serializeToFile(graph, outputFile)
+
+    inputFile.close()
+    outputFile.close()
+    return (counter, len(graph))
+
+  def processSources(self):
+
+    try:
+      inputFile = open(self.opts.sources, "r")
+      outputFile = open(self.opts.sourcesOutput, "w")
+    except IOError, e:
+      logging.error("Unable to open input and/or output Sources streams (%s)." % str(e))
+      raise Exception()
+   
+    counter = 0
+    graph = ConjunctiveGraph()
+    parser = SourcesParser()
+    triplifier = Triplifier(graph, self.opts.baseURI)
+    serializer = Serializer()
+
+    rawPackages = deb822.Sources.iter_paragraphs(inputFile)
+
+    for p in rawPackages:
+      # Parse
+      try:
+        parsedPackage = parser.parseSourcePackage(p)
+        counter += 1
+      except MissingMandatoryFieldException, e:
+        logging.error("Unable to parse package (%s). Skipping this." % str(e))
+        continue
+
+      # Triplify
+      triplifier.triplifySourcePackage(parsedPackage)
 
     # Serialize all packages
     serializer.serializeToFile(graph, outputFile)
