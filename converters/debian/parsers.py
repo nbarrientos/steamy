@@ -76,6 +76,8 @@ class SourcesParser(BaseParser):
     sourcePackage.package = self.parsePackage(raw)
     sourcePackage.binary = self.parseBinary(raw)
     sourcePackage.version = self.parseVersion(raw)
+    sourcePackage.build_depends = self.parseBuildDepends(raw)
+    sourcePackage.build_depends_indep = self.parseBuildDependsIndep(raw)
     return sourcePackage
 
   def parseBinary(self, raw):
@@ -93,6 +95,14 @@ class SourcesParser(BaseParser):
     
     return arches
 
+  @optional('Build-Depends')
+  def parseBuildDepends(self, raw):
+    return self.parseConstraints(raw['Build-Depends'])
+ 
+  @optional('Build-Depends-Indep')
+  def parseBuildDependsIndep(self, raw):
+    return self.parseConstraints(raw['Build-Depends-Indep'])
+ 
 
 class PackagesParser(BaseParser):
   def __init__(self):

@@ -7,6 +7,8 @@ class SourcePackage():
     self.package = None
     self.binary = None
     self.version = None
+    self.build_depends = None
+    self.build_depends_indep = None
 
 class BinaryPackageLite():
   def __init__(self, package=None, version=None):
