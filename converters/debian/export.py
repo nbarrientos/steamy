@@ -86,6 +86,9 @@ class Triplifier():
     archRef = self.triplifyArchitecture(build.architecture)
     self.g.add((ref, DEB['architecture'], archRef))
 
+    # Installed-Size
+    self.g.add((ref, DEB['installedSize'], Literal(str(build.installedSize))))
+
     return ref
 
   def triplifyArchitecture(self, arch):
