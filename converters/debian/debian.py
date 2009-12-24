@@ -74,7 +74,6 @@ class Launcher():
       raise NoBaseURIException()
 
   def processPackages(self):
-
     try:
       inputFile = open(self.opts.packages, "r")
       outputFile = open(self.opts.packagesOutput, "w")
@@ -110,7 +109,6 @@ class Launcher():
     return (counter, len(graph))
 
   def processSources(self):
-
     try:
       inputFile = open(self.opts.sources, "r")
       outputFile = open(self.opts.sourcesOutput, "w")
