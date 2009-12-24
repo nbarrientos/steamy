@@ -37,6 +37,12 @@ class Triplifier():
         node = self.triplifyOrConstraint(ord)
         self.g.add((ref, DEB['build-depends'], node))
 
+    # Architecture
+    if package.architecture:
+      for arch in package.architecture:
+        archRef = self.triplifyArchitecture(arch)
+        self.g.add((ref, DEB['shouldBuildIn'], archRef))
+
 
   def triplifyBinaryPackageLite(self, package):
     ref = URIRef(package.asURI(self.baseURI))

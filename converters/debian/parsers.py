@@ -78,6 +78,7 @@ class SourcesParser(BaseParser):
     sourcePackage.version = self.parseVersion(raw)
     sourcePackage.build_depends = self.parseBuildDepends(raw)
     sourcePackage.build_depends_indep = self.parseBuildDependsIndep(raw)
+    sourcePackage.architecture = self.parseArchitecture(raw)
     return sourcePackage
 
   def parseBinary(self, raw):

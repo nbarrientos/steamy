@@ -9,6 +9,7 @@ class SourcePackage():
     self.version = None
     self.build_depends = None
     self.build_depends_indep = None
+    self.architecture = None
 
   def asURI(self, base):
     return "%s/source/%s/%s" % (base, self.package, self.version)
