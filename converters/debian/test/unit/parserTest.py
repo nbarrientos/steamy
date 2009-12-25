@@ -37,10 +37,10 @@ class SourcesParserTest(unittest.TestCase):
     self.assertEqual("srcpkg", s.package)
     self.assertEqual("0.5-2", str(s.version))
     self.assertEqual(2, len(s.binary))
-    self.assertNotEqual(None, s.build_depends)
-    self.assertNotEqual(None, s.build_depends_indep)
-    self.assertEqual(2, s.build_depends.len())
-    self.assertEqual(1, s.build_depends_indep.len())
+    self.assertNotEqual(None, s.buildDepends)
+    self.assertNotEqual(None, s.buildDependsIndep)
+    self.assertEqual(2, s.buildDepends.len())
+    self.assertEqual(1, s.buildDependsIndep.len())
 
   def testParseArchitecture(self):
     archs = self.parser.parseArchitecture(self.sourcePackage)
