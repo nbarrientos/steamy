@@ -1,6 +1,6 @@
 from errors import MissingMandatoryFieldException
 
-def mandatory(fieldname):
+def required(fieldname):
   def decorator(f):
     def wrapper(self, raw):
       if fieldname in raw:

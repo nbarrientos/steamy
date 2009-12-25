@@ -4,7 +4,7 @@ from debian_bundle.changelog import Version
 
 from models import *
 from errors import MissingMandatoryFieldException
-from decorators import mandatory, optional
+from decorators import required, optional
 
 class BaseParser():
   def __init__(self):
@@ -12,11 +12,11 @@ class BaseParser():
 
   # Common Fields
 
-  @mandatory('Version')
+  @required('Version')
   def parseVersion(self, raw):
     return self.parseVersionNumber(raw['Version'])
 
-  @mandatory('Package')
+  @required('Package')
   def parsePackage(self, raw):
     return raw['Package']
 
@@ -90,7 +90,7 @@ class SourcesParser(BaseParser):
 
     return binaries
 
-  @mandatory('Architecture')
+  @required('Architecture')
   def parseArchitecture(self, raw):
     arches = []
     for arch in raw['Architecture'].split():
@@ -137,10 +137,10 @@ class PackagesParser(BaseParser):
   def parseRecommends(self, raw):
     return self.parseConstraints(raw['Recommends'])
 
-  @mandatory('Architecture')
+  @required('Architecture')
   def parseArchitecture(self, raw):
     return Architecture(raw['Architecture'])
 
-  @mandatory('Installed-Size')
+  @required('Installed-Size')
   def parseInstalledSize(self, raw):
     return raw['Installed-Size']
