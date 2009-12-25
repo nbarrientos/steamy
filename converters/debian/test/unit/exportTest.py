@@ -1,5 +1,6 @@
 import unittest
 import hashlib
+import mox
 
 from rdflib.Graph import ConjunctiveGraph
 from rdflib import Namespace, URIRef, BNode, Literal
@@ -23,6 +24,7 @@ class TriplifierTest(unittest.TestCase):
     self.graph = ConjunctiveGraph()
     self.t = Triplifier(self.graph, "b")
     self.base = "b"
+    self.mox = mox.Mox()
 
   def compareGeneratedTriples(self, expected):
     for triple in self.graph.query(ALLTRIPLES):
@@ -51,7 +53,7 @@ class TriplifierTest(unittest.TestCase):
     constraint.package = "pkg"
     constraint.operator = ">>"
     constraint.version = VersionNumber("1.0-1")
-    self.t.triplifyVersionNumber = self.mockTriplifyVersionNumber("b")
+    self.t.triplifyVersionNumber = self.mockTriplifyVersionNumber("1.0-1")
     uriref = URIRef("b/constraint/%s" %\
         hashlib.sha1(constraint.package + constraint.operator +\
         str(constraint.version)).hexdigest())
@@ -65,9 +67,9 @@ class TriplifierTest(unittest.TestCase):
 
 
   # Mocks
-
-  # FIXME: Use pmock, mox, ... instead.
-  def mockTriplifyVersionNumber(self, base):
-    def f(version):
-      return URIRef(version.asURI(base))
-    return f
+  def mockTriplifyVersionNumber(self, version):
+    classMock = self.mox.CreateMock(Triplifier)
+    classMock.triplifyVersionNumber(VersionNumber(version))\
+                                    .AndReturn(URIRef("b/version/%s" % version))
+    self.mox.ReplayAll()
+    return classMock.triplifyVersionNumber
