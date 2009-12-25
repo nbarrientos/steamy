@@ -174,6 +174,23 @@ class BaseParserTest(unittest.TestCase):
     self.assertEqual("0.5.18", d.version.upstream_version)
     self.assertEqual(None, d.version.debian_version)
 
+  def testParseConstraintAllOperators(self):
+    input = "pkg1 (<< 1)"
+    d = self.parser.parseConstraint(input)
+    self.assertEqual("<<", d.operator)
+    input = "pkg1 (<= 1)"
+    d = self.parser.parseConstraint(input)
+    self.assertEqual("<=", d.operator)
+    input = "pkg1 (== 1)"
+    d = self.parser.parseConstraint(input)
+    self.assertEqual("==", d.operator)
+    input = "pkg1 (>= 1)"
+    d = self.parser.parseConstraint(input)
+    self.assertEqual(">=", d.operator)
+    input = "pkg1 (>> 1)"
+    d = self.parser.parseConstraint(input)
+    self.assertEqual(">>", d.operator)
+
   def testParseConstraintKeepersExcept(self):
     input = "libasound2-dev [!kfreebsd-i386 !kfreebsd-amd64]"
     d = self.parser.parseConstraint(input)

@@ -45,8 +45,10 @@ class BaseParser():
 
   def parseConstraint(self, raw):
     constraint = Constraint()
+    # Assuming constraint comes from source in good shape. Validation
+    # is not necessary.
     regex = re.compile(\
-      r"(?P<package>\S+)( \((?P<operator>\S+) (?P<version>\S+)\))?( \[(?P<arches>.+)\])?")
+      r"(?P<package>\S+)( \((?P<operator>\S{2}) (?P<version>\S+)\))?( \[(?P<arches>.+)\])?")
     
     match = regex.match(raw.strip())
 
