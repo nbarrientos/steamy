@@ -1,4 +1,5 @@
 import unittest
+import hashlib
 
 from rdflib.Graph import ConjunctiveGraph
 from rdflib import Namespace, URIRef, BNode, Literal
@@ -20,7 +21,8 @@ ALLTRIPLES = BQ + "SELECT ?x ?y ?z WHERE { ?x ?y ?z . }"
 class TriplifierTest(unittest.TestCase):
   def setUp(self):
     self.graph = ConjunctiveGraph()
-    self.t = Triplifier(self.graph, "base")
+    self.t = Triplifier(self.graph, "b")
+    self.base = "b"
 
   def compareGeneratedTriples(self, expected):
     for triple in self.graph.query(ALLTRIPLES):
@@ -28,7 +30,7 @@ class TriplifierTest(unittest.TestCase):
   
   def testTriplifyArchitecture(self):
     arch = Architecture("testArch")
-    uriref = URIRef("base/arch/testArch")
+    uriref = URIRef("b/arch/testArch")
     self.assertEqual(uriref, self.t.triplifyArchitecture(arch))
     self.assertEqual(1, len(self.graph))
     expected = [(uriref, RDF.type, DEB['Architecture'])]
@@ -36,10 +38,36 @@ class TriplifierTest(unittest.TestCase):
 
   def testTriplifyVersionNumberSimple(self):
     version = VersionNumber("1.0-1")
-    uriref = URIRef("base/version/1.0-1")
+    uriref = URIRef("b/version/1.0-1")
     self.assertEqual(uriref, self.t.triplifyVersionNumber(version))
     self.assertEqual(3, len(self.graph))
     expected = [(uriref, RDF.type, DEB['VersionNumber']),\
                 (uriref, DEB['upstreamVersion'], Literal("1.0")),\
                 (uriref, DEB['debianRevision'], Literal("1"))]
     self.compareGeneratedTriples(expected)
+
+  def testTriplifyConstraintSimple(self):
+    constraint = Constraint()
+    constraint.package = "pkg"
+    constraint.operator = ">>"
+    constraint.version = VersionNumber("1.0-1")
+    self.t.triplifyVersionNumber = self.mockTriplifyVersionNumber("b")
+    uriref = URIRef("b/constraint/%s" %\
+        hashlib.sha1(constraint.package + constraint.operator +\
+        str(constraint.version)).hexdigest())
+    self.assertEqual(uriref, self.t.triplifyConstraint(constraint))
+    self.assertEqual(4, len(self.graph))
+    expected = [(uriref, RDF.type, DEB['SimplePackageConstraint']),\
+                (uriref, DEB['packageName'], Literal("pkg")),\
+                (uriref, DEB['constraintOperator'], Literal(">>")),\
+                (uriref, DEB['versionNumber'], URIRef("b/version/1.0-1"))]
+    self.compareGeneratedTriples(expected)
+
+
+  # Mocks
+
+  # FIXME: Use pmock, mox, ... instead.
+  def mockTriplifyVersionNumber(self, base):
+    def f(version):
+      return URIRef(version.asURI(base))
+    return f
