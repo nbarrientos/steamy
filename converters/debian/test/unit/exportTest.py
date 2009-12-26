@@ -53,7 +53,8 @@ class TriplifierTest(unittest.TestCase):
     constraint.package = "pkg"
     constraint.operator = ">>"
     constraint.version = VersionNumber("1.0-1")
-    self.t.triplifyVersionNumber = self.mockTriplifyVersionNumber("1.0-1")
+    self.t.triplifyVersionNumber =\
+        self.mockTriplifyVersionNumber(constraint.version)
     uriref = URIRef("b/constraint/%s" %\
         hashlib.sha1(constraint.package + constraint.operator +\
         str(constraint.version)).hexdigest())
@@ -82,8 +83,8 @@ class TriplifierTest(unittest.TestCase):
   # Mocks
   def mockTriplifyVersionNumber(self, version):
     classMock = self.mox.CreateMock(Triplifier)
-    classMock.triplifyVersionNumber(VersionNumber(version))\
-                                    .AndReturn(URIRef("b/version/%s" % version))
+    classMock.triplifyVersionNumber(version)\
+                                    .AndReturn(URIRef(version.asURI("b")))
     self.mox.ReplayAll()
     return classMock.triplifyVersionNumber
 
