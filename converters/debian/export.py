@@ -1,5 +1,6 @@
 from rdflib import Namespace, URIRef, BNode, Literal
 
+RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
 RDF = Namespace(u"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
 
@@ -17,6 +18,7 @@ class Triplifier():
   def triplifySourcePackage(self, package):
     ref = URIRef(package.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['Source']))
+    self.g.add((ref, RDFS.label, Literal(package.asLabel())))
 
     # Package
     self.g.add((ref, DEB['packageName'], Literal(str(package.package))))
@@ -53,6 +55,7 @@ class Triplifier():
   def triplifyBinaryPackageLite(self, package):
     ref = URIRef(package.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['Binary']))
+    self.g.add((ref, RDFS.label, Literal(package.asLabel())))
 
     # Package
     self.g.add((ref, DEB['packageName'], Literal(str(package.package))))

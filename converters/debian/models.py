@@ -14,6 +14,9 @@ class SourcePackage():
   def asURI(self, base):
     return "%s/source/%s/%s" % (base, self.package, self.version)
 
+  def asLabel(self):
+    return "src_%s_%s" % (self.package, self.version)
+
 class BinaryPackageLite():
   def __init__(self, package=None, version=None):
     self.package = package
@@ -21,6 +24,9 @@ class BinaryPackageLite():
 
   def asURI(self, base):
     return "%s/binary/%s/%s" % (base, self.package, self.version)
+
+  def asLabel(self):
+    return "bin_%s_%s" % (self.package, self.version)
 
   def __repr__(self):
     return "%s (%s)" % (self.package, self.version)
