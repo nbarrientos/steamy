@@ -58,6 +58,7 @@ class TriplifierTest(unittest.TestCase):
         hashlib.sha1(constraint.package + constraint.operator +\
         str(constraint.version)).hexdigest())
     self.assertEqual(uriref, self.t.triplifyConstraint(constraint))
+    self.mox.VerifyAll()
     self.assertEqual(4, len(self.graph))
     expected = [(uriref, RDF.type, DEB['SimplePackageConstraint']),\
                 (uriref, DEB['packageName'], Literal("pkg")),\
@@ -65,6 +66,18 @@ class TriplifierTest(unittest.TestCase):
                 (uriref, DEB['versionNumber'], URIRef("b/version/1.0-1"))]
     self.compareGeneratedTriples(expected)
 
+  def testTriplifyOrConstraint(self):
+    orconstraint = OrConstraint()
+    constraint1 = Constraint()
+    constraint1.package = "pkg1"
+    constraint2 = Constraint()
+    constraint2.package = "pkg2"
+    orconstraint.add(constraint1)
+    orconstraint.add(constraint2)
+    self.t.triplifyConstraint = self.mockTriplifyConstraint([constraint1, constraint2])
+    self.assertEqual(BNode, self.t.triplifyOrConstraint(orconstraint).__class__)
+    self.mox.VerifyAll()
+    self.assertEqual(3, len(self.graph))
 
   # Mocks
   def mockTriplifyVersionNumber(self, version):
@@ -73,3 +86,12 @@ class TriplifierTest(unittest.TestCase):
                                     .AndReturn(URIRef("b/version/%s" % version))
     self.mox.ReplayAll()
     return classMock.triplifyVersionNumber
+
+  def mockTriplifyConstraint(self, constraints):
+    classMock = self.mox.CreateMock(Triplifier)
+    for constraint in constraints:
+      classMock.triplifyConstraint(constraint)\
+                                      .InAnyOrder()\
+                                      .AndReturn(URIRef(constraint.asURI("b")))
+    self.mox.ReplayAll()
+    return classMock.triplifyConstraint
