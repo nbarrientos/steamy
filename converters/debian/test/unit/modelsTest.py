@@ -79,14 +79,14 @@ class BinaryPackageLiteTest(unittest.TestCase):
     b = BinaryPackageLite()
     b.package = "testpkgname"
     b.version = VersionNumber("1.0-1")
-    self.assertEqual("bin_testpkgname_1.0-1", b.asLabel())
+    self.assertEqual("Binary: testpkgname (1.0-1)", b.asLabel())
 
 class SourcePackageTest(unittest.TestCase):
    def testAsLabel(self):
     b = SourcePackage()
     b.package = "testpkgname"
     b.version = VersionNumber("1.0-1")
-    self.assertEqual("src_testpkgname_1.0-1", b.asLabel())
+    self.assertEqual("Source: testpkgname (1.0-1)", b.asLabel())
 
 class ConstraintTest(unittest.TestCase):
 
