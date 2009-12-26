@@ -12,6 +12,7 @@ class Triplifier():
     # Namespace Binding
     self.g.bind("rdf", RDF)
     self.g.bind("deb", DEB)
+    self.g.bind("rdfs", RDFS)
 
   ### Sources ###
 
