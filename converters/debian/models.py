@@ -52,6 +52,9 @@ class Architecture():
   def asURI(self, base):
     return "%s/arch/%s" % (base, self.name)
 
+  def asLabel(self):
+    return "Architecture: %s" % (self.name)
+
   def __repr__(self):
     return str(self.name)
 
@@ -108,6 +111,19 @@ class Constraint():
       tail = tail + "%s%s" % (self.operator, self.version)
     # FIMXE: Add *in
     return "%s/constraint/%s" % (base, hashlib.sha1(tail).hexdigest())
+
+  def asLabel(self):
+    label = "Constraint: %s" % self.package
+    if self.operator and self.version:
+      label = label + " (%s %s)" % (self.operator, self.version)
+
+    for arch in self.exceptin:
+      label = label + " !%s" % arch.name
+
+    for arch in self.onlyin:
+      label = label + " %s" % arch.name
+
+    return label
 
   def __repr__(self):
     if self.operator and self.version:

@@ -104,6 +104,7 @@ class Triplifier():
   def triplifyArchitecture(self, arch):
     ref = URIRef(arch.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['Architecture']))
+    self.g.add((ref, RDFS.label, Literal(arch.asLabel())))
     return ref
 
   def triplifyOrConstraint(self, orconstraint):
@@ -119,6 +120,7 @@ class Triplifier():
   def triplifyConstraint(self, constraint):
     ref = URIRef(constraint.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['SimplePackageConstraint']))
+    self.g.add((ref, RDFS.label, Literal(constraint.asLabel())))
 
     self.g.add((ref, DEB['packageName'], Literal(str(constraint.package))))
 

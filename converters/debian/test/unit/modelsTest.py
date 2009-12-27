@@ -58,6 +58,9 @@ class ArchitectureTest(unittest.TestCase):
     expected = baseURI + "/arch/i386"
     self.assertEqual(expected, self.arch.asURI(baseURI))
 
+  def testAsLabel(self):
+    self.assertEqual("Architecture: i386", self.arch.asLabel())
+
   def testToStr(self):
     self.assertEqual("i386", str(self.arch))
 
@@ -101,3 +104,23 @@ class ConstraintTest(unittest.TestCase):
                hashlib.sha1("testpackage>>2.5-2").hexdigest()
 
     self.assertEqual(expected, c.asURI(baseURI))
+
+  def testAsLabel(self):
+    c = Constraint()
+    c.package = "testpackage"
+    self.assertEqual("Constraint: testpackage",\
+                     c.asLabel())
+
+    c.operator = ">="
+    c.version = "4:4.5"
+    self.assertEqual("Constraint: testpackage (>= 4:4.5)",\
+                     c.asLabel())
+
+    c.exceptin = [Architecture("a1"), Architecture("a2")]
+    self.assertEqual("Constraint: testpackage (>= 4:4.5) !a1 !a2",\
+                     c.asLabel())
+
+    c.exceptin = []
+    c.onlyin = [Architecture("a1")]
+    self.assertEqual("Constraint: testpackage (>= 4:4.5) a1",\
+                     c.asLabel())

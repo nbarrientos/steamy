@@ -14,6 +14,7 @@ PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
 """
 
+RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
 RDF = Namespace(u"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
 
@@ -34,8 +35,9 @@ class TriplifierTest(unittest.TestCase):
     arch = Architecture("testArch")
     uriref = URIRef("b/arch/testArch")
     self.assertEqual(uriref, self.t.triplifyArchitecture(arch))
-    self.assertEqual(1, len(self.graph))
-    expected = [(uriref, RDF.type, DEB['Architecture'])]
+    self.assertEqual(2, len(self.graph))
+    expected = [(uriref, RDF.type, DEB['Architecture']),\
+                (uriref, RDFS.label, Literal("Architecture: testArch"))]
     self.compareGeneratedTriples(expected)
 
   def testTriplifyVersionNumberSimple(self):
@@ -60,8 +62,9 @@ class TriplifierTest(unittest.TestCase):
         str(constraint.version)).hexdigest())
     self.assertEqual(uriref, self.t.triplifyConstraint(constraint))
     self.mox.VerifyAll()
-    self.assertEqual(4, len(self.graph))
+    self.assertEqual(5, len(self.graph))
     expected = [(uriref, RDF.type, DEB['SimplePackageConstraint']),\
+                (uriref, RDFS.label, Literal("Constraint: pkg (>> 1.0-1)")),\
                 (uriref, DEB['packageName'], Literal("pkg")),\
                 (uriref, DEB['constraintOperator'], Literal(">>")),\
                 (uriref, DEB['versionNumber'], URIRef("b/version/1.0-1"))]
