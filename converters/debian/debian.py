@@ -30,9 +30,7 @@ class Launcher():
       logging.info("Trying to convert metadata from %s to %s..." % \
                     (self.opts.packages, self.opts.packagesOutput))
       try:
-        (packagesno, triplesno) = self.processPackages()
-        logging.info("Done! %s binary packages processed and %s triples extracted" % \
-                    (packagesno,triplesno))
+        self.processPackages()
       except:
         logging.error("%s will not be processed, check application log" % self.opts.packages)
 
@@ -40,9 +38,7 @@ class Launcher():
       logging.info("Trying to convert metadata from %s to %s..." % \
                     (self.opts.sources, self.opts.sourcesOutput))
       try:
-        (packagesno, triplesno) = self.processSources()
-        logging.info("Done! %s source packages processed and %s triples extracted" % \
-                    (packagesno,triplesno))
+        self.processSources()
       except:
         logging.error("%s will not be processed, check application log" % self.opts.sources)
 
@@ -114,12 +110,19 @@ class Launcher():
       # Triplify
       triplifier.triplifyBinaryPackage(parsedPackage)
 
+      logging.debug("Processed binary package %s." % parsedPackage.package)
+      if counter % 500 == 0:
+        logging.info("Processed %s binary packages." % counter)
+
     # Serialize all packages
     serializer.serializeToFile(graph, outputFile)
+    logging.debug("Graph serialization completed.")
 
     inputFile.close()
     outputFile.close()
-    return (counter, len(graph))
+
+    logging.info("Done! %s binary packages processed and %s triples extracted" % \
+                (counter, len(graph)))
 
   def processSources(self):
     try:
@@ -149,12 +152,19 @@ class Launcher():
       # Triplify
       triplifier.triplifySourcePackage(parsedPackage)
 
+      logging.debug("Processed source package %s." % parsedPackage.package)
+      if counter % 500 == 0:
+        logging.info("Processed %s source packages." % counter)
+    
     # Serialize all packages
     serializer.serializeToFile(graph, outputFile)
+    logging.debug("Graph serialization completed.")
 
     inputFile.close()
     outputFile.close()
-    return (counter, len(graph))
+
+    logging.info("Done! %s source packages processed and %s triples extracted" % \
+                (counter, len(graph)))
 
 if __name__ == "__main__":
   Launcher().run()
