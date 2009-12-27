@@ -66,6 +66,10 @@ class ArchitectureTest(unittest.TestCase):
     self.assertEqual(Architecture("i386"), Architecture("i386"))
     self.assertNotEqual(Architecture("i386"), Architecture("amd64"))
 
+  def testHasInstance(self):
+    self.assertFalse(self.arch.hasInstance())
+    self.assertTrue(Architecture("all").hasInstance())
+
 class BinaryPackageLiteTest(unittest.TestCase):
   def setUp(self):
     self.b = BinaryPackageLite()

@@ -52,6 +52,8 @@ class BinaryPackageBuild():
             (self.ancestor.package, self.ancestor.version, self.architecture)
 
 class Architecture():
+  INSTANCES = ("all")
+
   def __init__(self, arch):
     self.name = arch
 
@@ -66,6 +68,9 @@ class Architecture():
 
   def __eq__(self, other):
     return self.name.__eq__(other.name)
+
+  def hasInstance(self):
+    return self.name in self.INSTANCES
 
 class VersionNumber(Version):
   def asURI(self, base):

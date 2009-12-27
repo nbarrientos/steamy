@@ -102,10 +102,13 @@ class Triplifier():
     return ref
 
   def triplifyArchitecture(self, arch):
-    ref = URIRef(arch.asURI(self.baseURI))
-    self.g.add((ref, RDF.type, DEB['Architecture']))
-    self.g.add((ref, RDFS.label, Literal(arch.asLabel())))
-    return ref
+    if arch.hasInstance():
+      return DEB[arch.name]
+    else:
+      ref = URIRef(arch.asURI(self.baseURI))
+      self.g.add((ref, RDF.type, DEB['Architecture']))
+      self.g.add((ref, RDFS.label, Literal(arch.asLabel())))
+      return ref
 
   def triplifyOrConstraint(self, orconstraint):
     ref = BNode()

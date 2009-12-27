@@ -40,6 +40,10 @@ class TriplifierTest(unittest.TestCase):
                 (uriref, RDFS.label, Literal("Architecture: testArch"))]
     self.compareGeneratedTriples(expected)
 
+  def testTriplifyArchitectureOntologyInstance(self):
+    arch = Architecture("all")
+    self.assertEqual(DEB['all'], self.t.triplifyArchitecture(arch))
+
   def testTriplifyVersionNumberSimple(self):
     version = VersionNumber("1.0-1")
     uriref = URIRef("b/version/1.0-1")
