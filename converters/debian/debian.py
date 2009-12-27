@@ -66,9 +66,9 @@ class Launcher():
     parser.add_option("-S", "--sources-output", dest="sourcesOutput",\
                       default="Sources.rdf",\
                       metavar="FILE", help="dump rdfized Sources to FILE [default: %default]")
-    parser.add_option("-v", action="store_true", dest="verbose",\
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose",\
                       default=False, help="increases debug level")
-    parser.add_option("-q", action="store_true", dest="quiet",\
+    parser.add_option("-q", "--quiet", action="store_true", dest="quiet",\
                       default=False,\
                       help="decreases debug level (only errors are shown)")
 
