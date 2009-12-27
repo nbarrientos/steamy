@@ -5,10 +5,9 @@ class MissingMandatoryFieldException(Exception):
   def __str__(self):
     return "Mandatory field '%s' is missing" % self.fieldname
 
-class NoFilesException(Exception):
-  def __init__(self):
-    pass
+class OptsParsingException(Exception):
+  def __init__(self, msg):
+    self.msg = msg
 
-class NoBaseURIException(Exception):
-  def __init__(self):
-    pass
+  def __str__(self):
+    return str(self.msg)

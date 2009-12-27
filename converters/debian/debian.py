@@ -8,7 +8,7 @@ from rdflib.Graph import ConjunctiveGraph
 from parsers import PackagesParser, SourcesParser
 from export import Triplifier, Serializer
 from errors import MissingMandatoryFieldException 
-from errors import NoFilesException, NoBaseURIException
+from errors import OptsParsingException
 
 VERSION = "0.1alpha"
 
@@ -18,15 +18,13 @@ class Launcher():
     self.opts = None
 
   def run(self):
-    self.configLogger()
     try:
       self.parseArgs()
-    except NoFilesException:
-      logging.info("Nothing to do, did you forget -p and/or -s?")
-      exit(0)
-    except NoBaseURIException:
-      logging.error("Required base URI is missing, did you forget '-b'?")
-      exit(-1)
+    except OptsParsingException, e:
+      print >> sys.stderr, str(e)
+      sys.exit(2)
+
+    self.configLogger()
 
     if self.opts.packages:
       logging.info("Trying to convert metadata from %s to %s..." % \
@@ -49,7 +47,14 @@ class Launcher():
         logging.error("%s will not be processed, check application log" % self.opts.sources)
 
   def configLogger(self):
-    logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+    if self.opts.verbose:
+      lvl = logging.DEBUG
+    elif self.opts.quiet:
+      lvl = logging.ERROR
+    else:
+      lvl = logging.INFO
+
+    logging.basicConfig(level=lvl, format='%(message)s')
 
   def parseArgs(self):
     parser = OptionParser(usage="%prog [options]", version="%prog " + VERSION)
@@ -65,13 +70,21 @@ class Launcher():
     parser.add_option("-S", "--sources-output", dest="sourcesOutput",\
                       default="Sources.rdf",\
                       metavar="FILE", help="dump rdfized Sources to FILE [default: %default]")
+    parser.add_option("-v", action="store_true", dest="verbose",\
+                      default=False, help="increases debug level")
+    parser.add_option("-q", action="store_true", dest="quiet",\
+                      default=False,\
+                      help="decreases debug level (only errors are shown)")
+
     (self.opts, args) = parser.parse_args()
 
     # FIXME: Add more checks
     if not self.opts.packages and not self.opts.sources:
-      raise NoFilesException()
+      raise OptsParsingException("Nothing to do, did you forget -p and/or -s?")
     elif (self.opts.packages or self.opts.packages) and not self.opts.baseURI:
-      raise NoBaseURIException()
+      raise OptsParsingException("Required base URI is missing, did you forget -b?")
+    elif self.opts.verbose and self.opts.quiet:
+      raise OptsParsingException("Verbose (-v) and Quiet (-q) are mutually exclusive")
 
   def processPackages(self):
     try:
