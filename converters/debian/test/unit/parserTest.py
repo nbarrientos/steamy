@@ -108,10 +108,20 @@ class PackagesParserTest(unittest.TestCase):
     self.assertRaises(MissingMandatoryFieldException,\
                       self.parser.parseArchitecture, self.binaryPackage)
 
-  def testParseBinaryPackageBuild(self):
-    build = self.parser.parseBinaryPackageBuild(self.binaryPackage)
+  def testParseBinaryPackageBuildWithoutAncestorReference(self):
+    build = self.parser.parseBinaryPackageBuild(self.binaryPackage, None)
     self.assertEqual("all", build.architecture.name)
     self.assertEqual("108", build.installedSize)
+    self.assertEqual(None, build.ancestor)
+
+  def testParseBinaryPackageBuildWithAncestorReference(self):
+    parent = BinaryPackage()
+    parent.package = "testpkg"
+    build = self.parser.parseBinaryPackageBuild(self.binaryPackage, parent)
+    self.assertEqual("all", build.architecture.name)
+    self.assertEqual("108", build.installedSize)
+    self.assertEqual(parent, build.ancestor)
+    self.assertEqual("testpkg", build.ancestor.package)
 
   def testParseBinaryPackage(self):
     p = self.parser.parseBinaryPackage(self.binaryPackage)
@@ -123,6 +133,7 @@ class PackagesParserTest(unittest.TestCase):
     self.assertEqual("1", p.version.debian_version)
     self.assertEqual("all", p.build.architecture.name)
     self.assertEqual("108", p.build.installedSize)
+    self.assertEqual("mutt", p.build.ancestor.package)
     
 
 class BaseParserTest(unittest.TestCase):

@@ -38,12 +38,18 @@ class BinaryPackage(BinaryPackageLite):
     self.build = None
 
 class BinaryPackageBuild():
-  def __init__(self):
+  def __init__(self, ancestor = None):
     self.architecture = None
     self.installedSize = None
+    self.ancestor = ancestor # Cycles are OK in Python! :)
 
   def asURI(self, base):
-    return "%s/%s" % (base, self.architecture)
+    return "%s/binary/%s/%s/%s" % \
+            (base, self.ancestor.package, self.ancestor.version, self.architecture)
+
+  def asLabel(self):
+    return "BinaryBuild: %s (%s) [%s]" % \
+            (self.ancestor.package, self.ancestor.version, self.architecture)
 
 class Architecture():
   def __init__(self, arch):

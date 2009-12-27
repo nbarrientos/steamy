@@ -118,11 +118,11 @@ class PackagesParser(BaseParser):
     binaryPackage.depends = self.parseDepends(raw)
     binaryPackage.recommends = self.parseRecommends(raw)
     binaryPackage.architecture = self.parseArchitecture(raw)
-    binaryPackage.build = self.parseBinaryPackageBuild(raw)
+    binaryPackage.build = self.parseBinaryPackageBuild(raw, binaryPackage)
     return binaryPackage
 
-  def parseBinaryPackageBuild(self, raw):
-    binaryPackageBuild = BinaryPackageBuild()
+  def parseBinaryPackageBuild(self, raw, ancestor):
+    binaryPackageBuild = BinaryPackageBuild(ancestor)
     binaryPackageBuild.architecture = self.parseArchitecture(raw)
     binaryPackageBuild.installedSize = self.parseInstalledSize(raw)
     return binaryPackageBuild

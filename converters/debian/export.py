@@ -73,7 +73,7 @@ class Triplifier():
     ref = self.triplifyBinaryPackageLite(package)
 
     # Build
-    buildRef = self.triplifyBinaryPackageBuild(package.build, package.asURI(self.baseURI))
+    buildRef = self.triplifyBinaryPackageBuild(package.build)
     self.g.add((ref, DEB['build'], buildRef))
 
     # Depends
@@ -88,8 +88,8 @@ class Triplifier():
         node = self.triplifyOrConstraint(orr)
         self.g.add((ref, DEB['recommends'], node))
 
-  def triplifyBinaryPackageBuild(self, build, base):
-    ref = URIRef(build.asURI(base))
+  def triplifyBinaryPackageBuild(self, build):
+    ref = URIRef(build.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['BinaryBuild']))
    
     # Architecture

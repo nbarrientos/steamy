@@ -80,6 +80,30 @@ class BinaryPackageLiteTest(unittest.TestCase):
   def testAsLabel(self):
     self.assertEqual("Binary: testpkgname (1.0-1)", self.b.asLabel())
 
+class BinaryPackageBuildTest(unittest.TestCase):
+  def setUp(self):
+    self.b = BinaryPackageBuild()
+    self.b.architecture = Architecture("testarch")
+    self.b.ancestor = BinaryPackageLite("parent", "4:4.5")
+  
+  def testAsURINoAncestor(self):
+    baseURI = "http://example.org"
+    self.b.ancestor = None
+    self.assertRaises(AttributeError, self.b.asURI, baseURI)
+
+  def testAsURIAncestor(self):
+    baseURI = "http://example.org"
+    expected = baseURI + "/binary/parent/4:4.5/testarch"
+    self.assertEqual(expected, self.b.asURI(baseURI))
+
+  def testAsLabelNoAncestor(self):
+    self.b.ancestor = None
+    self.assertRaises(AttributeError, self.b.asLabel)
+
+  def testAsLabelAncestor(self):
+    self.assertEqual("BinaryBuild: parent (4:4.5) [testarch]",\
+                     self.b.asLabel())
+
 class SourcePackageTest(unittest.TestCase):
    def testAsLabel(self):
     b = SourcePackage()
