@@ -181,9 +181,9 @@ class BaseParserTest(unittest.TestCase):
     input = "pkg1 (<= 1)"
     d = self.parser.parseConstraint(input)
     self.assertEqual("<=", d.operator)
-    input = "pkg1 (== 1)"
+    input = "pkg1 (= 1)"
     d = self.parser.parseConstraint(input)
-    self.assertEqual("==", d.operator)
+    self.assertEqual("=", d.operator)
     input = "pkg1 (>= 1)"
     d = self.parser.parseConstraint(input)
     self.assertEqual(">=", d.operator)
