@@ -3,7 +3,6 @@ import unittest
 from models import *
 
 class VersionNumberTest(unittest.TestCase):
-  
   def testFieldParser(self):
     v = VersionNumber("2:1.2~svn54-1.5")
     self.assertEqual("2", v.epoch)
@@ -46,7 +45,6 @@ class VersionNumberTest(unittest.TestCase):
     self.assertTrue(v1 < v6)
 
 class ArchitectureTest(unittest.TestCase):
-
   def setUp(self):
     self.arch = Architecture("i386")
 
@@ -69,20 +67,18 @@ class ArchitectureTest(unittest.TestCase):
     self.assertNotEqual(Architecture("i386"), Architecture("amd64"))
 
 class BinaryPackageLiteTest(unittest.TestCase):
+  def setUp(self):
+    self.b = BinaryPackageLite()
+    self.b.package = "testpkgname"
+    self.b.version = VersionNumber("1.0-1")
+
   def testAsURI(self):
-    b = BinaryPackageLite()
-    b.package = "testpkgname"
-    b.version = VersionNumber("1.0-1")
     baseURI = "http://example.org"
     expected = baseURI + "/binary/testpkgname/1.0-1"
-
-    self.assertEqual(expected, b.asURI(baseURI))
+    self.assertEqual(expected, self.b.asURI(baseURI))
 
   def testAsLabel(self):
-    b = BinaryPackageLite()
-    b.package = "testpkgname"
-    b.version = VersionNumber("1.0-1")
-    self.assertEqual("Binary: testpkgname (1.0-1)", b.asLabel())
+    self.assertEqual("Binary: testpkgname (1.0-1)", self.b.asLabel())
 
 class SourcePackageTest(unittest.TestCase):
    def testAsLabel(self):
@@ -92,35 +88,39 @@ class SourcePackageTest(unittest.TestCase):
     self.assertEqual("Source: testpkgname (1.0-1)", b.asLabel())
 
 class ConstraintTest(unittest.TestCase):
+  def setUp(self):
+    self.c = Constraint()
+    self.c.package = "testpackage"
+    self.c.operator = ">="
+    self.c.version = "4:4.5"
 
   def testAsURI(self):
-    c = Constraint()
-    c.package = "testpackage"
-    c.operator = ">>"
-    c.version = "2.5-2"
-
     baseURI = "http://example.org"
     expected = baseURI + "/constraint/" +\
-               hashlib.sha1("testpackage>>2.5-2").hexdigest()
+               hashlib.sha1("testpackage>=4:4.5").hexdigest()
+    self.assertEqual(expected, self.c.asURI(baseURI))
 
-    self.assertEqual(expected, c.asURI(baseURI))
+    self.c.operator = None
+    self.c.version = None
+    expected = baseURI + "/constraint/" +\
+               hashlib.sha1("testpackage").hexdigest()
+    self.assertEqual(expected, self.c.asURI(baseURI))
 
   def testAsLabel(self):
-    c = Constraint()
-    c.package = "testpackage"
-    self.assertEqual("Constraint: testpackage",\
-                     c.asLabel())
-
-    c.operator = ">="
-    c.version = "4:4.5"
     self.assertEqual("Constraint: testpackage (>= 4:4.5)",\
-                     c.asLabel())
+                     self.c.asLabel())
 
-    c.exceptin = [Architecture("a1"), Architecture("a2")]
+    self.c.exceptin = [Architecture("a1"), Architecture("a2")]
     self.assertEqual("Constraint: testpackage (>= 4:4.5) !a1 !a2",\
-                     c.asLabel())
+                     self.c.asLabel())
 
-    c.exceptin = []
-    c.onlyin = [Architecture("a1")]
+    self.c.exceptin = []
+    self.c.onlyin = [Architecture("a1")]
     self.assertEqual("Constraint: testpackage (>= 4:4.5) a1",\
-                     c.asLabel())
+                     self.c.asLabel())
+
+    self.c.onlyin = []
+    self.c.operator = None
+    self.c.version = None
+    self.assertEqual("Constraint: testpackage",\
+                     self.c.asLabel())
