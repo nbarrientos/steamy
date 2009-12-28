@@ -87,6 +87,22 @@ class TriplifierTest(unittest.TestCase):
     self.mox.VerifyAll()
     self.assertEqual(3, len(self.graph))
 
+  def testTriplifyBinaryPackageBuild(self):
+    bs = BinaryPackageLite("pkg1", "6.7")
+    b = BinaryPackageBuild(bs)
+    b.architecture = Architecture("arch")
+    b.installedSize = "12345"
+    self.t.triplifyArchitecture = self.mockTriplifyArchitecture(b.architecture)
+    uriref = URIRef("b/binary/pkg1/6.7/arch")
+    self.assertEqual(uriref, self.t.triplifyBinaryPackageBuild(b))
+    self.assertEqual(4, len(self.graph))
+    expected = [(uriref, RDF.type, DEB['BinaryBuild']),\
+                (uriref, RDFS.label, Literal("BinaryBuild: pkg1 (6.7) [arch]")),\
+                (uriref, DEB['installed-size'], Literal("12345")),\
+                (uriref, DEB['architecture'], URIRef("b/arch/arch"))]
+    self.compareGeneratedTriples(expected)
+
+
   # Mocks
   def mockTriplifyVersionNumber(self, version):
     classMock = self.mox.CreateMock(Triplifier)
@@ -103,3 +119,11 @@ class TriplifierTest(unittest.TestCase):
                                       .AndReturn(URIRef(constraint.asURI("b")))
     self.mox.ReplayAll()
     return classMock.triplifyConstraint
+
+  def mockTriplifyArchitecture(self, arch):
+    classMock = self.mox.CreateMock(Triplifier)
+    classMock.triplifyArchitecture(arch)\
+                                  .AndReturn(URIRef(arch.asURI("b")))
+    self.mox.ReplayAll()
+    return classMock.triplifyArchitecture
+

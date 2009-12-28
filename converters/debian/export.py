@@ -98,7 +98,7 @@ class Triplifier():
     self.g.add((ref, DEB['architecture'], archRef))
 
     # Installed-Size
-    self.g.add((ref, DEB['installedSize'], Literal(str(build.installedSize))))
+    self.g.add((ref, DEB['installed-size'], Literal(str(build.installedSize))))
 
     return ref
 

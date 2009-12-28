@@ -246,9 +246,9 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#installedSize -->
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#installed-size -->
 
-    <owl:DatatypeProperty rdf:about="#installedSize">
+    <owl:DatatypeProperty rdf:about="#installed-size">
         <rdfs:domain rdf:resource="#BinaryBuild"/>
         <rdfs:range rdf:resource="&xsd;nonNegativeInteger"/>
     </owl:DatatypeProperty>
