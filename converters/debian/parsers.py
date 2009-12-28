@@ -68,6 +68,23 @@ class BaseParser():
 
     return constraint
 
+  def parseTags(self, raw):
+    split = raw.split(", ")
+    regex = re.compile(\
+      r"(?P<facet>[a-zA-Z0-9-]+)::(\{(?P<tags>\S+)\}|(?P<tag>[a-zA-Z0-9-:]+))")
+    tags = []
+
+    for rtag in split:
+      match = regex.match(rtag)
+      facet = match.group('facet')
+      if match.group('tag'):
+        tags.append(Tag(facet, match.group('tag')))
+      elif match.group('tags'):
+        for t in match.group('tags').split(","):
+          tags.append(Tag(facet, t))
+
+    return tags
+
 
 class SourcesParser(BaseParser):
   def __init__(self):
@@ -131,6 +148,7 @@ class PackagesParser(BaseParser):
     binaryPackage.architecture = self.parseArchitecture(raw)
     binaryPackage.build = self.parseBinaryPackageBuild(raw, binaryPackage)
     binaryPackage.filename = self.parseFilename(raw)
+    binaryPackage.tag = self.parseTag(raw)
     return binaryPackage
 
   def parseBinaryPackageBuild(self, raw, ancestor):
@@ -161,3 +179,7 @@ class PackagesParser(BaseParser):
   def parseFilename(self, raw):
     split = raw['Filename'].rsplit("/", 1)
     return File(split[1], raw['MD5sum'], raw['Size'], Directory(split[0]))
+
+  @optional('Tag') # FIXME
+  def parseTag(self, raw):
+    return self.parseTags(raw['Tag'])

@@ -190,3 +190,18 @@ class DirectoryTest(unittest.TestCase):
 
   def testAsLabel(self):
     self.assertEqual("Directory: test/path", self.d.asLabel())
+
+class TagTest(unittest.TestCase):
+  def setUp(self):
+    self.t = Tag("facet", "tag")
+
+  def testEq(self):
+    self.assertEqual(self.t, Tag("facet", "tag"))
+    self.assertNotEqual(self.t, Tag("facet", "gat"))
+    self.assertNotEqual(self.t, Tag("tecaf", "tag"))
+
+  def testAsURI(self):
+    self.assertEqual("b/tag/facet/tag", self.t.asURI("b"))
+
+  def testAsLabel(self):
+    self.assertEqual("Tag: facet::tag", self.t.asLabel())

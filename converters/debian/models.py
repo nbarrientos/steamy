@@ -39,6 +39,7 @@ class BinaryPackage(BinaryPackageLite):
     self.recommends = None
     self.build = None
     self.filename = None
+    self.tag = None
 
 class BinaryPackageBuild():
   def __init__(self, ancestor = None):
@@ -177,3 +178,20 @@ class Directory():
 
   def __eq__(self, other):
     return self.path.__eq__(other.path)
+
+class Tag():
+  def __init__(self, facet, tag):
+    self.facet = facet
+    self.tag = tag
+
+  def asURI(self, base):
+    return "%s/tag/%s/%s" % (base, self.facet, self.tag)
+
+  def asLabel(self):
+    return "Tag: %s::%s" % (self.facet, self.tag)
+
+  def __repr__(self):
+    return "%s::%s" % (self.facet, self.tag)
+
+  def __eq__(self, other):
+    return self.facet.__eq__(other.facet) and self.tag.__eq__(other.tag)

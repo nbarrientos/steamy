@@ -98,6 +98,7 @@ class PackagesParserTest(unittest.TestCase):
     self.binaryPackage['Filename'] = "pool/main/m/mutt/mutt_1:2.4+svn5677-1_all.deb"
     self.binaryPackage['MD5sum'] = "460578"
     self.binaryPackage['Size'] = "4566"
+    self.binaryPackage['Tag'] = "implemented-in::python, hardware::{lap,power:apm}"
   
   def tearDown(self):
     pass
@@ -166,6 +167,7 @@ class PackagesParserTest(unittest.TestCase):
     self.assertEqual("mutt_1:2.4+svn5677-1_all.deb", p.filename.name)
     self.assertEqual("4566", p.filename.size)
     self.assertEqual("460578", p.filename.md5sum)
+    self.assertEqual(3, len(p.tag))
 
   def testParseFilename(self):
     expectedFile = File("mutt_1:2.4+svn5677-1_all.deb",\
@@ -272,5 +274,37 @@ class BaseParserTest(unittest.TestCase):
     self.assertEqual(0, len(d.onlyin))
     expectedlist = [Architecture("kfreebsd-i386"), Architecture("kfreebsd-amd64")]
     self.assertEqual(expectedlist, d.exceptin)
+
+  def testParseTags(self):
+    input = "implemented-in::lisp"
+    tags = self.parser.parseTags(input)
+    expected = [Tag("implemented-in", "lisp")]
+    self.assertEqual(1,len(tags))
+    self.assertEqual(expected, tags)
+
+    input = "implemented-in::lisp, hardware::storage"
+    tags = self.parser.parseTags(input)
+    expected = [Tag("implemented-in", "lisp"), Tag("hardware", "storage")]
+    self.assertEqual(2,len(tags))
+    self.assertEqual(expected, tags)
+
+    input = "hardware::storage:cd"
+    tags = self.parser.parseTags(input)
+    expected = [Tag("hardware", "storage:cd")]
+    self.assertEqual(1,len(tags))
+    self.assertEqual(expected, tags)
+
+    input = "hardware::{laptop}"
+    tags = self.parser.parseTags(input)
+    expected = [Tag("hardware", "laptop")]
+    self.assertEqual(1,len(tags))
+    self.assertEqual(expected, tags)
+
+    input = "hardware::{laptop,power:apm}, implemented-in::lisp"
+    expected = [Tag("hardware", "laptop"),\
+                Tag("hardware", "power:apm"), Tag("implemented-in", "lisp")]
+    tags = self.parser.parseTags(input)
+    self.assertEqual(3,len(tags))
+    self.assertEqual(expected, tags)
 
 
