@@ -102,6 +102,11 @@ class TriplifierTest(unittest.TestCase):
                 (uriref, DEB['architecture'], URIRef("b/arch/arch"))]
     self.compareGeneratedTriples(expected)
 
+  def testTriplifyFile(self):
+    f = File("testname", "hash", "size", Directory("test/path"))
+    uriref = URIRef("b/path/test/path/testname")
+    self.assertEqual(uriref, self.t.triplifyFile(f))
+    self.assertEqual(8, len(self.graph))
 
   # Mocks
   def mockTriplifyVersionNumber(self, version):
