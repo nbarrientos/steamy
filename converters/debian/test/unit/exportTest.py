@@ -108,6 +108,17 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(uriref, self.t.triplifyFile(f))
     self.assertEqual(8, len(self.graph))
 
+  def testTriplifyTag(self):
+    t = Tag("facet", "tag:tag")
+    uriref = URIRef("b/tag/facet/tag:tag")
+    self.assertEqual(uriref, self.t.triplifyTag(t))
+    self.assertEqual(4, len(self.graph))
+    expected = [(uriref, RDF.type, DEB['Tag']),\
+                (uriref, RDFS.label, Literal("Tag: facet::tag:tag")),\
+                (uriref, DEB['facetName'], Literal("facet")),\
+                (uriref, DEB['tagName'], Literal("tag:tag"))]
+    self.compareGeneratedTriples(expected)
+
   # Mocks
   def mockTriplifyVersionNumber(self, version):
     classMock = self.mox.CreateMock(Triplifier)

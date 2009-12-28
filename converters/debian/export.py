@@ -110,6 +110,12 @@ class Triplifier():
     self.g.add((fileRef, NFO['belongsToContainer'], directoryRef))
     self.g.add((fileRef, DEB['productOf'], buildRef))
 
+    # Tag
+    if package.tag:
+      for tag in package.tag:
+        node = self.triplifyTag(tag)
+        self.g.add((ref, DEB['tag'], node))
+
   def triplifyBinaryPackageBuild(self, build):
     ref = URIRef(build.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['BinaryBuild']))
@@ -200,6 +206,15 @@ class Triplifier():
     ref = URIRef(dir.asURI(self.baseURI))
     self.g.add((ref, RDF.type, NFO['Folder']))
     self.g.add((ref, RDFS.label, Literal(dir.asLabel())))
+
+    return ref
+
+  def triplifyTag(self, tag):
+    ref = URIRef(tag.asURI(self.baseURI))
+    self.g.add((ref, RDF.type, DEB['Tag']))
+    self.g.add((ref, RDFS.label, Literal(tag.asLabel())))
+    self.g.add((ref, DEB['facetName'], Literal(tag.facet)))
+    self.g.add((ref, DEB['tagName'], Literal(tag.tag)))
 
     return ref
 
