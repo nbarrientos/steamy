@@ -10,6 +10,8 @@ class SourcePackage():
     self.buildDepends = None
     self.buildDependsIndep = None
     self.architecture = None
+    self.files = None
+    self.directory = None
 
   def asURI(self, base):
     return "%s/source/%s/%s" % (base, self.package, self.version)
@@ -141,3 +143,12 @@ class Constraint():
       return "%s (%s %s)" % (self.package, self.operator, self.version)
     else:
       return "%s" % self.package
+
+class File():
+  def __init__(self, d):
+    self.name = d['name']
+    self.md5sum = d['md5sum']
+    self.size = d['size']
+
+  def __repr__(self):
+    return "%s %s %s" % (self.md5sum, self.size, self.name)

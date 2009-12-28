@@ -105,6 +105,14 @@ class SourcesParser(BaseParser):
   @optional('Build-Depends-Indep')
   def parseBuildDependsIndep(self, raw):
     return self.parseConstraints(raw['Build-Depends-Indep'])
+
+  @required('Files')
+  def parseFiles(self, raw):
+    return [File(data) for data in raw['Files']]
+
+  @required('Directory')
+  def parseDirectory(self, raw):
+    return raw['Directory']
  
 
 class PackagesParser(BaseParser):

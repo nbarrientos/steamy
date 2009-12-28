@@ -14,6 +14,11 @@ class SourcesParserTest(unittest.TestCase):
     self.sourcePackage['Build-Depends'] = "dep1 (>= 5.0.37), dep2 [!powerpc]"
     self.sourcePackage['Build-Depends-Indep'] = "dep3"
     self.sourcePackage['Architecture'] = "any"
+    self.sourcePackage['Directory'] = "pool/main/s/srcpkg"
+    self.sourcePackage['Files'] = [\
+      {'md5sum': 'd7f059964', 'size': '1234', 'name': 'srcpkg_0.5-2.dsc'},
+      {'md5sum': '5b32fbe56', 'size': '5678', 'name': 'srcpkg_0.5.orig.tar.gz'},
+      {'md5sum': 'd7f9b6fbe', 'size': '9012', 'name': 'srcpkg_0.5-2.diff.gz'}]
 
   # Fields
 
@@ -58,6 +63,24 @@ class SourcesParserTest(unittest.TestCase):
     self.assertRaises(MissingMandatoryFieldException,\
                       self.parser.parseArchitecture, self.sourcePackage)
 
+  def testParseFiles(self):
+    files = self.parser.parseFiles(self.sourcePackage)
+    self.assertEqual(3, len(files))
+    self.assertEqual("d7f059964", files[0].md5sum)
+
+  def testParseFilesMissingField(self):
+    self.sourcePackage.pop('Files')
+    self.assertRaises(MissingMandatoryFieldException,\
+                      self.parser.parseFiles, self.sourcePackage)
+
+  def testParseDirectory(self):
+    self.assertEqual("pool/main/s/srcpkg",\
+                     self.parser.parseDirectory(self.sourcePackage))
+
+  def testParseDirectoryMissingField(self):
+    self.sourcePackage.pop('Directory')
+    self.assertRaises(MissingMandatoryFieldException,\
+                      self.parser.parseDirectory, self.sourcePackage)
 
 class PackagesParserTest(unittest.TestCase):
   

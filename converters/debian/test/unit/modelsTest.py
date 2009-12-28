@@ -152,3 +152,7 @@ class ConstraintTest(unittest.TestCase):
     self.c.version = None
     self.assertEqual("Constraint: testpackage",\
                      self.c.asLabel())
+
+class FileTest(unittest.TestCase):
+  def setUp(self):
+    self.f = File({'md5sum': '35dsfsd', 'name': 'filename', 'size': '3435'})
