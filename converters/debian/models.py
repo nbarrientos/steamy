@@ -145,10 +145,34 @@ class Constraint():
       return "%s" % self.package
 
 class File():
-  def __init__(self, d):
+  def __init__(self, d, ancestor=None):
     self.name = d['name']
     self.md5sum = d['md5sum']
     self.size = d['size']
+    self.ancestor = ancestor
+
+  def asURI(self, base):
+    return "%s/path/%s/%s" % \
+          (base, self.ancestor.path, self.name)
+
+  def asLabel(self):
+    return "File: %s" % self.name
 
   def __repr__(self):
     return "%s %s %s" % (self.md5sum, self.size, self.name)
+
+  def __eq__(self, other):
+    return self.md5sum.__eq__(other.md5sum)
+
+class Directory():
+  def __init__(self, path):
+    self.path = path
+
+  def asLabel(self):
+    return "Directory: %s" % self.path
+
+  def asURI(self, base):
+    return "%s/path/%s" % (base, self.path)
+
+  def __eq__(self, other):
+    return self.path.__eq__(other.path)

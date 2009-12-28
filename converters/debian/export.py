@@ -1,8 +1,12 @@
+#!/usr/bin/python
+# -*- coding: utf8 -*-
+
 from rdflib import Namespace, URIRef, BNode, Literal
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
 RDF = Namespace(u"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
+NFO = Namespace(u"http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#")
 
 class Triplifier():
   def __init__(self, graph, baseURI):
@@ -13,6 +17,7 @@ class Triplifier():
     self.g.bind("rdf", RDF)
     self.g.bind("deb", DEB)
     self.g.bind("rdfs", RDFS)
+    self.g.bind("nfo", NFO)
 
   ### Sources ###
 
@@ -51,6 +56,15 @@ class Triplifier():
       for arch in package.architecture:
         archRef = self.triplifyArchitecture(arch)
         self.g.add((ref, DEB['shouldBuildIn'], archRef))
+
+    # Directory
+    directoryRef = self.triplifyDirectory(package.directory)
+    self.g.add((ref, DEB['container'], directoryRef))
+
+    # Files
+    for file in package.files:
+      fileRef = self.triplifyFile(file)
+      self.g.add((fileRef, NFO['belongsToContainer'], directoryRef))
 
 
   def triplifyBinaryPackageLite(self, package):
@@ -157,6 +171,29 @@ class Triplifier():
     
     return ref
 
+  def triplifyFile(self, file):
+    ref = URIRef(file.asURI(self.baseURI))
+    self.g.add((ref, RDF.type, NFO['FileDataObject']))
+    self.g.add((ref, RDFS.label, Literal(file.asLabel())))
+
+    self.g.add((ref, NFO['fileName'], Literal(file.name)))
+
+    hash = BNode()
+    self.g.add((hash, RDF.type, NFO['FileHash']))
+    self.g.add((hash, NFO['hashAlgorithm'], Literal("MD5")))
+    self.g.add((hash, NFO['hashValue'], Literal(file.md5sum)))
+    self.g.add((ref, NFO['hasHash'], hash))
+
+    self.g.add((ref, NFO['fileSize'], Literal(file.size)))
+
+    return ref
+
+  def triplifyDirectory(self, dir):
+    ref = URIRef(dir.asURI(self.baseURI))
+    self.g.add((ref, RDF.type, NFO['Folder']))
+    self.g.add((ref, RDFS.label, Literal(dir.asLabel())))
+
+    return ref
 
 class Serializer():
   def __init__(self):

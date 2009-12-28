@@ -156,3 +156,37 @@ class ConstraintTest(unittest.TestCase):
 class FileTest(unittest.TestCase):
   def setUp(self):
     self.f = File({'md5sum': '35dsfsd', 'name': 'filename', 'size': '3435'})
+    self.f.ancestor = Directory("test/path")
+
+  def testEq(self):
+    self.assertEqual(self.f,\
+              File({'md5sum': '35dsfsd', 'name': 'filename', 'size': '3435'}))
+    self.assertNotEqual(self.f,\
+              File({'md5sum': '35dsfsr', 'name': 'filename', 'size': '3435'}))
+
+  def testAsURIAncestor(self):
+    baseURI = "http://example.org"
+    expected = baseURI + "/path/test/path/filename"
+    self.assertEqual(expected, self.f.asURI(baseURI))
+
+  def testAsURINoAncestor(self):
+    baseURI = "http://example.org"
+    self.f.ancestor = None
+    self.assertRaises(AttributeError, self.f.asURI, baseURI)
+
+  def testAsLabelAncestor(self):
+    self.assertEqual("File: filename", self.f.asLabel())
+
+class DirectoryTest(unittest.TestCase):
+  def setUp(self):
+    self.d = Directory("test/path")
+
+  def testEq(self):
+    self.assertEqual(self.d, Directory("test/path"))
+    self.assertNotEqual(self.d, Directory("other/path"))
+
+  def testAsURI(self):
+    self.assertEqual("b/path/test/path", self.d.asURI("b"))
+
+  def testAsLabel(self):
+    self.assertEqual("Directory: test/path", self.d.asLabel())

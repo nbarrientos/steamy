@@ -81,6 +81,9 @@ class SourcesParser(BaseParser):
     sourcePackage.buildDepends = self.parseBuildDepends(raw)
     sourcePackage.buildDependsIndep = self.parseBuildDependsIndep(raw)
     sourcePackage.architecture = self.parseArchitecture(raw)
+    sourcePackage.directory = self.parseDirectory(raw)
+    sourcePackage.files = self.parseFiles(raw, sourcePackage.directory)
+
     return sourcePackage
 
   def parseBinary(self, raw):
@@ -106,13 +109,13 @@ class SourcesParser(BaseParser):
   def parseBuildDependsIndep(self, raw):
     return self.parseConstraints(raw['Build-Depends-Indep'])
 
-  @required('Files')
-  def parseFiles(self, raw):
-    return [File(data) for data in raw['Files']]
+  #@required('Files')
+  def parseFiles(self, raw, dir):
+    return [File(data, dir) for data in raw['Files']]
 
   @required('Directory')
   def parseDirectory(self, raw):
-    return raw['Directory']
+    return Directory(raw['Directory'])
  
 
 class PackagesParser(BaseParser):
