@@ -108,7 +108,7 @@ class Triplifier():
     directoryRef = self.triplifyDirectory(package.filename.ancestor)
     self.g.add((ref, DEB['container'], directoryRef))
     self.g.add((fileRef, NFO['belongsToContainer'], directoryRef))
-    self.g.add((fileRef, DEB['productOf'], ref))
+    self.g.add((fileRef, DEB['productOf'], buildRef))
 
   def triplifyBinaryPackageBuild(self, build):
     ref = URIRef(build.asURI(self.baseURI))
