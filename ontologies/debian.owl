@@ -109,6 +109,14 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#container -->
+
+    <owl:ObjectProperty rdf:about="#container">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#depends -->
 
     <owl:ObjectProperty rdf:about="#depends">
