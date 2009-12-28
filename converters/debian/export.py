@@ -65,6 +65,7 @@ class Triplifier():
     for file in package.files:
       fileRef = self.triplifyFile(file)
       self.g.add((fileRef, NFO['belongsToContainer'], directoryRef))
+      self.g.add((fileRef, DEB['productOf'], ref))
 
 
   def triplifyBinaryPackageLite(self, package):
@@ -101,6 +102,13 @@ class Triplifier():
       for orr in package.recommends:
         node = self.triplifyOrConstraint(orr)
         self.g.add((ref, DEB['recommends'], node))
+
+    # Filename
+    fileRef = self.triplifyFile(package.filename)
+    directoryRef = self.triplifyDirectory(package.filename.ancestor)
+    self.g.add((ref, DEB['container'], directoryRef))
+    self.g.add((fileRef, NFO['belongsToContainer'], directoryRef))
+    self.g.add((fileRef, DEB['productOf'], ref))
 
   def triplifyBinaryPackageBuild(self, build):
     ref = URIRef(build.asURI(self.baseURI))
