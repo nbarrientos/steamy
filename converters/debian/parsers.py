@@ -109,7 +109,7 @@ class SourcesParser(BaseParser):
   def parseBuildDependsIndep(self, raw):
     return self.parseConstraints(raw['Build-Depends-Indep'])
 
-  #@required('Files')
+  @required('Files')
   def parseFiles(self, raw, dir):
     return [File(data, dir) for data in raw['Files']]
 

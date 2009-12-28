@@ -70,11 +70,10 @@ class SourcesParserTest(unittest.TestCase):
     self.assertEqual("d7f059964", files[0].md5sum)
     self.assertEqual("test/path", files[0].ancestor.path)
 
-# Decorator is not working now FIXME
-#  def testParseFilesMissingField(self):
-#    self.sourcePackage.pop('Files')
-#    self.assertRaises(MissingMandatoryFieldException,\
-#                      self.parser.parseFiles, self.sourcePackage, None)
+  def testParseFilesMissingField(self):
+    self.sourcePackage.pop('Files')
+    self.assertRaises(MissingMandatoryFieldException,\
+                      self.parser.parseFiles, self.sourcePackage, None)
 
   def testParseDirectory(self):
     self.assertEqual(Directory("pool/main/s/srcpkg"),\
