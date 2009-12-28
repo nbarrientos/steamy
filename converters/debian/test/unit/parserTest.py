@@ -52,6 +52,12 @@ class SourcesParserTest(unittest.TestCase):
     self.assertEqual(1, len(archs))
     self.assertEqual([Architecture("any")], archs)
 
+    self.sourcePackage['Architecture'] = "i386 amd64"
+    archs = self.parser.parseArchitecture(self.sourcePackage)
+    self.assertEqual(2, len(archs))
+    self.assertEqual([Architecture("i386"), Architecture("amd64")], archs)
+
+
   def testParseArchitectureSeveral(self):
     self.sourcePackage['Architecture'] = "alpha amd64"
     archs = self.parser.parseArchitecture(self.sourcePackage)

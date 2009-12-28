@@ -104,20 +104,13 @@ class SourcesParser(BaseParser):
     return sourcePackage
 
   def parseBinary(self, raw):
-    binaries = []
-    for bin in raw['Binary'].split(","):
-      binaries.append(BinaryPackageLite(bin.strip(), self.parseVersionNumber(raw['Version'])))
-
-    return binaries
+    return [BinaryPackageLite(bin, self.parseVersionNumber(raw['Version'])) \
+                for bin in raw['Binary'].split(", ")]
 
   @required('Architecture')
   def parseArchitecture(self, raw):
-    arches = []
-    for arch in raw['Architecture'].split():
-      arches.append(Architecture(arch.strip()))
+    return [Architecture(arch) for arch in raw['Architecture'].split()]
     
-    return arches
-
   @optional('Build-Depends')
   def parseBuildDepends(self, raw):
     return self.parseConstraints(raw['Build-Depends'])
