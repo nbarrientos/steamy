@@ -111,7 +111,7 @@ class SourcesParser(BaseParser):
 
   @required('Files')
   def parseFiles(self, raw, dir):
-    return [File(data, dir) for data in raw['Files']]
+    return [File(d['name'], d['md5sum'], d['size'], dir) for d in raw['Files']]
 
   @required('Directory')
   def parseDirectory(self, raw):
@@ -130,6 +130,7 @@ class PackagesParser(BaseParser):
     binaryPackage.recommends = self.parseRecommends(raw)
     binaryPackage.architecture = self.parseArchitecture(raw)
     binaryPackage.build = self.parseBinaryPackageBuild(raw, binaryPackage)
+    binaryPackage.filename = self.parseFilename(raw)
     return binaryPackage
 
   def parseBinaryPackageBuild(self, raw, ancestor):
@@ -155,3 +156,8 @@ class PackagesParser(BaseParser):
   @required('Installed-Size')
   def parseInstalledSize(self, raw):
     return raw['Installed-Size']
+
+  @required('Filename')
+  def parseFilename(self, raw):
+    split = raw['Filename'].rsplit("/", 1)
+    return File(split[1], raw['MD5sum'], raw['Size'], Directory(split[0]))

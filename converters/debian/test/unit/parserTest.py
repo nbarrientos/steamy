@@ -95,6 +95,9 @@ class PackagesParserTest(unittest.TestCase):
     self.binaryPackage['Depends'] = "exim4 (>> 0.5.4-5) | mail-transport-agent, mutt"
     self.binaryPackage['Recommends'] = "locales, mime-support, bastet"
     self.binaryPackage['Installed-Size'] = "108"
+    self.binaryPackage['Filename'] = "pool/main/m/mutt/mutt_1:2.4+svn5677-1_all.deb"
+    self.binaryPackage['MD5sum'] = "460578"
+    self.binaryPackage['Size'] = "4566"
   
   def tearDown(self):
     pass
@@ -159,6 +162,16 @@ class PackagesParserTest(unittest.TestCase):
     self.assertEqual("all", p.build.architecture.name)
     self.assertEqual("108", p.build.installedSize)
     self.assertEqual("mutt", p.build.ancestor.package)
+    self.assertEqual("pool/main/m/mutt", p.filename.ancestor.path)
+    self.assertEqual("mutt_1:2.4+svn5677-1_all.deb", p.filename.name)
+    self.assertEqual("4566", p.filename.size)
+    self.assertEqual("460578", p.filename.md5sum)
+
+  def testParseFilename(self):
+    expectedFile = File("mutt_1:2.4+svn5677-1_all.deb",\
+                        "460578", "4566", Directory("pool/main/m/mutt"))
+    file = self.parser.parseFilename(self.binaryPackage)
+    self.assertEqual(expectedFile, file)
     
 
 class BaseParserTest(unittest.TestCase):

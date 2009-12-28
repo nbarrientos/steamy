@@ -38,6 +38,7 @@ class BinaryPackage(BinaryPackageLite):
     self.depends = None
     self.recommends = None
     self.build = None
+    self.filename = None
 
 class BinaryPackageBuild():
   def __init__(self, ancestor = None):
@@ -145,10 +146,10 @@ class Constraint():
       return "%s" % self.package
 
 class File():
-  def __init__(self, d, ancestor=None):
-    self.name = d['name']
-    self.md5sum = d['md5sum']
-    self.size = d['size']
+  def __init__(self, name, md5sum, size, ancestor = None):
+    self.name = name
+    self.md5sum = md5sum
+    self.size = size
     self.ancestor = ancestor
 
   def asURI(self, base):

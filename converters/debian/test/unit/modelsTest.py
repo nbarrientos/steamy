@@ -155,14 +155,14 @@ class ConstraintTest(unittest.TestCase):
 
 class FileTest(unittest.TestCase):
   def setUp(self):
-    self.f = File({'md5sum': '35dsfsd', 'name': 'filename', 'size': '3435'})
+    self.f = File('filename', '35dsfsd', '3435')
     self.f.ancestor = Directory("test/path")
 
   def testEq(self):
     self.assertEqual(self.f,\
-              File({'md5sum': '35dsfsd', 'name': 'filename', 'size': '3435'}))
+              File('filename', '35dsfsd', '3435'))
     self.assertNotEqual(self.f,\
-              File({'md5sum': '35dsfsr', 'name': 'filename', 'size': '3435'}))
+              File('filename', '35dsfsr', '3435'))
 
   def testAsURIAncestor(self):
     baseURI = "http://example.org"
