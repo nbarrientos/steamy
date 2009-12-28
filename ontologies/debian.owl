@@ -209,6 +209,15 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#tag -->
+
+    <owl:ObjectProperty rdf:about="#tag">
+        <rdfs:domain rdf:resource="#Binary"/>
+        <rdfs:range rdf:resource="#Tag"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#versionNumber -->
 
     <owl:ObjectProperty rdf:about="#versionNumber">
@@ -254,6 +263,16 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#facetName -->
+
+    <owl:DatatypeProperty rdf:about="#facetName">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="#Tag"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#installed-size -->
 
     <owl:DatatypeProperty rdf:about="#installed-size">
@@ -266,6 +285,16 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#packageName -->
 
     <owl:DatatypeProperty rdf:about="#packageName"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#tagName -->
+
+    <owl:DatatypeProperty rdf:about="#tagName">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="#Tag"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
     
 
 
@@ -327,6 +356,12 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#Source -->
 
     <owl:Class rdf:about="#Source"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#Tag -->
+
+    <owl:Class rdf:about="#Tag"/>
     
 
 
