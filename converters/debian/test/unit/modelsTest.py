@@ -205,3 +205,32 @@ class TagTest(unittest.TestCase):
 
   def testAsLabel(self):
     self.assertEqual("Tag: facet::tag", self.t.asLabel())
+
+class SectionTest(unittest.TestCase):
+  def setUp(self):
+    self.s = Section("name")
+
+  def testEq(self):
+    self.assertEqual(self.s, Section("name"))
+    self.assertNotEqual(self.s, Section("othername"))
+
+  def testAsURI(self):
+    self.assertEqual("b/section/name", self.s.asURI("b"))
+
+  def testAsLabel(self):
+    self.assertEqual("Section: name", self.s.asLabel())
+
+class PriorityTest(unittest.TestCase):
+  def setUp(self):
+    self.p = Priority("name")
+
+  def testEq(self):
+    self.assertEqual(self.p, Priority("name"))
+    self.assertNotEqual(self.p, Priority("othername"))
+
+  def testAsURI(self):
+    self.assertEqual("b/priority/name", self.p.asURI("b"))
+
+  def testAsLabel(self):
+    self.assertEqual("Priority: name", self.p.asLabel())
+

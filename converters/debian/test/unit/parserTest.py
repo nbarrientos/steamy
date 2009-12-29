@@ -14,6 +14,8 @@ class SourcesParserTest(unittest.TestCase):
     self.sourcePackage['Build-Depends'] = "dep1 (>= 5.0.37), dep2 [!powerpc]"
     self.sourcePackage['Build-Depends-Indep'] = "dep3"
     self.sourcePackage['Architecture'] = "any"
+    self.sourcePackage['Section'] = "games"
+    self.sourcePackage['Priority'] = "optional"
     self.sourcePackage['Directory'] = "pool/main/s/srcpkg"
     self.sourcePackage['Files'] = [\
       {'md5sum': 'd7f059964', 'size': '1234', 'name': 'srcpkg_0.5-2.dsc'},
@@ -105,7 +107,9 @@ class PackagesParserTest(unittest.TestCase):
     self.binaryPackage['MD5sum'] = "460578"
     self.binaryPackage['Size'] = "4566"
     self.binaryPackage['Tag'] = "implemented-in::python, hardware::{lap,power:apm}"
-  
+    self.binaryPackage['Section'] = "games"
+    self.binaryPackage['Priority'] = "optional"
+
   def tearDown(self):
     pass
 
@@ -313,4 +317,10 @@ class BaseParserTest(unittest.TestCase):
     self.assertEqual(3,len(tags))
     self.assertEqual(expected, tags)
 
-
+  def testParseSection(self):
+    input = {'Section': "utils"}
+    self.assertEqual(Section("utils"), self.parser.parseSection(input))
+ 
+  def testParsePriority(self):
+    input = {'Priority': "required"}
+    self.assertEqual(Section("required"), self.parser.parsePriority(input))

@@ -20,6 +20,14 @@ class BaseParser():
   def parsePackage(self, raw):
     return raw['Package']
 
+  @required('Section')
+  def parseSection(self, raw):
+    return Section(raw['Section'])
+
+  @optional('Priority')
+  def parsePriority(self, raw):
+    return Priority(raw['Priority'])
+
   # Tools
 
   def parseVersionNumber(self, raw):
@@ -100,7 +108,8 @@ class SourcesParser(BaseParser):
     sourcePackage.architecture = self.parseArchitecture(raw)
     sourcePackage.directory = self.parseDirectory(raw)
     sourcePackage.files = self.parseFiles(raw, sourcePackage.directory)
-
+    sourcePackage.priority = self.parsePriority(raw)
+    sourcePackage.section = self.parseSection(raw)
     return sourcePackage
 
   def parseBinary(self, raw):
@@ -142,6 +151,8 @@ class PackagesParser(BaseParser):
     binaryPackage.build = self.parseBinaryPackageBuild(raw, binaryPackage)
     binaryPackage.filename = self.parseFilename(raw)
     binaryPackage.tag = self.parseTag(raw)
+    binaryPackage.priority = self.parsePriority(raw)
+    binaryPackage.section = self.parseSection(raw)
     return binaryPackage
 
   def parseBinaryPackageBuild(self, raw, ancestor):

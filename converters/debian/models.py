@@ -12,6 +12,8 @@ class SourcePackage():
     self.architecture = None
     self.files = None
     self.directory = None
+    self.priority = None
+    self.section = None
 
   def asURI(self, base):
     return "%s/source/%s/%s" % (base, self.package, self.version)
@@ -40,6 +42,8 @@ class BinaryPackage(BinaryPackageLite):
     self.build = None
     self.filename = None
     self.tag = None
+    self.priority = None
+    self.section = None
 
 class BinaryPackageBuild():
   def __init__(self, ancestor = None):
@@ -195,3 +199,29 @@ class Tag():
 
   def __eq__(self, other):
     return self.facet.__eq__(other.facet) and self.tag.__eq__(other.tag)
+
+class Section():
+  def __init__(self, name):
+    self.name = name
+
+  def asURI(self, base):
+    return "%s/section/%s" % (base, self.name)
+
+  def asLabel(self):
+    return "Section: %s" % (self.name)
+
+  def __eq__(self, other):
+    return self.name.__eq__(other.name)
+
+class Priority():
+  def __init__(self, name):
+    self.name = name
+
+  def asURI(self, base):
+    return "%s/priority/%s" % (base, self.name)
+
+  def asLabel(self):
+    return "Priority: %s" % (self.name)
+
+  def __eq__(self, other):
+    return self.name.__eq__(other.name)
