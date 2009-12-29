@@ -7,6 +7,7 @@ RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
 RDF = Namespace(u"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
 NFO = Namespace(u"http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#")
+TAG = Namespace(u"http://www.holygoat.co.uk/owl/redwood/0.1/tags#")
 
 class Triplifier():
   def __init__(self, graph, baseURI):
@@ -18,6 +19,7 @@ class Triplifier():
     self.g.bind("deb", DEB)
     self.g.bind("rdfs", RDFS)
     self.g.bind("nfo", NFO)
+    self.g.bind("tag", TAG)
 
   ### Sources ###
 
@@ -123,7 +125,8 @@ class Triplifier():
     if package.tag:
       for tag in package.tag:
         node = self.triplifyTag(tag)
-        self.g.add((ref, DEB['tag'], node))
+        self.g.add((ref, TAG['taggedWithTag'], node))
+        self.g.add((node, TAG['isTagOf'], ref))
 
     # Section
     sectionRef = self.triplifySection(package.section)
@@ -229,10 +232,10 @@ class Triplifier():
 
   def triplifyTag(self, tag):
     ref = URIRef(tag.asURI(self.baseURI))
-    self.g.add((ref, RDF.type, DEB['Tag']))
+    self.g.add((ref, RDF.type, TAG['Tag']))
     self.g.add((ref, RDFS.label, Literal(tag.asLabel())))
-    self.g.add((ref, DEB['facetName'], Literal(tag.facet)))
-    self.g.add((ref, DEB['tagName'], Literal(tag.tag)))
+    self.g.add((ref, DEB['facet'], Literal(tag.facet)))
+    self.g.add((ref, TAG['name'], Literal(tag.tag)))
 
     return ref
 

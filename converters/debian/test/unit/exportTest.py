@@ -17,6 +17,7 @@ PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
 RDF = Namespace(u"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
+TAG = Namespace(u"http://www.holygoat.co.uk/owl/redwood/0.1/tags#")
 
 ALLTRIPLES = BQ + "SELECT ?x ?y ?z WHERE { ?x ?y ?z . }"
 
@@ -113,10 +114,10 @@ class TriplifierTest(unittest.TestCase):
     uriref = URIRef("b/tag/facet/tag:tag")
     self.assertEqual(uriref, self.t.triplifyTag(t))
     self.assertEqual(4, len(self.graph))
-    expected = [(uriref, RDF.type, DEB['Tag']),\
+    expected = [(uriref, RDF.type, TAG['Tag']),\
                 (uriref, RDFS.label, Literal("Tag: facet::tag:tag")),\
-                (uriref, DEB['facetName'], Literal("facet")),\
-                (uriref, DEB['tagName'], Literal("tag:tag"))]
+                (uriref, DEB['facet'], Literal("facet")),\
+                (uriref, TAG['name'], Literal("tag:tag"))]
     self.compareGeneratedTriples(expected)
 
   def testTriplifySection(self):
