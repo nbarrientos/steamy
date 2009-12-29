@@ -67,6 +67,15 @@ class Triplifier():
       self.g.add((fileRef, NFO['belongsToContainer'], directoryRef))
       self.g.add((fileRef, DEB['productOf'], ref))
 
+    # Section
+    sectionRef = self.triplifySection(package.section)
+    self.g.add((ref, DEB['section'], sectionRef))
+
+    # Priority
+    if package.priority:
+      priorityRef = self.triplifyPriority(package.priority)
+      self.g.add((ref, DEB['priority'], priorityRef))
+
 
   def triplifyBinaryPackageLite(self, package):
     ref = URIRef(package.asURI(self.baseURI))
@@ -115,6 +124,15 @@ class Triplifier():
       for tag in package.tag:
         node = self.triplifyTag(tag)
         self.g.add((ref, DEB['tag'], node))
+
+    # Section
+    sectionRef = self.triplifySection(package.section)
+    self.g.add((ref, DEB['section'], sectionRef))
+
+    # Priority
+    if package.priority:
+      priorityRef = self.triplifyPriority(package.priority)
+      self.g.add((ref, DEB['priority'], priorityRef))
 
   def triplifyBinaryPackageBuild(self, build):
     ref = URIRef(build.asURI(self.baseURI))
@@ -218,6 +236,22 @@ class Triplifier():
 
     return ref
 
+  def triplifySection(self, section):
+    ref = URIRef(section.asURI(self.baseURI))
+    self.g.add((ref, RDF.type, DEB['Section']))
+    self.g.add((ref, RDFS.label, Literal(section.asLabel())))
+    self.g.add((ref, DEB['sectionName'], Literal(section.name)))
+
+    return ref
+ 
+  def triplifyPriority(self, priority):
+    ref = URIRef(priority.asURI(self.baseURI))
+    self.g.add((ref, RDF.type, DEB['Priority']))
+    self.g.add((ref, RDFS.label, Literal(priority.asLabel())))
+    self.g.add((ref, DEB['priorityName'], Literal(priority.name)))
+
+    return ref
+ 
 class Serializer():
   def __init__(self):
     pass

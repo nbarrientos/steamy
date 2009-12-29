@@ -119,6 +119,26 @@ class TriplifierTest(unittest.TestCase):
                 (uriref, DEB['tagName'], Literal("tag:tag"))]
     self.compareGeneratedTriples(expected)
 
+  def testTriplifySection(self):
+    s = Section("test")
+    uriref = URIRef("b/section/test")
+    self.assertEqual(uriref, self.t.triplifySection(s))
+    self.assertEqual(3, len(self.graph))
+    expected = [(uriref, RDF.type, DEB['Section']),\
+                (uriref, RDFS.label, Literal("Section: test")),\
+                (uriref, DEB['sectionName'], Literal("test"))]
+    self.compareGeneratedTriples(expected)
+
+  def testTriplifyPriority(self):
+    p = Priority("test")
+    uriref = URIRef("b/priority/test")
+    self.assertEqual(uriref, self.t.triplifyPriority(p))
+    self.assertEqual(3, len(self.graph))
+    expected = [(uriref, RDF.type, DEB['Priority']),\
+                (uriref, RDFS.label, Literal("Priority: test")),\
+                (uriref, DEB['priorityName'], Literal("test"))]
+    self.compareGeneratedTriples(expected)
+
   # Mocks
   def mockTriplifyVersionNumber(self, version):
     classMock = self.mox.CreateMock(Triplifier)
