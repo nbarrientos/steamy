@@ -175,10 +175,28 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#priority -->
+
+    <owl:ObjectProperty rdf:about="#priority">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:range rdf:resource="#Priority"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#recommends -->
 
     <owl:ObjectProperty rdf:about="#recommends">
         <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#section -->
+
+    <owl:ObjectProperty rdf:about="#section">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:range rdf:resource="#Section"/>
     </owl:ObjectProperty>
     
 
@@ -205,15 +223,6 @@
 
     <owl:ObjectProperty rdf:about="#suggests">
         <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
-    </owl:ObjectProperty>
-    
-
-
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#tag -->
-
-    <owl:ObjectProperty rdf:about="#tag">
-        <rdfs:domain rdf:resource="#Binary"/>
-        <rdfs:range rdf:resource="#Tag"/>
     </owl:ObjectProperty>
     
 
@@ -267,7 +276,6 @@
 
     <owl:DatatypeProperty rdf:about="#facetName">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
-        <rdfs:domain rdf:resource="#Tag"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
@@ -292,7 +300,6 @@
 
     <owl:DatatypeProperty rdf:about="#tagName">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
-        <rdfs:domain rdf:resource="#Tag"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
@@ -347,6 +354,18 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#Priority -->
+
+    <owl:Class rdf:about="#Priority"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#Section -->
+
+    <owl:Class rdf:about="#Section"/>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#SimplePackageConstraint -->
 
     <owl:Class rdf:about="#SimplePackageConstraint"/>
@@ -356,12 +375,6 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#Source -->
 
     <owl:Class rdf:about="#Source"/>
-    
-
-
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#Tag -->
-
-    <owl:Class rdf:about="#Tag"/>
     
 
 
