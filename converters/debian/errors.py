@@ -1,10 +1,3 @@
-class MissingMandatoryFieldException(Exception):
-  def __init__(self, fieldname=""):
-    self.fieldname = fieldname
-
-  def __str__(self):
-    return "Mandatory field '%s' is missing" % self.fieldname
-
 class OptsParsingException(Exception):
   def __init__(self, msg):
     self.msg = msg
@@ -18,4 +11,11 @@ class ParsingException(Exception):
     self.raw = raw
 
   def __str__(self):
-    return "%s failed parsing: '%s'" % (self.method, self.raw)
+    return "Method '%s' failed parsing: '%s'" % (self.method, self.raw)
+
+class MissingMandatoryFieldException(ParsingException):
+  def __init__(self, fieldname=""):
+    self.fieldname = fieldname
+
+  def __str__(self):
+    return "Mandatory field '%s' is missing" % self.fieldname

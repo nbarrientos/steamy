@@ -7,7 +7,7 @@ from rdflib.Graph import ConjunctiveGraph
 
 from parsers import PackagesParser, SourcesParser
 from export import Triplifier, Serializer
-from errors import MissingMandatoryFieldException 
+from errors import ParsingException 
 from errors import OptsParsingException
 
 VERSION = "0.1alpha"
@@ -103,7 +103,7 @@ class Launcher():
       try:
         parsedPackage = parser.parseBinaryPackage(p)
         counter += 1
-      except MissingMandatoryFieldException, e:
+      except ParsingException, e:
         logging.error("Unable to parse package (%s). Skipping this." % str(e))
         continue
 
@@ -145,7 +145,7 @@ class Launcher():
       try:
         parsedPackage = parser.parseSourcePackage(p)
         counter += 1
-      except MissingMandatoryFieldException, e:
+      except ParsingException, e:
         logging.error("Unable to parse package (%s). Skipping this." % str(e))
         continue
 
