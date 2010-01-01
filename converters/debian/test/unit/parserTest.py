@@ -242,12 +242,13 @@ class BaseParserTest(unittest.TestCase):
     self.assertEqual(2, len(ors.get(0).constraints))
 
   def testParseOrConstraint(self):
-    input = "exim4 (>> 0.5.4-5) | mail-transport-agent | swaml"
+    input = "exim4+r (>> 0.5.4-5) | mail-transport-agent | swaml.4"
     ord = self.parser.parseOrConstraint(input)
     self.assertEqual(3, len(ord.constraints))
-    self.assertEqual("exim4", ord.get(0).package)
+    self.assertEqual("exim4+r", ord.get(0).package)
     self.assertEqual(">>", ord.get(0).operator)
     self.assertEqual("mail-transport-agent", ord.get(1).package)
+    self.assertEqual("swaml.4", ord.get(2).package)
 
   def testParseConstraintSimple(self):
     input = "libgnutls13"
