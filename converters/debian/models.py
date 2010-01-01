@@ -235,3 +235,22 @@ class Contributor():
 
   def asLabel(self):
     return "Contributor: %s <%s>" % (self.name, self.email)
+
+class DebianDeveloper(Contributor):
+  def __init__(self, name, email):
+    Contributor.__init__(self, name, email)
+
+  def asLabel(self):
+    return "Debian Developer: %s <%s>" % (self.name, self.email)
+
+class Team(Contributor):
+  def __init__(self, name, email):
+    Contributor.__init__(self, name, email)
+
+  def asLabel(self):
+    return "Team: %s <%s>" % (self.name, self.email)
+
+# Tools
+
+def guessRole(name, email):
+  return Contributor(name, email) # FIXME

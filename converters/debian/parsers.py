@@ -104,7 +104,7 @@ class BaseParser():
     match = regex.match(raw)
 
     if match and match.group("name") and match.group("email"):
-      return Contributor(match.group("name"), match.group("email"))
+      return guessRole(match.group("name"), match.group("email"))
     else:
       raise ParsingException("parseContributor", raw)
 
