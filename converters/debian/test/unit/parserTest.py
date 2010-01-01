@@ -309,6 +309,18 @@ class BaseParserTest(unittest.TestCase):
     expectedlist = [Architecture("kfreebsd-i386"), Architecture("kfreebsd-amd64")]
     self.assertEqual(expectedlist, d.exceptin)
 
+  def testParseMalformedConstraint(self):
+    input = "()"
+    self.assertRaises(ParsingException, self.parser.parseConstraint, input)
+    input = "(>= 6.8)"
+    self.assertRaises(ParsingException, self.parser.parseConstraint, input)
+    input = "[]"
+    self.assertRaises(ParsingException, self.parser.parseConstraint, input)
+    input = "[powerpc]"
+    self.assertRaises(ParsingException, self.parser.parseConstraint, input)
+    input = "(>= 5.6) [powerpc]"
+    self.assertRaises(ParsingException, self.parser.parseConstraint, input)
+
   def testParseTags(self):
     input = "implemented-in::lisp"
     tags = self.parser.parseTags(input)

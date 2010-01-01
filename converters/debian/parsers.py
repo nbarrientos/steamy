@@ -56,23 +56,26 @@ class BaseParser():
     # Assuming constraint comes from source in good shape. Validation
     # is not necessary.
     regex = re.compile(\
-      r"(?P<package>\S+)( \((?P<operator>\S{1,2}) (?P<version>\S+)\))?( \[(?P<arches>.+)\])?")
+      r"(?P<package>[-a-z0-9+.]+)(\s\((?P<operator>\S{1,2})\s(?P<version>\S+?)\))?(\s\[(?P<arches>.+)\])?")
     
     match = regex.match(raw.strip())
 
-    constraint.package = match.group('package')
+    if match and match.group('package'):
+      constraint.package = match.group('package')
 
-    if match.group('operator') and match.group('version'):
-      constraint.operator = match.group('operator')
-      constraint.version = self.parseVersionNumber(match.group('version'))
+      if match.group('operator') and match.group('version'):
+        constraint.operator = match.group('operator')
+        constraint.version = self.parseVersionNumber(match.group('version'))
 
-    if match.group('arches'):
-      split = match.group('arches').split()
-      for arch in split:
-        if arch.startswith("!"):
-          constraint.exceptin.append(Architecture(arch[1:]))
-        else:
-          constraint.onlyin.append(Architecture(arch))
+      if match.group('arches'):
+        split = match.group('arches').split()
+        for arch in split:
+          if arch.startswith("!"):
+            constraint.exceptin.append(Architecture(arch[1:]))
+          else:
+            constraint.onlyin.append(Architecture(arch))
+    else:
+      raise ParsingException("parseConstraint", raw)
 
     return constraint
 
