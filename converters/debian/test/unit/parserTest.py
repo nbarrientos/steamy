@@ -235,6 +235,11 @@ class BaseParserTest(unittest.TestCase):
     self.assertEqual(">>", ors.get(0).get(0).operator)
     self.assertEqual("mail-transport-agent", ors.get(0).get(1).package)
     self.assertEqual("mutt", ors.get(1).get(0).package)
+ 
+    input = "c1a | c1b,    c2,c3, c4,  c5"
+    ors = self.parser.parseConstraints(input)
+    self.assertEqual(5, len(ors.orconstraints))
+    self.assertEqual(2, len(ors.get(0).constraints))
 
   def testParseOrConstraint(self):
     input = "exim4 (>> 0.5.4-5) | mail-transport-agent | swaml"
@@ -352,6 +357,10 @@ class BaseParserTest(unittest.TestCase):
     tags = self.parser.parseTags(input)
     self.assertEqual(3,len(tags))
     self.assertEqual(expected, tags)
+
+    #input = "facet::t1,     facet::t2,facet::t3"
+    #tags = self.parser.parseTags(input)
+    #self.assertEqual(3,len(tags))
 
     input = "::"
     self.assertRaises(ParsingException, self.parser.parseTags, input)

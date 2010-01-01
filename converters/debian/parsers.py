@@ -35,7 +35,7 @@ class BaseParser():
 
   def parseConstraints(self, raw):
     constraints = Constraints()
-    orconstraints = raw.split(",") # FIXME
+    orconstraints = re.split(",\s*", raw)
 
     for orconstraint in orconstraints:
       constraints.add(self.parseOrConstraint(orconstraint))
