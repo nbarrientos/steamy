@@ -245,3 +245,12 @@ class ContributorTest(unittest.TestCase):
   def testAsLabel(self):
     self.assertEqual("Contributor: Name Surname <mail@example.com>",\
                      self.c.asLabel())
+
+class ToolsTest(unittest.TestCase):
+  def setUp(self):
+    pass
+
+  def testGuessRole(self):
+    name = "Name"
+    email = "Email"
+    self.assertEqual(Contributor, guessRole(name, email).__class__)
