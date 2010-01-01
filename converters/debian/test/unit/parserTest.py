@@ -18,6 +18,7 @@ class SourcesParserTest(unittest.TestCase):
     self.sourcePackage['Priority'] = "optional"
     self.sourcePackage['Maintainer'] = "Joe Doe <joe.doe@example.com>"
     self.sourcePackage['Uploaders'] = "Alice <alice@d.o>, Bob <bob@d.o>"
+    self.sourcePackage['Homepage'] = "http://www.example.org"
     self.sourcePackage['Directory'] = "pool/main/s/srcpkg"
     self.sourcePackage['Files'] = [\
       {'md5sum': 'd7f059964', 'size': '1234', 'name': 'srcpkg_0.5-2.dsc'},
@@ -53,6 +54,7 @@ class SourcesParserTest(unittest.TestCase):
     self.assertNotEqual(None, s.maintainer)
     self.assertNotEqual(None, s.uploaders)
     self.assertEqual(2, len(s.uploaders))
+    self.assertEqual("http://www.example.org", s.homepage)
 
   def testParseArchitecture(self):
     archs = self.parser.parseArchitecture(self.sourcePackage)
@@ -114,7 +116,6 @@ class SourcesParserTest(unittest.TestCase):
   def testParseUploadersMissingField(self):
     self.sourcePackage.pop('Uploaders')
     self.assertEqual(None, self.parser.parseUploaders(self.sourcePackage))
-
 
 class PackagesParserTest(unittest.TestCase):
   
@@ -409,3 +410,7 @@ class BaseParserTest(unittest.TestCase):
     input = "S P <s@p.us>,    T <n@r.es>,K R R    <p@l.de>"
     contributors = self.parser.parseContributors(input)
     self.assertEqual(3, len(contributors))
+
+  def testParseHomepage(self):
+    input = {'Homepage': "http://example.org"}
+    self.assertEquals("http://example.org", self.parser.parseHomepage(input))

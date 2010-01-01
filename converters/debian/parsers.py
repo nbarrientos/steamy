@@ -28,6 +28,10 @@ class BaseParser():
   def parsePriority(self, raw):
     return Priority(raw['Priority'])
 
+  @optional('Homepage')
+  def parseHomepage(self, raw):
+    return raw['Homepage']
+
   # Tools
 
   def parseVersionNumber(self, raw):
@@ -136,6 +140,7 @@ class SourcesParser(BaseParser):
     sourcePackage.section = self.parseSection(raw)
     sourcePackage.maintainer = self.parseMaintainer(raw)
     sourcePackage.uploaders = self.parseUploaders(raw)
+    sourcePackage.homepage = self.parseHomepage(raw)
     return sourcePackage
 
   def parseBinary(self, raw):
@@ -169,7 +174,6 @@ class SourcesParser(BaseParser):
   @optional('Uploaders')
   def parseUploaders(self, raw):
     return self.parseContributors(raw['Uploaders'])
- 
 
 class PackagesParser(BaseParser):
   def __init__(self):

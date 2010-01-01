@@ -16,6 +16,7 @@ class SourcePackage():
     self.section = None
     self.maintainer = None
     self.uploaders = None
+    self.homepage = None
 
   def asURI(self, base):
     return "%s/source/%s/%s" % (base, self.package, self.version)
