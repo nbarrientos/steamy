@@ -145,7 +145,7 @@ class SourcesParser(BaseParser):
 
   def parseBinary(self, raw):
     return [BinaryPackageLite(bin, self.parseVersionNumber(raw['Version'])) \
-                for bin in raw['Binary'].split(", ")]
+                for bin in raw['Binary'].split(", ")] # FIXME
 
   @required('Architecture')
   def parseArchitecture(self, raw):

@@ -242,15 +242,27 @@ class Human(Contributor):
   def __init__(self, name, email):
     Contributor.__init__(self, name, email)
 
+  def asURI(self, base):
+    return "%s/people/%s" % (base, self.name.replace(" ", "_"))
+
   def asLabel(self):
     return "Human: %s <%s>" % (self.name, self.email)
+
+  def rdfType(self):
+    return "Person"
 
 class Team(Contributor):
   def __init__(self, name, email):
     Contributor.__init__(self, name, email)
 
+  def asURI(self, base):
+    return "%s/team/%s" % (base, self.name.replace(" ", "_"))
+
   def asLabel(self):
     return "Team: %s <%s>" % (self.name, self.email)
+
+  def rdfType(self):
+    return "Group"
 
 # Tools
 

@@ -4,6 +4,7 @@
 from rdflib import Namespace, URIRef, BNode, Literal
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
+FOAF = Namespace(u"http://xmlns.com/foaf/0.1/#")
 RDF = Namespace(u"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
 NFO = Namespace(u"http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#")
@@ -18,6 +19,7 @@ class Triplifier():
     self.g.bind("rdf", RDF)
     self.g.bind("deb", DEB)
     self.g.bind("rdfs", RDFS)
+    self.g.bind("foaf", FOAF)
     self.g.bind("nfo", NFO)
     self.g.bind("tag", TAG)
 
@@ -78,6 +80,15 @@ class Triplifier():
       priorityRef = self.triplifyPriority(package.priority)
       self.g.add((ref, DEB['priority'], priorityRef))
 
+    # Maintainer
+    maintainerRef = self.triplifyContributor(package.maintainer)
+    self.g.add((ref, DEB['maintainer'], maintainerRef))
+
+    # Uploaders
+    if package.uploaders:
+      for uploader in package.uploaders:
+        uploaderRef = self.triplifyContributor(uploader)
+        self.g.add((ref, DEB['uploader'], uploaderRef))
 
   def triplifyBinaryPackageLite(self, package):
     ref = URIRef(package.asURI(self.baseURI))
@@ -254,6 +265,17 @@ class Triplifier():
     self.g.add((ref, DEB['priorityName'], Literal(priority.name)))
 
     return ref
+
+  def triplifyContributor(self, contributor):
+    ref = URIRef(contributor.asURI(self.baseURI))
+    self.g.add((ref, RDF.type, FOAF[contributor.rdfType()]))
+    self.g.add((ref, RDFS.label, Literal(contributor.asLabel())))
+
+    self.g.add((ref, FOAF['name'], Literal(contributor.name)))
+    self.g.add((ref, FOAF['mbox'], Literal(contributor.email)))
+
+    return ref
+    
  
 class Serializer():
   def __init__(self):

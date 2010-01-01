@@ -15,6 +15,7 @@ PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 """
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
+FOAF = Namespace(u"http://xmlns.com/foaf/0.1/#")
 RDF = Namespace(u"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
 TAG = Namespace(u"http://www.holygoat.co.uk/owl/redwood/0.1/tags#")
@@ -138,6 +139,28 @@ class TriplifierTest(unittest.TestCase):
     expected = [(uriref, RDF.type, DEB['Priority']),\
                 (uriref, RDFS.label, Literal("Priority: test")),\
                 (uriref, DEB['priorityName'], Literal("test"))]
+    self.compareGeneratedTriples(expected)
+
+  def testTriplifyContributorHuman(self):
+    c = Human("Jon Doe", "joe@debian.org")
+    uriref = URIRef("b/people/Jon_Doe")
+    self.assertEqual(uriref, self.t.triplifyContributor(c))
+    self.assertEqual(4, len(self.graph))
+    expected = [(uriref, RDF.type, FOAF['Person']),\
+                (uriref, RDFS.label, Literal("Human: Jon Doe <joe@debian.org>")),\
+                (uriref, FOAF['name'], Literal("Jon Doe")),\
+                (uriref, FOAF['mbox'], Literal("joe@debian.org"))]
+    self.compareGeneratedTriples(expected)
+
+  def testTriplifyContributorTeam(self):
+    c = Team("Debian Love Team", "love@lists.debian.org")
+    uriref = URIRef("b/team/Debian_Love_Team")
+    self.assertEqual(uriref, self.t.triplifyContributor(c))
+    self.assertEqual(4, len(self.graph))
+    expected = [(uriref, RDF.type, FOAF['Group']),\
+                (uriref, RDFS.label, Literal("Team: Debian Love Team <love@lists.debian.org>")),\
+                (uriref, FOAF['name'], Literal("Debian Love Team")),\
+                (uriref, FOAF['mbox'], Literal("love@lists.debian.org"))]
     self.compareGeneratedTriples(expected)
 
   # Mocks
