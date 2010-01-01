@@ -1,4 +1,5 @@
 import hashlib
+import re
 
 from debian_bundle.changelog import Version
 
@@ -237,12 +238,12 @@ class Contributor():
   def asLabel(self):
     return "Contributor: %s <%s>" % (self.name, self.email)
 
-class DebianDeveloper(Contributor):
+class Human(Contributor):
   def __init__(self, name, email):
     Contributor.__init__(self, name, email)
 
   def asLabel(self):
-    return "Debian Developer: %s <%s>" % (self.name, self.email)
+    return "Human: %s <%s>" % (self.name, self.email)
 
 class Team(Contributor):
   def __init__(self, name, email):
@@ -254,4 +255,39 @@ class Team(Contributor):
 # Tools
 
 def guessRole(name, email):
-  return Contributor(name, email) # FIXME
+  if teamRating(name, email) > humanRating(name, email) + 1: # FIXME?
+    return Team(name, email)
+  else:
+    return Human(name, email)
+
+def teamRating(name, email):
+  mailRegexPool = (".*@lists\.alioth\.debian\.org",\
+                   ".*@lists\.debian\.org",\
+                   ".*@teams\.debian\.net",\
+                   ".*-maintainers@.*")
+  nameRegexPool = (".*[tT]eam$", ".*[mM]aintainers.*",\
+                   ".*([sS]trike|[tT]ask)\s*Force.*",\
+                   ".*[gG]roup", ".*[pP]ackagers",\
+                   ".*[pP]arty.*", "^Debian.*")
+
+  return computeRating(name, email, mailRegexPool, nameRegexPool)
+
+def humanRating(name, email):
+  mailRegexPool = (".*@debian\.org",\
+                   ".*@users.alioth.debian.org",\
+                   ".*@gmail\.com") # FIXME
+
+  return computeRating(name, email, mailRegexPool, ())
+
+def computeRating(name, email, eregex, nregex):
+  rating = 0
+
+  for regex in nregex:
+    if re.match(regex, name):
+      rating = rating + 1
+
+  for regex in eregex:
+    if re.match(regex, email):
+      rating = rating + 1
+
+  return rating

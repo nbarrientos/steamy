@@ -248,9 +248,39 @@ class ContributorTest(unittest.TestCase):
 
 class ToolsTest(unittest.TestCase):
   def setUp(self):
-    pass
-
+    self.name1 = "Debian Cool Team"
+    self.email1 = "team@lists.debian.org"
+    self.name2 = "Debian X Strike Force"
+    self.email2 = "debian-x@lists.debian.org"
+    self.name3 = "Debian Love Maintainers"
+    self.email3 = "pkg-love-maintainers@lists.alioth.debian.org"
+    self.name4 = "Jon Doe"
+    self.email4 = "jon@debian.org"
+    self.name5 = "Jon Team"
+    self.email5 = "jon@gmail.com"
+    self.name6 = "Debian Forensics"
+    self.email6 = "forensics-devel@lists.alioth.debian.org"
+  
   def testGuessRole(self):
-    name = "Name"
-    email = "Email"
-    self.assertEqual(Contributor, guessRole(name, email).__class__)
+    self.assertEqual(Team, guessRole(self.name1, self.email1).__class__)
+    self.assertEqual(Team, guessRole(self.name2, self.email2).__class__)
+    self.assertEqual(Team, guessRole(self.name3, self.email3).__class__)
+    self.assertEqual(Human, guessRole(self.name4, self.email4).__class__)
+    self.assertEqual(Human, guessRole(self.name5, self.email5).__class__)
+    self.assertEqual(Team, guessRole(self.name6, self.email6).__class__)
+
+  def testRating(self):
+    self.assertEqual(3, teamRating(self.name1, self.email1))
+    self.assertEqual(0, humanRating(self.name1, self.email1))
+
+    self.assertEqual(3, teamRating(self.name2, self.email2))
+    self.assertEqual(0, humanRating(self.name2, self.email2))
+
+    self.assertEqual(4, teamRating(self.name3, self.email3))
+    self.assertEqual(0, humanRating(self.name3, self.email3))
+
+    self.assertEqual(0, teamRating(self.name4, self.email4))
+    self.assertEqual(1, humanRating(self.name4, self.email4))
+    
+    self.assertEqual(1, teamRating(self.name5, self.email5))
+    self.assertEqual(1, humanRating(self.name5, self.email5))
