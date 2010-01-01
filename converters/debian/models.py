@@ -14,6 +14,8 @@ class SourcePackage():
     self.directory = None
     self.priority = None
     self.section = None
+    self.maintainer = None
+    self.uploaders = None
 
   def asURI(self, base):
     return "%s/source/%s/%s" % (base, self.package, self.version)
@@ -225,3 +227,11 @@ class Priority():
 
   def __eq__(self, other):
     return self.name.__eq__(other.name)
+
+class Contributor():
+  def __init__(self, name, email):
+    self.name = name
+    self.email = email
+
+  def asLabel(self):
+    return "Contributor: %s <%s>" % (self.name, self.email)

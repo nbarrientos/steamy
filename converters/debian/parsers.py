@@ -3,7 +3,7 @@ import re
 from debian_bundle.changelog import Version
 
 from models import *
-from errors import MissingMandatoryFieldException
+from errors import MissingMandatoryFieldException, ParsingException
 from decorators import required, optional
 
 class BaseParser():
@@ -35,7 +35,7 @@ class BaseParser():
 
   def parseConstraints(self, raw):
     constraints = Constraints()
-    orconstraints = raw.split(",")
+    orconstraints = raw.split(",") # FIXME
 
     for orconstraint in orconstraints:
       constraints.add(self.parseOrConstraint(orconstraint))
@@ -77,7 +77,7 @@ class BaseParser():
     return constraint
 
   def parseTags(self, raw):
-    split = raw.split(", ")
+    split = raw.split(", ") # FIXME
     regex = re.compile(\
       r"(?P<facet>[a-zA-Z0-9-]+)::(\{(?P<tags>\S+)\}|(?P<tag>[a-zA-Z0-9-:]+))")
     tags = []
@@ -93,6 +93,24 @@ class BaseParser():
 
     return tags
 
+  def parseContributor(self, raw):
+    regex = re.compile(r"(?P<name>.*?)\s*\<(?P<email>\S+)\>")
+    match = regex.match(raw)
+
+    if match and match.group("name") and match.group("email"):
+      return Contributor(match.group("name"), match.group("email"))
+    else:
+      raise ParsingException("parseContributor", raw)
+
+  def parseContributors(self, raw):
+    split = re.split(",\s*", raw)
+    contributors = []
+
+    for contributor in split:
+      contributors.append(self.parseContributor(contributor))
+
+    return contributors
+    
 
 class SourcesParser(BaseParser):
   def __init__(self):
@@ -110,6 +128,8 @@ class SourcesParser(BaseParser):
     sourcePackage.files = self.parseFiles(raw, sourcePackage.directory)
     sourcePackage.priority = self.parsePriority(raw)
     sourcePackage.section = self.parseSection(raw)
+    sourcePackage.maintainer = self.parseMaintainer(raw)
+    sourcePackage.uploaders = self.parseUploaders(raw)
     return sourcePackage
 
   def parseBinary(self, raw):
@@ -135,6 +155,14 @@ class SourcesParser(BaseParser):
   @required('Directory')
   def parseDirectory(self, raw):
     return Directory(raw['Directory'])
+
+  @required('Maintainer')
+  def parseMaintainer(self, raw):
+    return self.parseContributor(raw['Maintainer'])
+
+  @optional('Uploaders')
+  def parseUploaders(self, raw):
+    return self.parseContributors(raw['Uploaders'])
  
 
 class PackagesParser(BaseParser):

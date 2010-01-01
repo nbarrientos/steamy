@@ -2,7 +2,7 @@ import unittest
 
 from models import *
 from parsers import SourcesParser, PackagesParser, BaseParser
-from errors import MissingMandatoryFieldException
+from errors import MissingMandatoryFieldException, ParsingException
 
 class SourcesParserTest(unittest.TestCase):
   def setUp(self):
@@ -16,6 +16,8 @@ class SourcesParserTest(unittest.TestCase):
     self.sourcePackage['Architecture'] = "any"
     self.sourcePackage['Section'] = "games"
     self.sourcePackage['Priority'] = "optional"
+    self.sourcePackage['Maintainer'] = "Joe Doe <joe.doe@example.com>"
+    self.sourcePackage['Uploaders'] = "Alice <alice@d.o>, Bob <bob@d.o>"
     self.sourcePackage['Directory'] = "pool/main/s/srcpkg"
     self.sourcePackage['Files'] = [\
       {'md5sum': 'd7f059964', 'size': '1234', 'name': 'srcpkg_0.5-2.dsc'},
@@ -48,6 +50,9 @@ class SourcesParserTest(unittest.TestCase):
     self.assertNotEqual(None, s.buildDependsIndep)
     self.assertEqual(2, s.buildDepends.len())
     self.assertEqual(1, s.buildDependsIndep.len())
+    self.assertNotEqual(None, s.maintainer)
+    self.assertNotEqual(None, s.uploaders)
+    self.assertEqual(2, len(s.uploaders))
 
   def testParseArchitecture(self):
     archs = self.parser.parseArchitecture(self.sourcePackage)
@@ -91,6 +96,25 @@ class SourcesParserTest(unittest.TestCase):
     self.sourcePackage.pop('Directory')
     self.assertRaises(MissingMandatoryFieldException,\
                       self.parser.parseDirectory, self.sourcePackage)
+
+  def testParseMaintainer(self):
+    maintainer = self.parser.parseMaintainer(self. sourcePackage)
+    self.assertEquals("Joe Doe", maintainer.name)
+    self.assertEquals("joe.doe@example.com", maintainer.email)
+
+  def testParseMaintainerMissingField(self):
+    self.sourcePackage.pop('Maintainer')
+    self.assertRaises(MissingMandatoryFieldException,\
+                      self.parser.parseMaintainer, self.sourcePackage)
+
+  def testParseUploaders(self):
+    uploaders = self.parser.parseUploaders(self. sourcePackage)
+    self.assertEquals(2, len(uploaders))
+
+  def testParseUploadersMissingField(self):
+    self.sourcePackage.pop('Uploaders')
+    self.assertEqual(None, self.parser.parseUploaders(self.sourcePackage))
+
 
 class PackagesParserTest(unittest.TestCase):
   
@@ -324,3 +348,26 @@ class BaseParserTest(unittest.TestCase):
   def testParsePriority(self):
     input = {'Priority': "required"}
     self.assertEqual(Section("required"), self.parser.parsePriority(input))
+
+  def testParseContributor(self):
+    input = "Name Surname     <mail@example.com>"
+    contributor = self.parser.parseContributor(input)
+    self.assertEqual("Name Surname", contributor.name)
+    self.assertEqual("mail@example.com", contributor.email)
+
+    input = "Name Surname (Some notes) <mail+fax@example-rt.com>"
+    contributor = self.parser.parseContributor(input)
+    self.assertEqual("Name Surname (Some notes)", contributor.name)
+    self.assertEqual("mail+fax@example-rt.com", contributor.email)
+
+    input = "Name Surname"
+    self.assertRaises(ParsingException, self.parser.parseContributor, input)
+
+  def testParseContributors(self):
+    input = "Name Surname <mail@example.com>"
+    contributors = self.parser.parseContributors(input)
+    self.assertEqual(1, len(contributors))
+
+    input = "S P <s@p.us>,    T <n@r.es>,K R R    <p@l.de>"
+    contributors = self.parser.parseContributors(input)
+    self.assertEqual(3, len(contributors))

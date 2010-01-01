@@ -234,3 +234,14 @@ class PriorityTest(unittest.TestCase):
   def testAsLabel(self):
     self.assertEqual("Priority: name", self.p.asLabel())
 
+class ContributorTest(unittest.TestCase):
+  def setUp(self):
+    self.c = Contributor("Name Surname", "mail@example.com")
+
+  def testInit(self):
+    self.assertEqual("Name Surname", self.c.name)
+    self.assertEqual("mail@example.com", self.c.email)
+    
+  def testAsLabel(self):
+    self.assertEqual("Contributor: Name Surname <mail@example.com>",\
+                     self.c.asLabel())
