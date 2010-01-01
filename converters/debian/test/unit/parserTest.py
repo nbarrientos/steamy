@@ -250,6 +250,10 @@ class BaseParserTest(unittest.TestCase):
     self.assertEqual("mail-transport-agent", ord.get(1).package)
     self.assertEqual("swaml.4", ord.get(2).package)
 
+    input = "c1|    c2|c3 | c4"
+    ord = self.parser.parseOrConstraint(input)
+    self.assertEqual(4, len(ord.constraints))
+
   def testParseConstraintSimple(self):
     input = "libgnutls13"
     d = self.parser.parseConstraint(input)

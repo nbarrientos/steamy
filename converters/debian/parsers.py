@@ -44,7 +44,7 @@ class BaseParser():
 
   def parseOrConstraint(self, raw):
     orconstraint = OrConstraint()
-    constraints = raw.strip().split("|")
+    constraints = re.split("\s*\|\s*", raw)
 
     for constraint in constraints:
       orconstraint.add(self.parseConstraint(constraint))
