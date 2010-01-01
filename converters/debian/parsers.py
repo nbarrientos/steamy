@@ -84,12 +84,15 @@ class BaseParser():
 
     for rtag in split:
       match = regex.match(rtag)
-      facet = match.group('facet')
-      if match.group('tag'):
-        tags.append(Tag(facet, match.group('tag')))
-      elif match.group('tags'):
-        for t in match.group('tags').split(","):
-          tags.append(Tag(facet, t))
+      if match and match.group('facet'):
+        facet = match.group('facet')
+        if match.group('tag'):
+          tags.append(Tag(facet, match.group('tag')))
+        elif match.group('tags'):
+          for t in match.group('tags').split(","):
+            tags.append(Tag(facet, t))
+      else:
+        raise ParsingException("parseTags", raw)
 
     return tags
 

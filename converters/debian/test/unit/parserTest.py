@@ -341,6 +341,18 @@ class BaseParserTest(unittest.TestCase):
     self.assertEqual(3,len(tags))
     self.assertEqual(expected, tags)
 
+    input = "::"
+    self.assertRaises(ParsingException, self.parser.parseTags, input)
+
+    input = "hardware::"
+    self.assertRaises(ParsingException, self.parser.parseTags, input)
+
+    input = "::lang:c"
+    self.assertRaises(ParsingException, self.parser.parseTags, input)
+
+    input = "hardware::, ::lang:c"
+    self.assertRaises(ParsingException, self.parser.parseTags, input)
+
   def testParseSection(self):
     input = {'Section': "utils"}
     self.assertEqual(Section("utils"), self.parser.parseSection(input))
