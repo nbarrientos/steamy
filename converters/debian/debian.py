@@ -84,11 +84,10 @@ class Launcher():
 
   def processPackages(self):
     try:
-      inputFile = open(self.opts.packages, "r")
-      outputFile = open(self.opts.packagesOutput, "w")
+      inputFile = open(self.opts.packages)
     except IOError, e:
-      logging.error("Unable to open input and/or output Packages streams (%s)." % str(e))
-      raise Exception()
+      logging.error("Unable to open Packages input stream (%s)." % str(e))
+      raise e
    
     counter = 0
     graph = ConjunctiveGraph()
@@ -115,6 +114,12 @@ class Launcher():
         logging.info("Processed %s binary packages." % counter)
 
     # Serialize all packages
+    try:
+      outputFile = open(self.opts.packagesOutput, "w")
+    except IOError, e:
+      logging.error("Unable to open Packages output stream (%s)." % str(e))
+      raise e
+
     serializer.serializeToFile(graph, outputFile)
     logging.debug("Graph serialization completed.")
 
@@ -126,10 +131,9 @@ class Launcher():
 
   def processSources(self):
     try:
-      inputFile = open(self.opts.sources, "r")
-      outputFile = open(self.opts.sourcesOutput, "w")
+      inputFile = open(self.opts.sources)
     except IOError, e:
-      logging.error("Unable to open input and/or output Sources streams (%s)." % str(e))
+      logging.error("Unable to open Sources input stream (%s)." % str(e))
       raise Exception()
    
     counter = 0
@@ -157,6 +161,12 @@ class Launcher():
         logging.info("Processed %s source packages." % counter)
     
     # Serialize all packages
+    try:
+      outputFile = open(self.opts.sourcesOutput, "w")
+    except IOError, e:
+      logging.error("Unable to open Sources output stream (%s)." % str(e))
+      raise Exception()
+    
     serializer.serializeToFile(graph, outputFile)
     logging.debug("Graph serialization completed.")
 
