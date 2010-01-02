@@ -74,7 +74,7 @@ class Launcher():
                       metavar="FILE", help="dump rdfized Sources to FILE [default: %default]")
     parser.add_option("-t", "--compose-team", action="store_true", dest="team",\
                       default=False,\
-                      help="Team members heuristic: every human uploader will be\
+                      help="Team membership heuristic: every human uploader will be\
                       added as team member if maintainer is classified as a team")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose",\
                       default=False, help="increases debug level")
