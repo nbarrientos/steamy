@@ -59,12 +59,12 @@ class Launcher():
                       metavar="FILE", help="read Packages from FILE")
     parser.add_option("-s", "--sources", dest="sources",\
                       metavar="FILE", help="read Sources from FILE")
-    parser.add_option("-b", "--baseURI", dest="baseURI",\
+    parser.add_option("-b", "--base", dest="baseURI",\
                       metavar="URI", help="use URI as base URI for all resources\
                       (e.g. 'http://rdf.debian.net')")
     parser.add_option("-d", "--distribution", dest="distribution",\
                       metavar="URI", help="attach distribution pointed by URI\
-                      to every Source package processed\
+                      to every source package processed\
                       (e.g. 'http://rdf.debian.net/distribution/lenny')")
     parser.add_option("-P", "--packages-output", dest="packagesOutput",\
                       default="Packages.rdf",\
@@ -74,12 +74,12 @@ class Launcher():
                       metavar="FILE", help="dump rdfized Sources to FILE [default: %default]")
     parser.add_option("-t", "--guess-team", action="store_true", dest="team",\
                       default=False,\
-                      help="Team membership heuristic: every human uploader\
+                      help="team membership heuristic: every human uploader\
                       will be added as team member if maintainer is classified as a team")
     parser.add_option("-a", "--guess-area", action="store_true", dest="area",\
                       default=False,\
-                      help="Package area heuristic: attach source package to an\
-                      area according to the content of Directory field")
+                      help="package area heuristic: attach source package to an\
+                      area according to the content of directory field")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose",\
                       default=False, help="increases debug level")
     parser.add_option("-q", "--quiet", action="store_true", dest="quiet",\
