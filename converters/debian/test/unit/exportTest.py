@@ -16,10 +16,10 @@ PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 """
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
-FOAF = Namespace(u"http://xmlns.com/foaf/0.1/#")
+FOAF = Namespace(u"http://xmlns.com/foaf/0.1/")
 RDF = Namespace(u"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
-TAG = Namespace(u"http://www.holygoat.co.uk/owl/redwood/0.1/tags#")
+TAG = Namespace(u"http://www.holygoat.co.uk/owl/redwood/0.1/tags/")
 
 ALLTRIPLES = BQ + "SELECT ?x ?y ?z WHERE { ?x ?y ?z . }"
 
