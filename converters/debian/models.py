@@ -3,31 +3,30 @@ import re
 
 from debian_bundle.changelog import Version
 
-class SourcePackage():
+class BasePackage():
+  def __init__(self, package=None, version=None):
+    self.package = package
+    self.version = version
+
+  def __str__(self):
+    return "%s (%s)" % (self.package, self.version)
+
+class SourcePackage(BasePackage):
   def asURI(self, base):
     return "%s/source/%s/%s" % (base, self.package, self.version)
 
   def asLabel(self):
     return "Source: %s (%s)" % (self.package, self.version)
 
-class BinaryPackage():
-  def __init__(self, package=None, version=None):
-    self.package = package
-    self.version = version
-
+class BinaryPackage(BasePackage):
   def asURI(self, base):
     return "%s/binary/%s/%s" % (base, self.package, self.version)
 
   def asLabel(self):
     return "Binary: %s (%s)" % (self.package, self.version)
 
-  def __repr__(self):
-    return "%s (%s)" % (self.package, self.version)
-
 class BinaryPackageBuild():
   def __init__(self, ancestor = None):
-    self.architecture = None
-    self.installedSize = None
     self.ancestor = ancestor # Cycles are OK in Python! :)
 
   def asURI(self, base):
@@ -50,7 +49,7 @@ class Architecture():
   def asLabel(self):
     return "Architecture: %s" % (self.name)
 
-  def __repr__(self):
+  def __str__(self):
     return str(self.name)
 
   def __eq__(self, other):
@@ -76,7 +75,7 @@ class Constraints():
   def len(self):
     return len(self.orconstraints)
 
-  def __repr__(self):
+  def __str__(self):
     return "Constraints: %s" % str(self.orconstraints)
 
   def __iter__(self):
@@ -92,7 +91,7 @@ class OrConstraint():
   def get(self, index):
     return self.constraints[index]
 
-  def __repr__(self):
+  def __str__(self):
     return "OrConstraint: %s" % str(self.constraints)
 
 class Constraint():
@@ -123,7 +122,7 @@ class Constraint():
 
     return label
 
-  def __repr__(self):
+  def __str__(self):
     if self.operator and self.version:
       return "%s (%s %s)" % (self.package, self.operator, self.version)
     else:
@@ -143,7 +142,7 @@ class File():
   def asLabel(self):
     return "File: %s" % self.name
 
-  def __repr__(self):
+  def __str__(self):
     return "%s %s %s" % (self.md5sum, self.size, self.name)
 
   def __eq__(self, other):
@@ -173,7 +172,7 @@ class Tag():
   def asLabel(self):
     return "Tag: %s::%s" % (self.facet, self.tag)
 
-  def __repr__(self):
+  def __str__(self):
     return "%s::%s" % (self.facet, self.tag)
 
   def __eq__(self, other):
