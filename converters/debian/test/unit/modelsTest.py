@@ -246,6 +246,17 @@ class ContributorTest(unittest.TestCase):
     self.assertEqual("Contributor: Name Surname <mail@example.com>",\
                      self.c.asLabel())
 
+class AreaTest(unittest.TestCase):
+  def setUp(self):
+    self.a = Area("main")
+
+  def testAsLabel(self):
+    self.assertEqual("Area: main", self.a.asLabel())
+
+  def testEq(self):
+    self.assertNotEqual(Area("name"), self.a)
+    self.assertEqual(Area("main"), self.a)
+
 class ToolsTest(unittest.TestCase):
   def setUp(self):
     self.name1 = "Debian Cool Team"

@@ -120,6 +120,15 @@ class BaseParser():
       contributors.append(self.parseContributor(contributor))
 
     return contributors
+
+  def parseArea(self, raw):
+    regex = re.compile(r"^pool/(?P<area>(main|non-free|contrib))/./.+?")
+    match = regex.match(raw)
+
+    if match and match.group("area"):
+      return Area(match.group("area"))
+    else:
+      raise ParsingException("parseArea", raw)
     
 
 class SourcesParser(BaseParser):
@@ -134,7 +143,7 @@ class SourcesParser(BaseParser):
     sourcePackage.buildDepends = self.parseBuildDepends(raw)
     sourcePackage.buildDependsIndep = self.parseBuildDependsIndep(raw)
     sourcePackage.architecture = self.parseArchitecture(raw)
-    sourcePackage.directory = self.parseDirectory(raw)
+    (sourcePackage.directory, sourcePackage.area) = self.parseDirectory(raw)
     sourcePackage.files = self.parseFiles(raw, sourcePackage.directory)
     sourcePackage.priority = self.parsePriority(raw)
     sourcePackage.section = self.parseSection(raw)
@@ -165,7 +174,7 @@ class SourcesParser(BaseParser):
 
   @required('Directory')
   def parseDirectory(self, raw):
-    return Directory(raw['Directory'])
+    return (Directory(raw['Directory']), self.parseArea(raw['Directory']))
 
   @required('Maintainer')
   def parseMaintainer(self, raw):

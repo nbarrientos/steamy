@@ -18,6 +18,7 @@ class SourcePackage():
     self.maintainer = None
     self.uploaders = None
     self.homepage = None
+    self.area = None
 
   def asURI(self, base):
     return "%s/source/%s/%s" % (base, self.package, self.version)
@@ -272,6 +273,19 @@ class Team(Contributor):
 
   def isTeam(self):
     return True
+
+class Area():
+  def __init__(self, name):
+    self.name = name
+
+  def asURI(self, base):
+    return "%s/area/%s" % (base, self.name)
+
+  def asLabel(self):
+    return "Area: %s" % self.name
+
+  def __eq__(self, other):
+    return self.name.__eq__(other.name)
 
 # Tools
 

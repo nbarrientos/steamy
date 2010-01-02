@@ -91,7 +91,7 @@ class SourcesParserTest(unittest.TestCase):
                       self.parser.parseFiles, self.sourcePackage, None)
 
   def testParseDirectory(self):
-    self.assertEqual(Directory("pool/main/s/srcpkg"),\
+    self.assertEqual((Directory("pool/main/s/srcpkg"), Area("main")),\
                      self.parser.parseDirectory(self.sourcePackage))
 
   def testParseDirectoryMissingField(self):
@@ -414,3 +414,16 @@ class BaseParserTest(unittest.TestCase):
   def testParseHomepage(self):
     input = {'Homepage': "http://example.org"}
     self.assertEquals("http://example.org", self.parser.parseHomepage(input))
+
+  def testParseArea(self):
+    input = 'pool/main/f/foo'
+    self.assertEquals(Area("main"), self.parser.parseArea(input))
+
+    input = 'pool/non-free/f/foo'
+    self.assertEquals(Area("non-free"), self.parser.parseArea(input))
+    
+    input = 'pool/contrib/f/foo'
+    self.assertEquals(Area("contrib"), self.parser.parseArea(input))
+    
+    input = 'pool/failarea/f/foo'
+    self.assertRaises(ParsingException, self.parser.parseArea, input)
