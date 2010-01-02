@@ -181,6 +181,15 @@ class TriplifierTest(unittest.TestCase):
     self.t.triplifyTeamAddMember(t,t)
     self.assertEqual(0, len(self.graph))
 
+  def testTriplifyArea(self):
+    a = Area("main")
+    uriref = URIRef("b/area/main")
+    self.assertEqual(uriref, self.t.triplifyArea(a))
+    self.assertEqual(2, len(self.graph))
+    expected = [(uriref, RDF.type, DEB['Area']),\
+                (uriref, RDFS.label, Literal("Area: main"))]
+    self.compareGeneratedTriples(expected)
+
   # Mocks
   def mockTriplifyVersionNumber(self, version):
     classMock = self.mox.CreateMock(Triplifier)

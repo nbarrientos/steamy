@@ -72,10 +72,14 @@ class Launcher():
     parser.add_option("-S", "--sources-output", dest="sourcesOutput",\
                       default="Sources.rdf",\
                       metavar="FILE", help="dump rdfized Sources to FILE [default: %default]")
-    parser.add_option("-t", "--compose-team", action="store_true", dest="team",\
+    parser.add_option("-t", "--guess-team", action="store_true", dest="team",\
                       default=False,\
-                      help="Team membership heuristic: every human uploader will be\
-                      added as team member if maintainer is classified as a team")
+                      help="Team membership heuristic: every human uploader\
+                      will be added as team member if maintainer is classified as a team")
+    parser.add_option("-a", "--guess-area", action="store_true", dest="area",\
+                      default=False,\
+                      help="Package area heuristic: attach source package to an\
+                      area according to the content of Directory field")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose",\
                       default=False, help="increases debug level")
     parser.add_option("-q", "--quiet", action="store_true", dest="quiet",\

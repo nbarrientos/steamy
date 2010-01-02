@@ -99,6 +99,11 @@ class Triplifier():
     if self.opts.distribution:
       self.g.add((ref, DEB['distribution'], URIRef(self.opts.distribution)))
 
+    # Area
+    if self.opts.area:
+      areaRef = self.triplifyArea(package.area)
+      self.g.add((ref, DEB['area'], areaRef))
+
   def triplifyBinaryPackageLite(self, package):
     ref = URIRef(package.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['Binary']))
@@ -291,7 +296,15 @@ class Triplifier():
       memberRef = URIRef(member.asURI(self.baseURI))
       self.g.add((teamRef, FOAF['member'], memberRef))
       logging.debug("Added %s to team %s" % (member, team))
-   
+  
+  def triplifyArea(self, area):
+    ref = URIRef(area.asURI(self.baseURI))
+    self.g.add((ref, RDF.type, DEB['Area']))
+    self.g.add((ref, RDFS.label, Literal(area.asLabel())))
+
+    return ref
+
+
 class Serializer():
   def __init__(self):
     pass
