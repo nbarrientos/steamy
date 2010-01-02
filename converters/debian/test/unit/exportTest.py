@@ -1,6 +1,7 @@
 import unittest
 import hashlib
 import mox
+import optparse
 
 from rdflib.Graph import ConjunctiveGraph
 from rdflib import Namespace, URIRef, BNode, Literal
@@ -24,9 +25,10 @@ ALLTRIPLES = BQ + "SELECT ?x ?y ?z WHERE { ?x ?y ?z . }"
 
 class TriplifierTest(unittest.TestCase):
   def setUp(self):
+    values = optparse.Values()
+    values.ensure_value("baseURI", "b")
     self.graph = ConjunctiveGraph()
-    self.t = Triplifier(self.graph, "b")
-    self.base = "b"
+    self.t = Triplifier(self.graph, values)
     self.mox = mox.Mox()
 
   def compareGeneratedTriples(self, expected):
@@ -162,6 +164,22 @@ class TriplifierTest(unittest.TestCase):
                 (uriref, FOAF['name'], Literal("Debian Love Team")),\
                 (uriref, FOAF['mbox'], Literal("love@lists.debian.org"))]
     self.compareGeneratedTriples(expected)
+
+  def testTriplifyTeamAddMemberHumanToGroup(self):
+    t = Team("Debian Love Team", "love@lists.debian.org")
+    h = Human("Jon Doe", "joe@debian.org")
+    tRef = URIRef("b/team/Debian_Love_Team")
+    hRef = URIRef("b/people/Jon_Doe")
+    self.t.triplifyTeamAddMember(t,h)
+    self.assertEqual(1, len(self.graph))
+    expected = [(tRef, FOAF['member'], hRef)]
+    self.compareGeneratedTriples(expected)
+
+  def testTriplifyTeamAddMemberGroupToGroup(self):
+    t = Team("Debian Love Team", "love@lists.debian.org")
+    tRef = URIRef("b/team/Debian_Love_Team")
+    self.t.triplifyTeamAddMember(t,t)
+    self.assertEqual(0, len(self.graph))
 
   # Mocks
   def mockTriplifyVersionNumber(self, version):

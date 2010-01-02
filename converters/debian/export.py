@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf8 -*-
 
+import logging
+
 from rdflib import Namespace, URIRef, BNode, Literal
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
@@ -11,9 +13,10 @@ NFO = Namespace(u"http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#")
 TAG = Namespace(u"http://www.holygoat.co.uk/owl/redwood/0.1/tags#")
 
 class Triplifier():
-  def __init__(self, graph, baseURI):
+  def __init__(self, graph, opts):
     self.g = graph
-    self.baseURI = baseURI
+    self.baseURI = opts.baseURI
+    self.opts = opts
     
     # Namespace Binding
     self.g.bind("rdf", RDF)
@@ -89,6 +92,12 @@ class Triplifier():
       for uploader in package.uploaders:
         uploaderRef = self.triplifyContributor(uploader)
         self.g.add((ref, DEB['uploader'], uploaderRef))
+        if self.opts.team and package.maintainer.isTeam():
+          self.triplifyTeamAddMember(package.maintainer, uploader)
+
+    # Distribution
+    if self.opts.distribution:
+      self.g.add((ref, DEB['distribution'], URIRef(self.opts.distribution)))
 
   def triplifyBinaryPackageLite(self, package):
     ref = URIRef(package.asURI(self.baseURI))
@@ -275,8 +284,14 @@ class Triplifier():
     self.g.add((ref, FOAF['mbox'], Literal(contributor.email)))
 
     return ref
-    
- 
+
+  def triplifyTeamAddMember(self, team, member):
+    if not member.isTeam():
+      teamRef = URIRef(team.asURI(self.baseURI))
+      memberRef = URIRef(member.asURI(self.baseURI))
+      self.g.add((teamRef, FOAF['member'], memberRef))
+      logging.debug("Added %s to team %s" % (member, team))
+   
 class Serializer():
   def __init__(self):
     pass

@@ -238,6 +238,9 @@ class Contributor():
   def asLabel(self):
     return "Contributor: %s <%s>" % (self.name, self.email)
 
+  def __str__(self):
+    return "%s <%s>" % (self.name, self.email)
+
 class Human(Contributor):
   def __init__(self, name, email):
     Contributor.__init__(self, name, email)
@@ -251,6 +254,9 @@ class Human(Contributor):
   def rdfType(self):
     return "Person"
 
+  def isTeam(self):
+    return False
+
 class Team(Contributor):
   def __init__(self, name, email):
     Contributor.__init__(self, name, email)
@@ -263,6 +269,9 @@ class Team(Contributor):
 
   def rdfType(self):
     return "Group"
+
+  def isTeam(self):
+    return True
 
 # Tools
 

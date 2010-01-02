@@ -1,5 +1,6 @@
 import sys
 import logging
+import re
 
 from optparse import OptionParser
 from debian_bundle import deb822
@@ -59,13 +60,22 @@ class Launcher():
     parser.add_option("-s", "--sources", dest="sources",\
                       metavar="FILE", help="read Sources from FILE")
     parser.add_option("-b", "--baseURI", dest="baseURI",\
-                      metavar="URI", help="use URI as base URI for all resources")
+                      metavar="URI", help="use URI as base URI for all resources\
+                      (e.g. 'http://rdf.debian.net')")
+    parser.add_option("-d", "--distribution", dest="distribution",\
+                      metavar="URI", help="attach distribution pointed by URI\
+                      to every Source package processed\
+                      (e.g. 'http://rdf.debian.net/distribution/lenny')")
     parser.add_option("-P", "--packages-output", dest="packagesOutput",\
                       default="Packages.rdf",\
                       metavar="FILE", help="dump rdfized Packages to FILE [default: %default]")
     parser.add_option("-S", "--sources-output", dest="sourcesOutput",\
                       default="Sources.rdf",\
                       metavar="FILE", help="dump rdfized Sources to FILE [default: %default]")
+    parser.add_option("-t", "--compose-team", action="store_true", dest="team",\
+                      default=False,\
+                      help="Team members heuristic: every human uploader will be\
+                      added as team member if maintainer is classified as a team")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose",\
                       default=False, help="increases debug level")
     parser.add_option("-q", "--quiet", action="store_true", dest="quiet",\
@@ -81,6 +91,9 @@ class Launcher():
       raise OptsParsingException("Required base URI is missing, did you forget -b?")
     elif self.opts.verbose and self.opts.quiet:
       raise OptsParsingException("Verbose (-v) and Quiet (-q) are mutually exclusive")
+    elif self.opts.distribution and \
+         re.match(r"^%s.+" % self.opts.baseURI, self.opts.distribution) == None:
+      raise OptsParsingException("Distribution (-d) is not prefixed by base URI (-b)")
 
   def processPackages(self):
     try:
@@ -92,7 +105,7 @@ class Launcher():
     counter = 0
     graph = ConjunctiveGraph()
     parser = PackagesParser()
-    triplifier = Triplifier(graph, self.opts.baseURI)
+    triplifier = Triplifier(graph, self.opts)
     serializer = Serializer()
 
     rawPackages = deb822.Packages.iter_paragraphs(inputFile)
@@ -139,7 +152,7 @@ class Launcher():
     counter = 0
     graph = ConjunctiveGraph()
     parser = SourcesParser()
-    triplifier = Triplifier(graph, self.opts.baseURI)
+    triplifier = Triplifier(graph, self.opts)
     serializer = Serializer()
 
     rawPackages = deb822.Sources.iter_paragraphs(inputFile)
