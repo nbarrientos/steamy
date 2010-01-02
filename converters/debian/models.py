@@ -37,27 +37,6 @@ class BinaryPackageBuild():
     return "BinaryBuild: %s (%s) [%s]" % \
             (self.ancestor.package, self.ancestor.version, self.architecture)
 
-class Architecture():
-  INSTANCES = ("all")
-
-  def __init__(self, arch):
-    self.name = arch
-
-  def asURI(self, base):
-    return "%s/arch/%s" % (base, self.name)
-
-  def asLabel(self):
-    return "Architecture: %s" % (self.name)
-
-  def __str__(self):
-    return str(self.name)
-
-  def __eq__(self, other):
-    return self.name.__eq__(other.name)
-
-  def hasInstance(self):
-    return self.name in self.INSTANCES
-
 class VersionNumber(Version):
   def asURI(self, base):
     return "%s/version/%s" % (base, str(self))
@@ -178,31 +157,48 @@ class Tag():
   def __eq__(self, other):
     return self.facet.__eq__(other.facet) and self.tag.__eq__(other.tag)
 
-class Section():
+class SimpleDataHolder():
   def __init__(self, name):
     self.name = name
 
+  def __str__(self):
+    return str(self.name)
+
+  def __eq__(self, other):
+    return self.name.__eq__(other.name)
+
+class Architecture(SimpleDataHolder):
+  INSTANCES = ("all")
+
+  def asURI(self, base):
+    return "%s/arch/%s" % (base, self.name)
+
+  def asLabel(self):
+    return "Architecture: %s" % (self.name)
+
+  def hasInstance(self):
+    return self.name in self.INSTANCES
+
+class Section(SimpleDataHolder):
   def asURI(self, base):
     return "%s/section/%s" % (base, self.name)
 
   def asLabel(self):
     return "Section: %s" % (self.name)
 
-  def __eq__(self, other):
-    return self.name.__eq__(other.name)
-
-class Priority():
-  def __init__(self, name):
-    self.name = name
-
+class Priority(SimpleDataHolder):
   def asURI(self, base):
     return "%s/priority/%s" % (base, self.name)
 
   def asLabel(self):
     return "Priority: %s" % (self.name)
 
-  def __eq__(self, other):
-    return self.name.__eq__(other.name)
+class Area(SimpleDataHolder):
+  def asURI(self, base):
+    return "%s/area/%s" % (base, self.name)
+
+  def asLabel(self):
+    return "Area: %s" % self.name
 
 class Contributor():
   def __init__(self, name, email):
@@ -246,19 +242,6 @@ class Team(Contributor):
 
   def isTeam(self):
     return True
-
-class Area():
-  def __init__(self, name):
-    self.name = name
-
-  def asURI(self, base):
-    return "%s/area/%s" % (base, self.name)
-
-  def asLabel(self):
-    return "Area: %s" % self.name
-
-  def __eq__(self, other):
-    return self.name.__eq__(other.name)
 
 # Tools
 
