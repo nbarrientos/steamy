@@ -4,29 +4,13 @@ import re
 from debian_bundle.changelog import Version
 
 class SourcePackage():
-  def __init__(self):
-    self.package = None
-    self.binary = None
-    self.version = None
-    self.buildDepends = None
-    self.buildDependsIndep = None
-    self.architecture = None
-    self.files = None
-    self.directory = None
-    self.priority = None
-    self.section = None
-    self.maintainer = None
-    self.uploaders = None
-    self.homepage = None
-    self.area = None
-
   def asURI(self, base):
     return "%s/source/%s/%s" % (base, self.package, self.version)
 
   def asLabel(self):
     return "Source: %s (%s)" % (self.package, self.version)
 
-class BinaryPackageLite():
+class BinaryPackage():
   def __init__(self, package=None, version=None):
     self.package = package
     self.version = version
@@ -39,16 +23,6 @@ class BinaryPackageLite():
 
   def __repr__(self):
     return "%s (%s)" % (self.package, self.version)
-
-class BinaryPackage(BinaryPackageLite):
-  def __init__(self):
-    self.depends = None
-    self.recommends = None
-    self.build = None
-    self.filename = None
-    self.tag = None
-    self.priority = None
-    self.section = None
 
 class BinaryPackageBuild():
   def __init__(self, ancestor = None):

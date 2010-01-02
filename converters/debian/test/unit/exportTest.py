@@ -92,7 +92,7 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(3, len(self.graph))
 
   def testTriplifyBinaryPackageBuild(self):
-    bs = BinaryPackageLite("pkg1", "6.7")
+    bs = BinaryPackage("pkg1", "6.7")
     b = BinaryPackageBuild(bs)
     b.architecture = Architecture("arch")
     b.installedSize = "12345"

@@ -70,9 +70,9 @@ class ArchitectureTest(unittest.TestCase):
     self.assertFalse(self.arch.hasInstance())
     self.assertTrue(Architecture("all").hasInstance())
 
-class BinaryPackageLiteTest(unittest.TestCase):
+class BinaryPackageTest(unittest.TestCase):
   def setUp(self):
-    self.b = BinaryPackageLite()
+    self.b = BinaryPackage()
     self.b.package = "testpkgname"
     self.b.version = VersionNumber("1.0-1")
 
@@ -88,7 +88,7 @@ class BinaryPackageBuildTest(unittest.TestCase):
   def setUp(self):
     self.b = BinaryPackageBuild()
     self.b.architecture = Architecture("testarch")
-    self.b.ancestor = BinaryPackageLite("parent", "4:4.5")
+    self.b.ancestor = BinaryPackage("parent", "4:4.5")
   
   def testAsURINoAncestor(self):
     baseURI = "http://example.org"
