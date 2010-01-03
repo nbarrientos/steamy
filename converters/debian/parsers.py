@@ -165,8 +165,13 @@ class SourcesParser(BaseParser):
   def parseBuildDependsIndep(self, raw):
     return self.parseConstraints(raw['Build-Depends-Indep'])
 
-  #@optional('Build-Conflicts')
-  #@optional('Build-Conflicts-Indep')
+  @optional('Build-Conflicts')
+  def parseBuildConflicts(self, raw):
+    return self.parseConstraints(raw['Build-Conflicts'])
+  
+  @optional('Build-Conflicts-Indep')
+  def parseBuildConflictsIndep(self, raw):
+    return self.parseConstraints(raw['Build-Conflicts-Indep'])
 
   @required('Files')
   def parseFiles(self, raw, dir):
@@ -235,13 +240,33 @@ class PackagesParser(BaseParser):
   def parseRecommends(self, raw):
     return self.parseConstraints(raw['Recommends'])
 
-  #@optional('Pre-Depends')
-  #@optional('Suggests')
-  #@optional('Breaks')
-  #@optional('Conflicts')
-  #@optional('Provides')
-  #@optional('Replaces')
-  #@optional('Enhances')
+  @optional('Pre-Depends')
+  def parsePreDepends(self, raw):
+    return self.parseConstraints(raw['Pre-Depends'])
+
+  @optional('Suggests')
+  def parseSuggests(self, raw):
+    return self.parseConstraints(raw['Suggests'])
+
+  @optional('Breaks')
+  def parseBreaks(self, raw):
+    return self.parseConstraints(raw['Breaks'])
+
+  @optional('Conflicts')
+  def parseConflicts(self, raw):
+    return self.parseConstraints(raw['Conflicts'])
+
+  @optional('Provides')
+  def parseProvides(self, raw):
+    return self.parseConstraints(raw['Provides'])
+
+  @optional('Replaces')
+  def parseReplaces(self, raw):
+    return self.parseConstraints(raw['Replaces'])
+
+  @optional('Enhances')
+  def parseEnhances(self, raw):
+    return self.parseConstraints(raw['Enhances'])
 
   @required('Architecture')
   def parseArchitecture(self, raw):

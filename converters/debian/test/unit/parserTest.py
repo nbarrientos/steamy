@@ -13,6 +13,8 @@ class SourcesParserTest(unittest.TestCase):
     self.sourcePackage['Version'] = "0.5-2"
     self.sourcePackage['Build-Depends'] = "dep1 (>= 5.0.37), dep2 [!powerpc]"
     self.sourcePackage['Build-Depends-Indep'] = "dep3"
+    self.sourcePackage['Build-Conflicts'] = "dep4"
+    self.sourcePackage['Build-Conflicts-Indep'] = "dep5"
     self.sourcePackage['Architecture'] = "any"
     self.sourcePackage['Section'] = "games"
     self.sourcePackage['Priority'] = "optional"
@@ -58,6 +60,22 @@ class SourcesParserTest(unittest.TestCase):
     self.assertEqual("http://www.example.org", s.homepage)
     self.assertTrue(s.dmUploadAllowed)
 
+  def testParseBuildDepends(self):
+    deps = self.parser.parseBuildDepends(self.sourcePackage)
+    self.assertEqual(2, deps.len())
+
+  def testParseBuildDependsIndep(self):
+    deps = self.parser.parseBuildDependsIndep(self.sourcePackage)
+    self.assertEqual(1, deps.len())
+
+  def testParseBuildConflicts(self):
+    deps = self.parser.parseBuildConflicts(self.sourcePackage)
+    self.assertEqual(1, deps.len())
+
+  def testParseBuildConflictsIndep(self):
+    deps = self.parser.parseBuildConflictsIndep(self.sourcePackage)
+    self.assertEqual(1, deps.len())
+
   def testParseArchitecture(self):
     archs = self.parser.parseArchitecture(self.sourcePackage)
     self.assertEqual(1, len(archs))
@@ -67,7 +85,6 @@ class SourcesParserTest(unittest.TestCase):
     archs = self.parser.parseArchitecture(self.sourcePackage)
     self.assertEqual(2, len(archs))
     self.assertEqual([Architecture("i386"), Architecture("amd64")], archs)
-
 
   def testParseArchitectureSeveral(self):
     self.sourcePackage['Architecture'] = "alpha amd64"
@@ -145,6 +162,13 @@ class PackagesParserTest(unittest.TestCase):
     self.binaryPackage['Architecture'] = "all"
     self.binaryPackage['Depends'] = "exim4 (>> 0.5.4-5) | mail-transport-agent, mutt"
     self.binaryPackage['Recommends'] = "locales, mime-support, bastet"
+    self.binaryPackage['Pre-Depends'] = "test"
+    self.binaryPackage['Suggests'] = "test"
+    self.binaryPackage['Breaks'] = "test"
+    self.binaryPackage['Conflicts'] = "test"
+    self.binaryPackage['Provides'] = "test"
+    self.binaryPackage['Replaces'] = "test"
+    self.binaryPackage['Enhances'] = "test"
     self.binaryPackage['Installed-Size'] = "108"
     self.binaryPackage['Filename'] = "pool/main/m/mutt/mutt_1:2.4+svn5677-1_all.deb"
     self.binaryPackage['MD5sum'] = "460578"
@@ -175,6 +199,38 @@ class PackagesParserTest(unittest.TestCase):
   def testParseDependsMissingField(self):
     self.binaryPackage.pop('Depends')
     self.assertEqual(None, self.parser.parseDepends(self.binaryPackage))
+
+  def testParseRecommends(self):
+    deps = self.parser.parseRecommends(self.binaryPackage)
+    self.assertEqual(3, deps.len())
+
+  def testParsePreDepends(self):
+    deps = self.parser.parsePreDepends(self.binaryPackage)
+    self.assertEqual(1, deps.len())
+
+  def testParseSuggests(self):
+    deps = self.parser.parseSuggests(self.binaryPackage)
+    self.assertEqual(1, deps.len())
+
+  def testParseBreaks(self):
+    deps = self.parser.parseBreaks(self.binaryPackage)
+    self.assertEqual(1, deps.len())
+
+  def testParseConflicts(self):
+    deps = self.parser.parseConflicts(self.binaryPackage)
+    self.assertEqual(1, deps.len())
+
+  def testParseProvides(self):
+    deps = self.parser.parseProvides(self.binaryPackage)
+    self.assertEqual(1, deps.len())
+
+  def testParseReplaces(self):
+    deps = self.parser.parseReplaces(self.binaryPackage)
+    self.assertEqual(1, deps.len())
+
+  def testParseEnhances(self):
+    deps = self.parser.parseEnhances(self.binaryPackage)
+    self.assertEqual(1, deps.len())
 
   def testParseInstalledSize(self):
     self.assertEqual("108", self.parser.parseInstalledSize(self.binaryPackage))
