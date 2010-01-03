@@ -24,10 +24,6 @@ class BaseParser():
   def parseSection(self, raw):
     return Section(raw['Section'])
 
-  @optional('Priority')
-  def parsePriority(self, raw):
-    return Priority(raw['Priority'])
-
   @optional('Homepage')
   def parseHomepage(self, raw):
     return raw['Homepage']
@@ -168,6 +164,9 @@ class SourcesParser(BaseParser):
   def parseBuildDependsIndep(self, raw):
     return self.parseConstraints(raw['Build-Depends-Indep'])
 
+  #@optional('Build-Conflicts')
+  #@optional('Build-Conflicts-Indep')
+
   @required('Files')
   def parseFiles(self, raw, dir):
     return [File(d['name'], d['md5sum'], d['size'], dir) for d in raw['Files']]
@@ -183,6 +182,17 @@ class SourcesParser(BaseParser):
   @optional('Uploaders')
   def parseUploaders(self, raw):
     return self.parseContributors(raw['Uploaders'])
+
+  @optional('Priority')
+  def parsePriority(self, raw):
+    return Priority(raw['Priority'])
+
+  #@required('Format')
+  #@optional('Standards-Version')
+  #@optional('Dm-Upload-Allowed')
+  #@optional('Vcs-Browser')
+  #@optional('Vcs-{Git,Svn,Bzr,Darcs,Hg,Cvs,Arch,Mtn}')
+
 
 class PackagesParser(BaseParser):
   def __init__(self):
@@ -218,6 +228,14 @@ class PackagesParser(BaseParser):
   def parseRecommends(self, raw):
     return self.parseConstraints(raw['Recommends'])
 
+  #@optional('Pre-Depends')
+  #@optional('Suggests')
+  #@optional('Breaks')
+  #@optional('Conflicts')
+  #@optional('Provides')
+  #@optional('Replaces')
+  #@optional('Enhances')
+
   @required('Architecture')
   def parseArchitecture(self, raw):
     return Architecture(raw['Architecture'])
@@ -231,6 +249,13 @@ class PackagesParser(BaseParser):
     split = raw['Filename'].rsplit("/", 1)
     return File(split[1], raw['MD5sum'], raw['Size'], Directory(split[0]))
 
-  @optional('Tag') # FIXME
+  @optional('Tag')
   def parseTag(self, raw):
     return self.parseTags(raw['Tag'])
+
+  @required('Priority')
+  def parsePriority(self, raw):
+    return Priority(raw['Priority'])
+
+  #@optional('Essential')
+  #@required('Description')

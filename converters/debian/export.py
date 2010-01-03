@@ -158,9 +158,8 @@ class Triplifier():
     self.g.add((ref, DEB['section'], sectionRef))
 
     # Priority
-    if package.priority:
-      priorityRef = self.triplifyPriority(package.priority)
-      self.g.add((ref, DEB['priority'], priorityRef))
+    priorityRef = self.triplifyPriority(package.priority)
+    self.g.add((ref, DEB['priority'], priorityRef))
 
   def triplifyBinaryPackageBuild(self, build):
     ref = URIRef(build.asURI(self.baseURI))

@@ -117,6 +117,14 @@ class SourcesParserTest(unittest.TestCase):
     self.sourcePackage.pop('Uploaders')
     self.assertEqual(None, self.parser.parseUploaders(self.sourcePackage))
 
+  def testParsePriority(self):
+    self.assertEqual(Priority("optional"),\
+                     self.parser.parsePriority(self.sourcePackage))
+
+  def testParsePriorityMissingField(self):
+    self.sourcePackage.pop('Priority')
+    self.assertEqual(None, self.parser.parsePriority(self.sourcePackage))
+
 class PackagesParserTest(unittest.TestCase):
   
   def setUp(self):
@@ -209,7 +217,15 @@ class PackagesParserTest(unittest.TestCase):
                         "460578", "4566", Directory("pool/main/m/mutt"))
     file = self.parser.parseFilename(self.binaryPackage)
     self.assertEqual(expectedFile, file)
-    
+
+  def testParsePriority(self):
+    self.assertEqual(Priority("optional"),\
+                     self.parser.parsePriority(self.binaryPackage))
+
+  def testParsePriorityMissingField(self):
+    self.binaryPackage.pop('Priority')
+    self.assertRaises(MissingMandatoryFieldException,\
+                      self.parser.parsePriority, self.binaryPackage)
 
 class BaseParserTest(unittest.TestCase):
   def setUp(self):
@@ -384,10 +400,6 @@ class BaseParserTest(unittest.TestCase):
     input = {'Section': "utils"}
     self.assertEqual(Section("utils"), self.parser.parseSection(input))
  
-  def testParsePriority(self):
-    input = {'Priority': "required"}
-    self.assertEqual(Section("required"), self.parser.parsePriority(input))
-
   def testParseContributor(self):
     input = "Name Surname     <mail@example.com>"
     contributor = self.parser.parseContributor(input)
