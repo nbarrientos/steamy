@@ -56,6 +56,16 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#area -->
+
+    <owl:ObjectProperty rdf:about="#area">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:range rdf:resource="#ArchiveArea"/>
+        <rdfs:domain rdf:resource="#Source"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#binary -->
 
     <owl:ObjectProperty rdf:about="#binary">
@@ -150,6 +160,15 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#maintainer -->
+
+    <owl:ObjectProperty rdf:about="#maintainer">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="#Source"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#onlyInArchitecture -->
 
     <owl:ObjectProperty rdf:about="#onlyInArchitecture">
@@ -223,6 +242,14 @@
 
     <owl:ObjectProperty rdf:about="#suggests">
         <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#uploader -->
+
+    <owl:ObjectProperty rdf:about="#uploader">
+        <rdfs:domain rdf:resource="#Source"/>
     </owl:ObjectProperty>
     
 
@@ -330,6 +357,12 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#ArchiveArea -->
+
+    <owl:Class rdf:about="#ArchiveArea"/>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#Binary -->
 
     <owl:Class rdf:about="#Binary"/>
@@ -384,12 +417,6 @@
     
 
 
-    <!-- http://www.w3.org/2002/07/owl#Thing -->
-
-    <owl:Class rdf:about="&owl;Thing"/>
-    
-
-
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -405,6 +432,70 @@
 
     <owl:Thing rdf:about="#all">
         <rdf:type rdf:resource="#Architecture"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#contrib -->
+
+    <owl:Thing rdf:about="#contrib">
+        <rdf:type rdf:resource="#ArchiveArea"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#extra -->
+
+    <owl:Thing rdf:about="#extra">
+        <rdf:type rdf:resource="#Priority"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#important -->
+
+    <Priority rdf:about="#important">
+        <rdf:type rdf:resource="&owl;Thing"/>
+    </Priority>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#main -->
+
+    <ArchiveArea rdf:about="#main">
+        <rdf:type rdf:resource="&owl;Thing"/>
+    </ArchiveArea>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#non-free -->
+
+    <owl:Thing rdf:about="#non-free">
+        <rdf:type rdf:resource="#ArchiveArea"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#optional -->
+
+    <Priority rdf:about="#optional">
+        <rdf:type rdf:resource="&owl;Thing"/>
+    </Priority>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#required -->
+
+    <owl:Thing rdf:about="#required">
+        <rdf:type rdf:resource="#Priority"/>
+    </owl:Thing>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#standard -->
+
+    <owl:Thing rdf:about="#standard">
+        <rdf:type rdf:resource="#Priority"/>
     </owl:Thing>
 </rdf:RDF>
 
