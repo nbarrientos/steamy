@@ -302,11 +302,10 @@ class Triplifier():
       logging.debug("Added %s to team %s" % (member, team))
   
   def triplifyArea(self, area):
-    ref = URIRef(area.asURI(self.baseURI))
-    self.g.add((ref, RDF.type, DEB['Area']))
-    self.g.add((ref, RDFS.label, Literal(area.asLabel())))
-
-    return ref
+    if area.hasInstance():
+      return DEB[area.name]
+    else:
+      raise Exception("All areas are instances (%s)" % area.name)
 
   def triplifyHomepage(self, homepage):
     ref = URIRef(homepage)

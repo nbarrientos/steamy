@@ -167,6 +167,9 @@ class SimpleDataHolder():
   def __eq__(self, other):
     return self.name.__eq__(other.name)
 
+  def hasInstance(self):
+    return self.name in self.INSTANCES
+
 class Architecture(SimpleDataHolder):
   INSTANCES = ("all")
 
@@ -175,9 +178,6 @@ class Architecture(SimpleDataHolder):
 
   def asLabel(self):
     return "Architecture: %s" % (self.name)
-
-  def hasInstance(self):
-    return self.name in self.INSTANCES
 
 class Section(SimpleDataHolder):
   def asURI(self, base):
@@ -194,6 +194,8 @@ class Priority(SimpleDataHolder):
     return "Priority: %s" % (self.name)
 
 class Area(SimpleDataHolder):
+  INSTANCES = ("main", "non-free", "contrib")
+
   def asURI(self, base):
     return "%s/area/%s" % (base, self.name)
 

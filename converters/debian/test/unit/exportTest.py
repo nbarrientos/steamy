@@ -183,12 +183,7 @@ class TriplifierTest(unittest.TestCase):
 
   def testTriplifyArea(self):
     a = Area("main")
-    uriref = URIRef("b/area/main")
-    self.assertEqual(uriref, self.t.triplifyArea(a))
-    self.assertEqual(2, len(self.graph))
-    expected = [(uriref, RDF.type, DEB['Area']),\
-                (uriref, RDFS.label, Literal("Area: main"))]
-    self.compareGeneratedTriples(expected)
+    self.assertEqual(DEB["main"], self.t.triplifyArea(a))
 
   def testTriplifyHomepage(self):
     h = "http://example.org"
