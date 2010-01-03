@@ -196,12 +196,6 @@ class Priority(SimpleDataHolder):
 class Area(SimpleDataHolder):
   INSTANCES = ("main", "non-free", "contrib")
 
-  def asURI(self, base):
-    return "%s/area/%s" % (base, self.name)
-
-  def asLabel(self):
-    return "Area: %s" % self.name
-
 class Contributor():
   def __init__(self, name, email):
     self.name = name

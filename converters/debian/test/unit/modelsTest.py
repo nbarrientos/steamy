@@ -246,8 +246,10 @@ class AreaTest(unittest.TestCase):
   def setUp(self):
     self.a = Area("main")
 
-  def testAsLabel(self):
-    self.assertEqual("Area: main", self.a.asLabel())
+  def testHasInstance(self):
+    self.assertTrue(Area("main").hasInstance())
+    self.assertTrue(Area("contrib").hasInstance())
+    self.assertTrue(Area("non-free").hasInstance())
 
   def testEq(self):
     self.assertNotEqual(Area("name"), self.a)
