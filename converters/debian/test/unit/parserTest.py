@@ -1,12 +1,16 @@
 import unittest
+import optparse
 
 from models import *
 from parsers import SourcesParser, PackagesParser, BaseParser
-from errors import MissingMandatoryFieldException, ParsingException
+from errors import MissingMandatoryFieldException, ParsingErrorException
+from errors import PackageDoesNotMatchRegularExpressionException
 
 class SourcesParserTest(unittest.TestCase):
   def setUp(self):
-    self.parser = SourcesParser()
+    self.values = optparse.Values()
+    self.values.ensure_value("regex", None)
+    self.parser = SourcesParser(self.values)
     self.sourcePackage = {}
     self.sourcePackage['Package'] = "srcpkg"
     self.sourcePackage['Binary'] = "binpkg1, binpkg2"
@@ -64,6 +68,20 @@ class SourcesParserTest(unittest.TestCase):
     self.assertEqual("http://www.example.org", s.homepage)
     self.assertTrue(s.dmUploadAllowed)
 
+  def testParseSourcePackageNotMatchingRegex(self):
+    self.values.ensure_value("regex", "^a.*")
+    self.parser.opts = self.values
+    self.parser.opts.cRegex = re.compile("^a.*")
+    self.assertRaises(PackageDoesNotMatchRegularExpressionException,\
+                      self.parser.parseSourcePackage, self.sourcePackage)
+   
+  def testParseSourcePackageMatchingRegex(self):
+    self.values.ensure_value("regex", "^src.*")
+    self.parser.opts = self.values
+    self.parser.opts.cRegex = re.compile("^src.*")
+    s = self.parser.parseSourcePackage(self.sourcePackage)
+    self.assertEqual("srcpkg", s.package)
+    
   def testParseBuildDepends(self):
     deps = self.parser.parseBuildDepends(self.sourcePackage)
     self.assertEqual(2, deps.len())
@@ -157,9 +175,10 @@ class SourcesParserTest(unittest.TestCase):
 
 
 class PackagesParserTest(unittest.TestCase):
-  
   def setUp(self):
-    self.parser = PackagesParser()
+    self.values = optparse.Values()
+    self.values.ensure_value("regex", None)
+    self.parser = PackagesParser(self.values)
     self.binaryPackage = {}
     self.binaryPackage['Package'] = "mutt"
     self.binaryPackage['Version'] = "1:2.4+svn5677-1"
@@ -293,6 +312,20 @@ class PackagesParserTest(unittest.TestCase):
     self.assertTrue(p.essential)
     self.assertTrue(p.buildEssential)
 
+  def testParseBinaryPackageNotMatchingRegex(self):
+    self.values.ensure_value("regex", "^a.*")
+    self.parser.opts = self.values
+    self.parser.opts.cRegex = re.compile("^a.*")
+    self.assertRaises(PackageDoesNotMatchRegularExpressionException,\
+                      self.parser.parseBinaryPackage, self.binaryPackage)
+   
+  def testParseBinaryPackageMatchingRegex(self):
+    self.values.ensure_value("regex", "^mu.*")
+    self.parser.opts = self.values
+    self.parser.opts.cRegex = re.compile("^mu.*")
+    p = self.parser.parseBinaryPackage(self.binaryPackage)
+    self.assertEqual("mutt", p.package)
+ 
   def testParseFilename(self):
     expectedFile = File("mutt_1:2.4+svn5677-1_all.deb",\
                         "460578", "4566", Directory("pool/main/m/mutt"))
@@ -325,7 +358,9 @@ class PackagesParserTest(unittest.TestCase):
 
 class BaseParserTest(unittest.TestCase):
   def setUp(self):
-    self.parser = BaseParser()
+    values = optparse.Values()
+    values.ensure_value("regex", None)
+    self.parser = BaseParser(values)
 
   def testParseVersionNumberNoEpoch(self):
     ver = self.parser.parseVersionNumber("1.0-1")
@@ -434,15 +469,15 @@ class BaseParserTest(unittest.TestCase):
 
   def testParseMalformedConstraint(self):
     input = "()"
-    self.assertRaises(ParsingException, self.parser.parseConstraint, input)
+    self.assertRaises(ParsingErrorException, self.parser.parseConstraint, input)
     input = "(>= 6.8)"
-    self.assertRaises(ParsingException, self.parser.parseConstraint, input)
+    self.assertRaises(ParsingErrorException, self.parser.parseConstraint, input)
     input = "[]"
-    self.assertRaises(ParsingException, self.parser.parseConstraint, input)
+    self.assertRaises(ParsingErrorException, self.parser.parseConstraint, input)
     input = "[powerpc]"
-    self.assertRaises(ParsingException, self.parser.parseConstraint, input)
+    self.assertRaises(ParsingErrorException, self.parser.parseConstraint, input)
     input = "(>= 5.6) [powerpc]"
-    self.assertRaises(ParsingException, self.parser.parseConstraint, input)
+    self.assertRaises(ParsingErrorException, self.parser.parseConstraint, input)
 
   def testParseTags(self):
     input = "implemented-in::lisp"
@@ -481,16 +516,16 @@ class BaseParserTest(unittest.TestCase):
     #self.assertEqual(3,len(tags))
 
     input = "::"
-    self.assertRaises(ParsingException, self.parser.parseTags, input)
+    self.assertRaises(ParsingErrorException, self.parser.parseTags, input)
 
     input = "hardware::"
-    self.assertRaises(ParsingException, self.parser.parseTags, input)
+    self.assertRaises(ParsingErrorException, self.parser.parseTags, input)
 
     input = "::lang:c"
-    self.assertRaises(ParsingException, self.parser.parseTags, input)
+    self.assertRaises(ParsingErrorException, self.parser.parseTags, input)
 
     input = "hardware::, ::lang:c"
-    self.assertRaises(ParsingException, self.parser.parseTags, input)
+    self.assertRaises(ParsingErrorException, self.parser.parseTags, input)
 
   def testParseSection(self):
     input = {'Section': "utils"}
@@ -508,7 +543,7 @@ class BaseParserTest(unittest.TestCase):
     self.assertEqual("mail+fax@example-rt.com", contributor.email)
 
     input = "Name Surname"
-    self.assertRaises(ParsingException, self.parser.parseContributor, input)
+    self.assertRaises(ParsingErrorException, self.parser.parseContributor, input)
 
   def testParseContributors(self):
     input = "Name Surname <mail@example.com>"
@@ -534,4 +569,4 @@ class BaseParserTest(unittest.TestCase):
     self.assertEquals(AreaBox.get("contrib"), self.parser.parseArea(input))
     
     input = 'pool/failarea/f/foo'
-    self.assertRaises(ParsingException, self.parser.parseArea, input)
+    self.assertRaises(ParsingErrorException, self.parser.parseArea, input)

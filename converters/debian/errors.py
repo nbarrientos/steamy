@@ -6,12 +6,22 @@ class OptsParsingException(Exception):
     return str(self.msg)
 
 class ParsingException(Exception):
+  pass
+
+class ParsingErrorException(ParsingException):
   def __init__(self, method, raw):
     self.method = method
     self.raw = raw
 
   def __str__(self):
     return "Method '%s' failed parsing: '%s'" % (self.method, self.raw)
+
+class PackageDoesNotMatchRegularExpressionException(ParsingException):
+  def __init__(self, packagename):
+    self.packagename = packagename
+
+  def __str__(self):
+    return "Package '%s' does not match the regex" % self.packagename
 
 class MissingMandatoryFieldException(ParsingException):
   def __init__(self, fieldname=""):

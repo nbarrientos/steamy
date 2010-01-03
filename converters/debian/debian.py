@@ -72,6 +72,8 @@ class Launcher():
     parser.add_option("-S", "--sources-output", dest="sourcesOutput",\
                       default="Sources.rdf",\
                       metavar="FILE", help="dump rdfized Sources to FILE [default: %default]")
+    parser.add_option("-r", "--regex", dest="regex",\
+                      metavar="REGEX", help="skip source and binary packages not matching REGEX")
     parser.add_option("-t", "--guess-team", action="store_true", dest="team",\
                       default=False,\
                       help="team membership heuristic: every human uploader\
@@ -98,6 +100,11 @@ class Launcher():
     elif self.opts.distribution and \
          re.match(r"^%s.+" % self.opts.baseURI, self.opts.distribution) == None:
       raise OptsParsingException("Distribution (-d) is not prefixed by base URI (-b)")
+    elif self.opts.regex:
+      try:
+        self.opts.cRegex = re.compile(self.opts.regex)
+      except:
+        raise OptsParsingException("The Regular expression you provided is not valid")
 
   def processPackages(self):
     try:
@@ -108,7 +115,7 @@ class Launcher():
    
     counter = 0
     graph = ConjunctiveGraph()
-    parser = PackagesParser()
+    parser = PackagesParser(self.opts)
     triplifier = Triplifier(graph, self.opts)
     serializer = Serializer()
 
@@ -120,7 +127,7 @@ class Launcher():
         parsedPackage = parser.parseBinaryPackage(p)
         counter += 1
       except ParsingException, e:
-        logging.error("Unable to parse package (%s). Skipping this." % str(e))
+        logging.debug("Won't process this package (reason: '%s')." % str(e))
         continue
 
       # Triplify
@@ -155,7 +162,7 @@ class Launcher():
    
     counter = 0
     graph = ConjunctiveGraph()
-    parser = SourcesParser()
+    parser = SourcesParser(self.opts)
     triplifier = Triplifier(graph, self.opts)
     serializer = Serializer()
 
@@ -167,7 +174,7 @@ class Launcher():
         parsedPackage = parser.parseSourcePackage(p)
         counter += 1
       except ParsingException, e:
-        logging.error("Unable to parse package (%s). Skipping this." % str(e))
+        logging.debug("Won't process this package (reason: '%s')." % str(e))
         continue
 
       # Triplify

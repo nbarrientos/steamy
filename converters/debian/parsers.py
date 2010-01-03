@@ -3,12 +3,13 @@ import re
 from debian_bundle.changelog import Version
 
 from models import *
-from errors import MissingMandatoryFieldException, ParsingException
+from errors import MissingMandatoryFieldException, ParsingErrorException
+from errors import PackageDoesNotMatchRegularExpressionException
 from decorators import required, optional
 
 class BaseParser():
-  def __init__(self):
-    pass
+  def __init__(self, opts):
+    self.opts = opts
 
   # Common Fields
 
@@ -75,7 +76,7 @@ class BaseParser():
           else:
             constraint.onlyin.append(Architecture(arch))
     else:
-      raise ParsingException("parseConstraint", raw)
+      raise ParsingErrorException("parseConstraint", raw)
 
     return constraint
 
@@ -95,7 +96,7 @@ class BaseParser():
           for t in match.group('tags').split(","):
             tags.append(Tag(facet, t))
       else:
-        raise ParsingException("parseTags", raw)
+        raise ParsingErrorException("parseTags", raw)
 
     return tags
 
@@ -106,7 +107,7 @@ class BaseParser():
     if match and match.group("name") and match.group("email"):
       return guessRole(match.group("name"), match.group("email"))
     else:
-      raise ParsingException("parseContributor", raw)
+      raise ParsingErrorException("parseContributor", raw)
 
   def parseContributors(self, raw):
     split = re.split(",\s*", raw)
@@ -124,18 +125,18 @@ class BaseParser():
     if match and match.group("area"):
       return AreaBox.get(match.group("area"))
     else:
-      raise ParsingException("parseArea", raw)
+      raise ParsingErrorException("parseArea", raw)
 
 
 class SourcesParser(BaseParser):
-  def __init__(self):
-    pass
-
   def parseSourcePackage(self, raw):
-    sourcePackage = SourcePackage()
-    sourcePackage.package = self.parsePackage(raw)
+    sourcePackage = SourcePackage(self.parsePackage(raw), self.parseVersion(raw))
+
+    if self.opts.regex:
+      if not self.opts.cRegex.match(sourcePackage.package):
+        raise PackageDoesNotMatchRegularExpressionException(sourcePackage.package)
+    
     sourcePackage.binary = self.parseBinary(raw)
-    sourcePackage.version = self.parseVersion(raw)
     sourcePackage.buildDepends = self.parseBuildDepends(raw)
     sourcePackage.buildDependsIndep = self.parseBuildDependsIndep(raw)
     sourcePackage.buildConflicts = self.parseBuildConflicts(raw)
@@ -207,13 +208,13 @@ class SourcesParser(BaseParser):
 
 
 class PackagesParser(BaseParser):
-  def __init__(self):
-    pass
-
   def parseBinaryPackage(self, raw):
-    binaryPackage = BinaryPackage()
-    binaryPackage.package = self.parsePackage(raw)
-    binaryPackage.version = self.parseVersion(raw)
+    binaryPackage = BinaryPackage(self.parsePackage(raw), self.parseVersion(raw))
+
+    if self.opts.regex:
+      if not self.opts.cRegex.match(binaryPackage.package):
+        raise PackageDoesNotMatchRegularExpressionException(binaryPackage.package)
+
     binaryPackage.depends = self.parseDepends(raw)
     binaryPackage.recommends = self.parseRecommends(raw)
     binaryPackage.preDepends = self.parsePreDepends(raw)
