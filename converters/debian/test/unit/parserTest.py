@@ -56,6 +56,7 @@ class SourcesParserTest(unittest.TestCase):
     self.assertNotEqual(None, s.uploaders)
     self.assertEqual(2, len(s.uploaders))
     self.assertEqual("http://www.example.org", s.homepage)
+    self.assertTrue(s.dmUploadAllowed)
 
   def testParseArchitecture(self):
     archs = self.parser.parseArchitecture(self.sourcePackage)
@@ -222,6 +223,8 @@ class PackagesParserTest(unittest.TestCase):
     self.assertEqual("4566", p.filename.size)
     self.assertEqual("460578", p.filename.md5sum)
     self.assertEqual(3, len(p.tag))
+    self.assertTrue(p.essential)
+    self.assertTrue(p.buildEssential)
 
   def testParseFilename(self):
     expectedFile = File("mutt_1:2.4+svn5677-1_all.deb",\

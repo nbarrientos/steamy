@@ -146,6 +146,7 @@ class SourcesParser(BaseParser):
     sourcePackage.maintainer = self.parseMaintainer(raw)
     sourcePackage.uploaders = self.parseUploaders(raw)
     sourcePackage.homepage = self.parseHomepage(raw)
+    sourcePackage.dmUploadAllowed = self.parseDmUploadAllowed(raw)
     return sourcePackage
 
   def parseBinary(self, raw):
@@ -214,6 +215,8 @@ class PackagesParser(BaseParser):
     binaryPackage.tag = self.parseTag(raw)
     binaryPackage.priority = self.parsePriority(raw)
     binaryPackage.section = self.parseSection(raw)
+    binaryPackage.essential = self.parseEssential(raw)
+    binaryPackage.buildEssential = self.parseBuildEssential(raw)
     return binaryPackage
 
   def parseBinaryPackageBuild(self, raw, ancestor):
