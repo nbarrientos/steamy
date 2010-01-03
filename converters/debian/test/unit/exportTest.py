@@ -190,6 +190,14 @@ class TriplifierTest(unittest.TestCase):
                 (uriref, RDFS.label, Literal("Area: main"))]
     self.compareGeneratedTriples(expected)
 
+  def testTriplifyHomepage(self):
+    h = "http://example.org"
+    uriref = URIRef(h)
+    self.assertEqual(uriref, self.t.triplifyHomepage(h))
+    self.assertEqual(1, len(self.graph))
+    expected = [(uriref, RDF.type, FOAF['Document'])]
+    self.compareGeneratedTriples(expected)
+
   # Mocks
   def mockTriplifyVersionNumber(self, version):
     classMock = self.mox.CreateMock(Triplifier)

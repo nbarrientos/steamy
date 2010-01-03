@@ -104,6 +104,11 @@ class Triplifier():
       areaRef = self.triplifyArea(package.area)
       self.g.add((ref, DEB['area'], areaRef))
 
+    # Homepage
+    if package.homepage:
+      homepageRef = self.triplifyHomepage(package.homepage)
+      self.g.add((ref, FOAF['page'], URIRef(package.homepage)))
+
   def triplifyBinaryPackageLite(self, package):
     ref = URIRef(package.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['Binary']))
@@ -300,6 +305,12 @@ class Triplifier():
     ref = URIRef(area.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['Area']))
     self.g.add((ref, RDFS.label, Literal(area.asLabel())))
+
+    return ref
+
+  def triplifyHomepage(self, homepage):
+    ref = URIRef(homepage)
+    self.g.add((ref, RDF.type, FOAF['Document']))
 
     return ref
 
