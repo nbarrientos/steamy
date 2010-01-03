@@ -16,6 +16,7 @@ class SourcesParserTest(unittest.TestCase):
     self.sourcePackage['Architecture'] = "any"
     self.sourcePackage['Section'] = "games"
     self.sourcePackage['Priority'] = "optional"
+    self.sourcePackage['Dm-Upload-Allowed'] = "yes"
     self.sourcePackage['Maintainer'] = "Joe Doe <joe.doe@example.com>"
     self.sourcePackage['Uploaders'] = "Alice <alice@d.o>, Bob <bob@d.o>"
     self.sourcePackage['Homepage'] = "http://www.example.org"
@@ -125,6 +126,14 @@ class SourcesParserTest(unittest.TestCase):
     self.sourcePackage.pop('Priority')
     self.assertEqual(None, self.parser.parsePriority(self.sourcePackage))
 
+  def testParseDmUploadAllowed(self):
+    self.assertTrue(self.parser.parseDmUploadAllowed(self.sourcePackage))
+
+  def testParseBuildEssentialMissingField(self):
+    self.sourcePackage.pop('Dm-Upload-Allowed')
+    self.assertEqual(None, self.parser.parseDmUploadAllowed(self.sourcePackage))
+
+
 class PackagesParserTest(unittest.TestCase):
   
   def setUp(self):
@@ -142,6 +151,8 @@ class PackagesParserTest(unittest.TestCase):
     self.binaryPackage['Tag'] = "implemented-in::python, hardware::{lap,power:apm}"
     self.binaryPackage['Section'] = "games"
     self.binaryPackage['Priority'] = "optional"
+    self.binaryPackage['Essential'] = "yes"
+    self.binaryPackage['Build-Essential'] = "yes"
 
   def tearDown(self):
     pass
@@ -226,6 +237,21 @@ class PackagesParserTest(unittest.TestCase):
     self.binaryPackage.pop('Priority')
     self.assertRaises(MissingMandatoryFieldException,\
                       self.parser.parsePriority, self.binaryPackage)
+
+  def testParseEssential(self):
+    self.assertTrue(self.parser.parseEssential(self.binaryPackage))
+
+  def testParseEssentialMissingField(self):
+    self.binaryPackage.pop('Essential')
+    self.assertEqual(None, self.parser.parseEssential(self.binaryPackage))
+
+  def testParseBuildEssential(self):
+    self.assertTrue(self.parser.parseBuildEssential(self.binaryPackage))
+
+  def testParseBuildEssentialMissingField(self):
+    self.binaryPackage.pop('Build-Essential')
+    self.assertEqual(None, self.parser.parseBuildEssential(self.binaryPackage))
+
 
 class BaseParserTest(unittest.TestCase):
   def setUp(self):

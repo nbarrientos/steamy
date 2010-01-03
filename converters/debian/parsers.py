@@ -125,7 +125,7 @@ class BaseParser():
       return AreaBox.get(match.group("area"))
     else:
       raise ParsingException("parseArea", raw)
-    
+
 
 class SourcesParser(BaseParser):
   def __init__(self):
@@ -189,7 +189,11 @@ class SourcesParser(BaseParser):
 
   #@required('Format')
   #@optional('Standards-Version')
-  #@optional('Dm-Upload-Allowed')
+
+  @optional('Dm-Upload-Allowed')
+  def parseDmUploadAllowed(self, raw):
+    return True
+
   #@optional('Vcs-Browser')
   #@optional('Vcs-{Git,Svn,Bzr,Darcs,Hg,Cvs,Arch,Mtn}')
 
@@ -257,5 +261,12 @@ class PackagesParser(BaseParser):
   def parsePriority(self, raw):
     return PriorityBox.get(raw['Priority'])
 
-  #@optional('Essential')
+  @optional('Essential')
+  def parseEssential(self, raw):
+    return True
+
+  @optional('Build-Essential')
+  def parseBuildEssential(self, raw):
+    return True
+  
   #@required('Description')
