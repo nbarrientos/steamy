@@ -220,15 +220,16 @@ class PriorityTest(unittest.TestCase):
   def setUp(self):
     self.p = Priority("name")
 
+  def testHasInstance(self):
+    self.assertTrue(Priority("required").hasInstance())
+    self.assertTrue(Priority("important").hasInstance())
+    self.assertTrue(Priority("standard").hasInstance())
+    self.assertTrue(Priority("optional").hasInstance())
+    self.assertTrue(Priority("extra").hasInstance())
+
   def testEq(self):
     self.assertEqual(self.p, Priority("name"))
     self.assertNotEqual(self.p, Priority("othername"))
-
-  def testAsURI(self):
-    self.assertEqual("b/priority/name", self.p.asURI("b"))
-
-  def testAsLabel(self):
-    self.assertEqual("Priority: name", self.p.asLabel())
 
 class ContributorTest(unittest.TestCase):
   def setUp(self):

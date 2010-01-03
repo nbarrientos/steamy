@@ -277,12 +277,10 @@ class Triplifier():
     return ref
  
   def triplifyPriority(self, priority):
-    ref = URIRef(priority.asURI(self.baseURI))
-    self.g.add((ref, RDF.type, DEB['Priority']))
-    self.g.add((ref, RDFS.label, Literal(priority.asLabel())))
-    self.g.add((ref, DEB['priorityName'], Literal(priority.name)))
-
-    return ref
+    if priority.hasInstance():
+      return DEB[priority.name]
+    else:
+      raise Exception("All priorities are instances (%s)" % priority.name)
 
   def triplifyContributor(self, contributor):
     ref = URIRef(contributor.asURI(self.baseURI))

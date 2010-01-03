@@ -134,14 +134,8 @@ class TriplifierTest(unittest.TestCase):
     self.compareGeneratedTriples(expected)
 
   def testTriplifyPriority(self):
-    p = Priority("test")
-    uriref = URIRef("b/priority/test")
-    self.assertEqual(uriref, self.t.triplifyPriority(p))
-    self.assertEqual(3, len(self.graph))
-    expected = [(uriref, RDF.type, DEB['Priority']),\
-                (uriref, RDFS.label, Literal("Priority: test")),\
-                (uriref, DEB['priorityName'], Literal("test"))]
-    self.compareGeneratedTriples(expected)
+    p = Priority("optional")
+    self.assertEqual(DEB["optional"], self.t.triplifyPriority(p))
 
   def testTriplifyContributorHuman(self):
     c = Human("Jon Doe", "joe@debian.org")

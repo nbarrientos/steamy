@@ -170,6 +170,15 @@ class SimpleDataHolder():
   def hasInstance(self):
     return self.name in self.INSTANCES
 
+class SimpleDataHolderIndividuals():
+  def asURI(self, base):
+    raise Exception("No URI available, you should treat \
+                     this object as an individual")
+
+  def asLabel(self):
+    raise Exception("No label available, you should treat \
+                     this object as an individual")
+
 class Architecture(SimpleDataHolder):
   INSTANCES = ("all")
 
@@ -186,14 +195,10 @@ class Section(SimpleDataHolder):
   def asLabel(self):
     return "Section: %s" % (self.name)
 
-class Priority(SimpleDataHolder):
-  def asURI(self, base):
-    return "%s/priority/%s" % (base, self.name)
+class Priority(SimpleDataHolder, SimpleDataHolderIndividuals):
+  INSTANCES = ("required", "important", "standard", "optional", "extra")
 
-  def asLabel(self):
-    return "Priority: %s" % (self.name)
-
-class Area(SimpleDataHolder):
+class Area(SimpleDataHolder, SimpleDataHolderIndividuals):
   INSTANCES = ("main", "non-free", "contrib")
 
 class Contributor():
