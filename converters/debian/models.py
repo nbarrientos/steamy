@@ -3,6 +3,8 @@ import re
 
 from debian_bundle.changelog import Version
 
+from errors import IndividualNotFoundException
+
 class BasePackage():
   def __init__(self, package=None, version=None):
     self.package = package
@@ -164,13 +166,11 @@ class SimpleDataHolder():
   def __str__(self):
     return str(self.name)
 
+class SimpleDataHolderResources(SimpleDataHolder):
   def __eq__(self, other):
     return self.name.__eq__(other.name)
 
-  def hasInstance(self):
-    return self.name in self.INSTANCES
-
-class SimpleDataHolderIndividuals():
+class SimpleDataHolderIndividuals(SimpleDataHolder):
   def asURI(self, base):
     raise Exception("No URI available, you should treat \
                      this object as an individual")
@@ -179,7 +179,7 @@ class SimpleDataHolderIndividuals():
     raise Exception("No label available, you should treat \
                      this object as an individual")
 
-class Architecture(SimpleDataHolder):
+class Architecture(SimpleDataHolderResources):
   INSTANCES = ("all")
 
   def asURI(self, base):
@@ -188,18 +188,41 @@ class Architecture(SimpleDataHolder):
   def asLabel(self):
     return "Architecture: %s" % (self.name)
 
-class Section(SimpleDataHolder):
+  def hasIndividual(self):
+    return self.name in self.INSTANCES
+
+class Section(SimpleDataHolderResources):
   def asURI(self, base):
     return "%s/section/%s" % (base, self.name)
 
   def asLabel(self):
     return "Section: %s" % (self.name)
 
-class Priority(SimpleDataHolder, SimpleDataHolderIndividuals):
-  INSTANCES = ("required", "important", "standard", "optional", "extra")
+class BaseBox():
+  @classmethod
+  def get(cls, name):
+    if name in cls._I:
+      return cls._I[name]
+    else:
+      raise IndividualNotFoundException(name)
 
-class Area(SimpleDataHolder, SimpleDataHolderIndividuals):
-  INSTANCES = ("main", "non-free", "contrib")
+class PriorityBox(BaseBox):
+  class Priority(SimpleDataHolderIndividuals):
+    pass
+
+  _I = {'required': Priority('required'),\
+        'important': Priority('important'),\
+        'standard': Priority('standard'),\
+        'optional': Priority('optional'),\
+        'extra': Priority('extra')}
+
+class AreaBox(BaseBox):
+  class Area(SimpleDataHolderIndividuals):
+    pass
+
+  _I = {'main': Area('main'),\
+        'non-free': Area('non-free'),\
+        'contrib': Area('contrib')}
 
 class Contributor():
   def __init__(self, name, email):

@@ -2,6 +2,8 @@ import unittest
 
 from models import *
 
+from errors import IndividualNotFoundException
+
 class VersionNumberTest(unittest.TestCase):
   def testFieldParser(self):
     v = VersionNumber("2:1.2~svn54-1.5")
@@ -66,9 +68,9 @@ class ArchitectureTest(unittest.TestCase):
     self.assertEqual(Architecture("i386"), Architecture("i386"))
     self.assertNotEqual(Architecture("i386"), Architecture("amd64"))
 
-  def testHasInstance(self):
-    self.assertFalse(self.arch.hasInstance())
-    self.assertTrue(Architecture("all").hasInstance())
+  def testHasIndividual(self):
+    self.assertFalse(self.arch.hasIndividual())
+    self.assertTrue(Architecture("all").hasIndividual())
 
 class BinaryPackageTest(unittest.TestCase):
   def setUp(self):
@@ -218,18 +220,30 @@ class SectionTest(unittest.TestCase):
 
 class PriorityTest(unittest.TestCase):
   def setUp(self):
-    self.p = Priority("name")
-
-  def testHasInstance(self):
-    self.assertTrue(Priority("required").hasInstance())
-    self.assertTrue(Priority("important").hasInstance())
-    self.assertTrue(Priority("standard").hasInstance())
-    self.assertTrue(Priority("optional").hasInstance())
-    self.assertTrue(Priority("extra").hasInstance())
+    self.p = PriorityBox.Priority("optional")
 
   def testEq(self):
-    self.assertEqual(self.p, Priority("name"))
-    self.assertNotEqual(self.p, Priority("othername"))
+    self.assertNotEqual(self.p, PriorityBox.Priority("optional"))
+
+  def testAsURI(self):
+    self.assertRaises(Exception, self.p.asURI, "b")
+
+  def testAsLabel(self):
+    self.assertRaises(Exception, self.p.asLabel)
+
+class PriorityBoxTest(unittest.TestCase):
+  def setUp(self):
+    self.p1 = PriorityBox.get("optional")
+    self.p2 = PriorityBox.get("optional")
+    self.p3 = PriorityBox.get("extra")
+
+  def testGetNotExistingIndividual(self):
+    self.assertRaises(IndividualNotFoundException, PriorityBox.get, "foo")
+
+  def testSameIDs(self):
+    self.assertEqual(id(self.p1), id(self.p1))
+    self.assertEqual(id(self.p1), id(self.p2))
+    self.assertNotEqual(id(self.p1), id(self.p3))
 
 class ContributorTest(unittest.TestCase):
   def setUp(self):
@@ -245,16 +259,30 @@ class ContributorTest(unittest.TestCase):
 
 class AreaTest(unittest.TestCase):
   def setUp(self):
-    self.a = Area("main")
-
-  def testHasInstance(self):
-    self.assertTrue(Area("main").hasInstance())
-    self.assertTrue(Area("contrib").hasInstance())
-    self.assertTrue(Area("non-free").hasInstance())
+    self.a = AreaBox.Area("main")
 
   def testEq(self):
-    self.assertNotEqual(Area("name"), self.a)
-    self.assertEqual(Area("main"), self.a)
+    self.assertNotEqual(AreaBox.Area("main"), self.a)
+
+  def testAsURI(self):
+    self.assertRaises(Exception, self.a.asURI, "b")
+
+  def testAsLabel(self):
+    self.assertRaises(Exception, self.a.asLabel)
+
+class AreaBoxTest(unittest.TestCase):
+  def setUp(self):
+    self.p1 = AreaBox.get("main")
+    self.p2 = AreaBox.get("main")
+    self.p3 = AreaBox.get("contrib")
+
+  def testGetNotExistingIndividual(self):
+    self.assertRaises(IndividualNotFoundException, PriorityBox.get, "foo")
+
+  def testSameIDs(self):
+    self.assertEqual(id(self.p1), id(self.p1))
+    self.assertEqual(id(self.p1), id(self.p2))
+    self.assertNotEqual(id(self.p1), id(self.p3))
 
 class ToolsTest(unittest.TestCase):
   def setUp(self):

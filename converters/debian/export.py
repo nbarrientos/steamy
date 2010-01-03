@@ -181,7 +181,7 @@ class Triplifier():
     return ref
 
   def triplifyArchitecture(self, arch):
-    if arch.hasInstance():
+    if arch.hasIndividual():
       return DEB[arch.name]
     else:
       ref = URIRef(arch.asURI(self.baseURI))
@@ -277,10 +277,7 @@ class Triplifier():
     return ref
  
   def triplifyPriority(self, priority):
-    if priority.hasInstance():
       return DEB[priority.name]
-    else:
-      raise Exception("All priorities are instances (%s)" % priority.name)
 
   def triplifyContributor(self, contributor):
     ref = URIRef(contributor.asURI(self.baseURI))
@@ -300,10 +297,7 @@ class Triplifier():
       logging.debug("Added %s to team %s" % (member, team))
   
   def triplifyArea(self, area):
-    if area.hasInstance():
       return DEB[area.name]
-    else:
-      raise Exception("All areas are instances (%s)" % area.name)
 
   def triplifyHomepage(self, homepage):
     ref = URIRef(homepage)

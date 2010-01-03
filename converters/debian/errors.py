@@ -19,3 +19,10 @@ class MissingMandatoryFieldException(ParsingException):
 
   def __str__(self):
     return "Mandatory field '%s' is missing" % self.fieldname
+
+class IndividualNotFoundException(Exception):
+  def __init__(self, individual):
+    self.individual = individual
+
+  def __str__(self):
+    return "Unable to find individual '%s'" % self.individual 

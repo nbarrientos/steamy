@@ -91,7 +91,7 @@ class SourcesParserTest(unittest.TestCase):
                       self.parser.parseFiles, self.sourcePackage, None)
 
   def testParseDirectory(self):
-    self.assertEqual((Directory("pool/main/s/srcpkg"), Area("main")),\
+    self.assertEqual((Directory("pool/main/s/srcpkg"), AreaBox.get("main")),\
                      self.parser.parseDirectory(self.sourcePackage))
 
   def testParseDirectoryMissingField(self):
@@ -118,7 +118,7 @@ class SourcesParserTest(unittest.TestCase):
     self.assertEqual(None, self.parser.parseUploaders(self.sourcePackage))
 
   def testParsePriority(self):
-    self.assertEqual(Priority("optional"),\
+    self.assertEqual(PriorityBox.get("optional"),\
                      self.parser.parsePriority(self.sourcePackage))
 
   def testParsePriorityMissingField(self):
@@ -219,7 +219,7 @@ class PackagesParserTest(unittest.TestCase):
     self.assertEqual(expectedFile, file)
 
   def testParsePriority(self):
-    self.assertEqual(Priority("optional"),\
+    self.assertEqual(PriorityBox.get("optional"),\
                      self.parser.parsePriority(self.binaryPackage))
 
   def testParsePriorityMissingField(self):
@@ -429,13 +429,13 @@ class BaseParserTest(unittest.TestCase):
 
   def testParseArea(self):
     input = 'pool/main/f/foo'
-    self.assertEquals(Area("main"), self.parser.parseArea(input))
+    self.assertEquals(AreaBox.get("main"), self.parser.parseArea(input))
 
     input = 'pool/non-free/f/foo'
-    self.assertEquals(Area("non-free"), self.parser.parseArea(input))
+    self.assertEquals(AreaBox.get("non-free"), self.parser.parseArea(input))
     
     input = 'pool/contrib/f/foo'
-    self.assertEquals(Area("contrib"), self.parser.parseArea(input))
+    self.assertEquals(AreaBox.get("contrib"), self.parser.parseArea(input))
     
     input = 'pool/failarea/f/foo'
     self.assertRaises(ParsingException, self.parser.parseArea, input)

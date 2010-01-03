@@ -122,7 +122,7 @@ class BaseParser():
     match = regex.match(raw)
 
     if match and match.group("area"):
-      return Area(match.group("area"))
+      return AreaBox.get(match.group("area"))
     else:
       raise ParsingException("parseArea", raw)
     
@@ -185,7 +185,7 @@ class SourcesParser(BaseParser):
 
   @optional('Priority')
   def parsePriority(self, raw):
-    return Priority(raw['Priority'])
+    return PriorityBox.get(raw['Priority'])
 
   #@required('Format')
   #@optional('Standards-Version')
@@ -255,7 +255,7 @@ class PackagesParser(BaseParser):
 
   @required('Priority')
   def parsePriority(self, raw):
-    return Priority(raw['Priority'])
+    return PriorityBox.get(raw['Priority'])
 
   #@optional('Essential')
   #@required('Description')

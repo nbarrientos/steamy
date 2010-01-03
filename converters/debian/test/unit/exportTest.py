@@ -134,7 +134,7 @@ class TriplifierTest(unittest.TestCase):
     self.compareGeneratedTriples(expected)
 
   def testTriplifyPriority(self):
-    p = Priority("optional")
+    p = PriorityBox.get("optional")
     self.assertEqual(DEB["optional"], self.t.triplifyPriority(p))
 
   def testTriplifyContributorHuman(self):
@@ -176,7 +176,7 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(0, len(self.graph))
 
   def testTriplifyArea(self):
-    a = Area("main")
+    a = AreaBox.get("main")
     self.assertEqual(DEB["main"], self.t.triplifyArea(a))
 
   def testTriplifyHomepage(self):
