@@ -109,6 +109,10 @@ class Triplifier():
       homepageRef = self.triplifyHomepage(package.homepage)
       self.g.add((ref, FOAF['page'], URIRef(package.homepage)))
 
+    # Dm-Upload-Allowed
+    if package.dmUploadAllowed:
+      self.g.add((ref, RDF.type, DEB['DMUploadAllowedSource']))
+
   def triplifyBinaryPackageLite(self, package):
     ref = URIRef(package.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['Binary']))
@@ -165,6 +169,14 @@ class Triplifier():
     # Priority
     priorityRef = self.triplifyPriority(package.priority)
     self.g.add((ref, DEB['priority'], priorityRef))
+
+    # Essential
+    if package.essential:
+      self.g.add((ref, RDF.type, DEB['EssentialBinary']))
+
+    # Build-Essential
+    if package.buildEssential:
+      self.g.add((ref, RDF.type, DEB['BuildEssentialBinary']))
 
   def triplifyBinaryPackageBuild(self, build):
     ref = URIRef(build.asURI(self.baseURI))
