@@ -20,9 +20,10 @@
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:debian="http://idi.fundacionctic.org/steamy/debian.owl#">
     <owl:Ontology rdf:about="">
-        <rdfs:label xml:lang="en">Debian Ontology</rdfs:label>
+        <rdfs:label xml:lang="en"
+            >Debian Archive Ontology</rdfs:label>
         <rdfs:label xml:lang="es"
-            >Ontolog&#237;a de Debian</rdfs:label>
+            >Ontolog&#237;a del archivo de Debian</rdfs:label>
     </owl:Ontology>
     
 
@@ -85,12 +86,36 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#breaks -->
+
+    <owl:ObjectProperty rdf:about="#breaks">
+        <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#build -->
 
     <owl:ObjectProperty rdf:about="#build">
         <rdf:type rdf:resource="&owl;InverseFunctionalProperty"/>
         <rdfs:domain rdf:resource="#Binary"/>
         <rdfs:range rdf:resource="#BinaryBuild"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#build-conflicts -->
+
+    <owl:ObjectProperty rdf:about="#build-conflicts">
+        <rdfs:subPropertyOf rdf:resource="#sourcePackageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#build-conflicts-indep -->
+
+    <owl:ObjectProperty rdf:about="#build-conflicts-indep">
+        <rdfs:subPropertyOf rdf:resource="#sourcePackageRelationship"/>
     </owl:ObjectProperty>
     
 
@@ -203,9 +228,25 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#provides -->
+
+    <owl:ObjectProperty rdf:about="#provides">
+        <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#recommends -->
 
     <owl:ObjectProperty rdf:about="#recommends">
+        <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#replaces -->
+
+    <owl:ObjectProperty rdf:about="#replaces">
         <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
     </owl:ObjectProperty>
     
@@ -290,6 +331,16 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#description -->
+
+    <owl:DatatypeProperty rdf:about="#description">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="#Binary"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#epoch -->
 
     <owl:DatatypeProperty rdf:about="#epoch">
@@ -308,6 +359,16 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#format -->
+
+    <owl:DatatypeProperty rdf:about="#format">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="#Source"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#installed-size -->
 
     <owl:DatatypeProperty rdf:about="#installed-size">
@@ -320,6 +381,16 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#packageName -->
 
     <owl:DatatypeProperty rdf:about="#packageName"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#standards-version -->
+
+    <owl:DatatypeProperty rdf:about="#standards-version">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="#Source"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
     
 
 
@@ -375,6 +446,20 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#BuildEssentialBinary -->
+
+    <owl:Class rdf:about="#BuildEssentialBinary"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#DMUploadAllowedSource -->
+
+    <owl:Class rdf:about="#DMUploadAllowedSource">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+    </owl:Class>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#DisjunctivePackageConstraint -->
 
     <owl:Class rdf:about="#DisjunctivePackageConstraint"/>
@@ -384,6 +469,12 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#Distribution -->
 
     <owl:Class rdf:about="#Distribution"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#EssentialBinary -->
+
+    <owl:Class rdf:about="#EssentialBinary"/>
     
 
 
@@ -417,6 +508,12 @@
     
 
 
+    <!-- http://www.w3.org/2002/07/owl#Thing -->
+
+    <owl:Class rdf:about="&owl;Thing"/>
+    
+
+
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -432,6 +529,8 @@
 
     <owl:Thing rdf:about="#all">
         <rdf:type rdf:resource="#Architecture"/>
+        <rdfs:label xml:lang="en"
+            >Architecture: all</rdfs:label>
     </owl:Thing>
     
 
@@ -440,6 +539,7 @@
 
     <owl:Thing rdf:about="#contrib">
         <rdf:type rdf:resource="#ArchiveArea"/>
+        <rdfs:label xml:lang="en">Area: contrib</rdfs:label>
     </owl:Thing>
     
 
@@ -448,6 +548,7 @@
 
     <owl:Thing rdf:about="#extra">
         <rdf:type rdf:resource="#Priority"/>
+        <rdfs:label xml:lang="en">Priority: extra</rdfs:label>
     </owl:Thing>
     
 
@@ -456,6 +557,8 @@
 
     <Priority rdf:about="#important">
         <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label xml:lang="en"
+            >Priority: important</rdfs:label>
     </Priority>
     
 
@@ -464,6 +567,7 @@
 
     <ArchiveArea rdf:about="#main">
         <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label xml:lang="en">Area: main</rdfs:label>
     </ArchiveArea>
     
 
@@ -472,6 +576,7 @@
 
     <owl:Thing rdf:about="#non-free">
         <rdf:type rdf:resource="#ArchiveArea"/>
+        <rdfs:label xml:lang="en">Area: non-free</rdfs:label>
     </owl:Thing>
     
 
@@ -480,6 +585,8 @@
 
     <Priority rdf:about="#optional">
         <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label xml:lang="en"
+            >Priority: optional</rdfs:label>
     </Priority>
     
 
@@ -488,6 +595,8 @@
 
     <owl:Thing rdf:about="#required">
         <rdf:type rdf:resource="#Priority"/>
+        <rdfs:label xml:lang="en"
+            >Priority: required</rdfs:label>
     </owl:Thing>
     
 
@@ -496,6 +605,8 @@
 
     <owl:Thing rdf:about="#standard">
         <rdf:type rdf:resource="#Priority"/>
+        <rdfs:label xml:lang="en"
+            >Priority: standard</rdfs:label>
     </owl:Thing>
 </rdf:RDF>
 
