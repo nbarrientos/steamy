@@ -58,6 +58,18 @@ class Triplifier():
         node = self.triplifyOrConstraint(ord)
         self.g.add((ref, DEB['build-depends-indep'], node))
 
+    # Build-Conflicts
+    if package.buildConflicts:
+      for ord in package.buildConflicts:
+        node = self.triplifyOrConstraint(ord)
+        self.g.add((ref, DEB['build-conflicts'], node))
+    
+    # Build-Conflicts-Indep
+    if package.buildConflictsIndep:
+      for ord in package.buildConflictsIndep:
+        node = self.triplifyOrConstraint(ord)
+        self.g.add((ref, DEB['build-conflicts-indep'], node))
+
     # Architecture
     if package.architecture:
       for arch in package.architecture:
@@ -147,6 +159,48 @@ class Triplifier():
       for orr in package.recommends:
         node = self.triplifyOrConstraint(orr)
         self.g.add((ref, DEB['recommends'], node))
+
+    # Pre-Depends
+    if package.preDepends:
+      for orr in package.preDepends:
+        node = self.triplifyOrConstraint(orr)
+        self.g.add((ref, DEB['pre-depends'], node))
+
+    # Suggests
+    if package.suggests:
+      for orr in package.suggests:
+        node = self.triplifyOrConstraint(orr)
+        self.g.add((ref, DEB['suggests'], node))
+
+    # Breaks
+    if package.breaks:
+      for orr in package.breaks:
+        node = self.triplifyOrConstraint(orr)
+        self.g.add((ref, DEB['breaks'], node))
+
+    # Conflicts
+    if package.conflicts:
+      for orr in package.conflicts:
+        node = self.triplifyOrConstraint(orr)
+        self.g.add((ref, DEB['conflicts'], node))
+
+    # Provides
+    if package.provides:
+      for orr in package.provides:
+        node = self.triplifyOrConstraint(orr)
+        self.g.add((ref, DEB['provides'], node))
+
+    # Replaces
+    if package.replaces:
+      for orr in package.replaces:
+        node = self.triplifyOrConstraint(orr)
+        self.g.add((ref, DEB['replaces'], node))
+
+    # Enhances
+    if package.enhances:
+      for orr in package.enhances:
+        node = self.triplifyOrConstraint(orr)
+        self.g.add((ref, DEB['enhances'], node))
 
     # Filename
     fileRef = self.triplifyFile(package.filename)
