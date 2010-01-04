@@ -434,7 +434,7 @@ class BaseParserTest(unittest.TestCase):
     d = self.parser.parseConstraint(input)
     self.assertEqual(">>", d.operator)
 
-  def testParseConstraintKeepersExcept(self):
+  def testParseConstraintGuardExcept(self):
     input = "libasound2-dev [!kfreebsd-i386 !kfreebsd-amd64]"
     d = self.parser.parseConstraint(input)
     self.assertEqual("libasound2-dev", d.package)
@@ -444,7 +444,7 @@ class BaseParserTest(unittest.TestCase):
     expectedlist = [Architecture("kfreebsd-i386"), Architecture("kfreebsd-amd64")]
     self.assertEqual(expectedlist, d.exceptin)
 
-  def testParseConstraintKeepersOnly(self):
+  def testParseConstraintGuardOnly(self):
     input = "libasound2-dev [kfreebsd-i386]"
     d = self.parser.parseConstraint(input)
     self.assertEqual("libasound2-dev", d.package)
