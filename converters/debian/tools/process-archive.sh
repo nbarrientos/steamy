@@ -5,6 +5,7 @@ BASEOUT=$3
 
 BASEURI="http://rdf.debian.net"
 DISTRIBUTION="http://rdf.debian.net/distributions/$2"
+DEAR="./dear" # FIXME
 
 areas=(non-free contrib)
 #areas=(non-free contrib main)
@@ -23,7 +24,7 @@ function processPackages {
   
   #echo "Area: $1 Architecture: $2 Prefix: $3 File: $filename"
 
-  ./romeo -p $filename -P $BASEOUT/$1/binary-$2/Packages.$3.rdf \
+  $DEAR -p $filename -P $BASEOUT/$1/binary-$2/Packages.$3.rdf \
   -a -t -b $BASEURI -r "^$3.*" \
   -d $DISTRIBUTION
   
@@ -44,7 +45,7 @@ function processSources {
   
   #echo "Area: $1 Prefix: $2 File: $filename"
 
-  ./romeo -s $filename -S $BASEOUT/$1/sources/Sources.$2.rdf \
+  $DEAR -s $filename -S $BASEOUT/$1/sources/Sources.$2.rdf \
   -a -t -b $BASEURI -r "^$2.*" \
   -d $DISTRIBUTION
 

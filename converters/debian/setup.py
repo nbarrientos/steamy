@@ -3,12 +3,12 @@
 
 from distutils.core import setup
 
-setup(name='romeo',
+setup(name='dear',
       version='1.0alpha',
-      description='RDFizer for Debian Packages Archive',
+      description='DEbian Archive Rdfizer',
       author='Nacho Barrientos Arias',
       author_email='nacho@debian.org',
       py_modules=['decorators', 'parsers', 'export', 'errors', 'models', 'launcher'],
-      scripts=['romeo']
+      scripts=['dear']
       )
 
