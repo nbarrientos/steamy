@@ -36,3 +36,6 @@ License:
 
 The Debian packaging is (C) 2009-2010, Nacho Barrientos Arias
 <nacho@debian.org> and is licensed under the GPL, see above.
+
+On Debian GNU/Linux systems, the complete text of the GNU General
+Public License can be found in `/usr/share/common-licenses/GPL'

@@ -2,12 +2,12 @@ Source: romeo
 Section: web
 Priority: extra
 Maintainer: Nacho Barrientos Arias <nacho@debian.org>
-Build-Depends: debhelper (>= 5), python-support (>= 0.4)
-Standards-Version: 3.8.2
+Build-Depends: debhelper (>= 5), python, python-support (>= 0.4)
+Standards-Version: 3.8.3
 Homepage: http://www.debian.org
 
 Package: romeo
 Architecture: all
 Depends: ${python:Depends}, python-rdflib, python-debian
 Description: RDFizer for Debian Packages Archive
- Blah blah
+ Some random words as a placeholder. FIXME.
