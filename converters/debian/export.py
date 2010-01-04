@@ -373,8 +373,8 @@ class Triplifier():
 
 
 class Serializer():
-  def __init__(self):
-    pass
+  def __init__(self, opts):
+    self.opts = opts
 
   def serializeToFile(self, graph, file):
-    file.write(graph.serialize())
+    file.write(graph.serialize(format=self.opts.format))

@@ -72,6 +72,10 @@ class Launcher():
     parser.add_option("-S", "--sources-output", dest="sourcesOutput",\
                       default="Sources.rdf",\
                       metavar="FILE", help="dump rdfized Sources to FILE [default: %default]")
+    parser.add_option("-f", "--output-format", dest="format",\
+                      default="xml", choices=["xml", "nt", "n3"],\
+                      metavar="FORMAT", help="use FORMAT as graph serialization\
+                      format [options: xml, n3, nt] [default: %default]")
     parser.add_option("-r", "--regex", dest="regex",\
                       metavar="REGEX", help="skip source and binary packages not matching REGEX")
     parser.add_option("-t", "--guess-team", action="store_true", dest="team",\
@@ -117,7 +121,7 @@ class Launcher():
     graph = ConjunctiveGraph()
     parser = PackagesParser(self.opts)
     triplifier = Triplifier(graph, self.opts)
-    serializer = Serializer()
+    serializer = Serializer(self.opts)
 
     rawPackages = deb822.Packages.iter_paragraphs(inputFile)
 
@@ -164,7 +168,7 @@ class Launcher():
     graph = ConjunctiveGraph()
     parser = SourcesParser(self.opts)
     triplifier = Triplifier(graph, self.opts)
-    serializer = Serializer()
+    serializer = Serializer(self.opts)
 
     rawPackages = deb822.Sources.iter_paragraphs(inputFile)
 
