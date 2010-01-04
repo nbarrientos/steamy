@@ -4,7 +4,7 @@
 from distutils.core import setup
 
 setup(name='romeo',
-      version='1.0',
+      version='1.0alpha',
       description='RDFizer for Debian Packages Archive',
       author='Nacho Barrientos Arias',
       author_email='nacho@debian.org',
