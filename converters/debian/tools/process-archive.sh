@@ -1,10 +1,10 @@
 #!/bin/bash
 
 DATADIR=$1
-BASEOUT=$2
+BASEOUT=$3
 
 BASEURI="http://rdf.debian.net"
-DISTRIBUTION="http://rdf.debian.net/distributions/lenny"
+DISTRIBUTION="http://rdf.debian.net/distributions/$2"
 
 areas=(non-free contrib)
 #areas=(non-free contrib main)
@@ -13,23 +13,60 @@ arches=(i386 amd64 powerpc)
 abc=(a b)
 
 function processPackages {
-  echo "Area: $1 Architecture: $2 Prefix: $3"
-  ./romeo -p $DATADIR/$1/binary-$2/Packages -P $BASEOUT/$1/binary-$2/Packages.$3.rdf \
+  local filename=$DATADIR/$1/binary-$2/Packages
+  if [ ! -e $filename ]
+  then
+    local t=$(mktemp)
+    gzip -d $filename.gz -c > $t
+    local filename=$t
+  fi
+  
+  #echo "Area: $1 Architecture: $2 Prefix: $3 File: $filename"
+
+  ./romeo -p $filename -P $BASEOUT/$1/binary-$2/Packages.$3.rdf \
   -a -t -b $BASEURI -r "^$3.*" \
   -d $DISTRIBUTION
+  
+  if [ ! -z "$t" ]
+  then
+    rm $t
+  fi
 }
 
 function processSources {
-  echo "Area: $1 Prefix: $2"
-  ./romeo -s $DATADIR/$1/source/Sources -P $BASEOUT/$1/sources/Sources.$2.rdf \
+  local filename=$DATADIR/$1/source/Sources
+  if [ ! -e $filename ]
+  then
+    local t=$(mktemp)
+    gzip -d $filename.gz -c > $t
+    local filename=$t
+  fi
+  
+  #echo "Area: $1 Prefix: $2 File: $filename"
+
+  ./romeo -s $filename -S $BASEOUT/$1/sources/Sources.$2.rdf \
   -a -t -b $BASEURI -r "^$2.*" \
   -d $DISTRIBUTION
+
+  if [ ! -z "$t" ]
+  then
+    rm $t
+  fi
 }
 
-if [ -z "$1" -o -z "$2" ]
+if [ $# -ne 3 ]
 then
-  echo "Usage: $0 <archive_dir> <output_dir>"
+  echo "Usage: $0 <dists_dir> <distribution> <output_dir>"
   exit -1
+fi
+
+if [ ! -e $DATADIR/$2 ]
+then
+  echo "Directory $DATADIR/$2 does not exist"
+  exit -1
+else
+  DATADIR=$DATADIR/$2
+  BASEOUT=$BASEOUT/$2
 fi
 
 mkdir -p $BASEOUT
