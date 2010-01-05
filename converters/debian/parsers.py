@@ -119,7 +119,7 @@ class BaseParser():
     return contributors
 
   def parseArea(self, raw):
-    regex = re.compile(r"^pool/(?P<area>(main|non-free|contrib))/./.+?")
+    regex = re.compile(r"^(pool|dists/[a-z]+)/(?P<area>(main|non-free|contrib))/.+?/.+?")
     match = regex.match(raw)
 
     if match and match.group("area"):

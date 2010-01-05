@@ -570,3 +570,15 @@ class BaseParserTest(unittest.TestCase):
     
     input = 'pool/failarea/f/foo'
     self.assertRaises(ParsingErrorException, self.parser.parseArea, input)
+    
+    input = 'dists/slink/main/source/games'
+    self.assertEquals(AreaBox.get("main"), self.parser.parseArea(input))
+    
+    input = 'dists/bo/non-free/source/x11'
+    self.assertEquals(AreaBox.get("non-free"), self.parser.parseArea(input))
+    
+    input = 'dists/potato/contrib/source/games'
+    self.assertEquals(AreaBox.get("contrib"), self.parser.parseArea(input))
+
+    input = 'dists/potato/failarea/source/games'
+    self.assertRaises(ParsingErrorException, self.parser.parseArea, input)
