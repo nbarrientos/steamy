@@ -21,7 +21,7 @@ class BaseParser():
   def parsePackage(self, raw):
     return raw['Package']
 
-  @required('Section')
+  @optional('Section')
   def parseSection(self, raw):
     return Section(raw['Section'])
 

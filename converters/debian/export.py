@@ -91,8 +91,9 @@ class Triplifier():
       self.g.add((fileRef, DEB['productOf'], ref))
 
     # Section
-    sectionRef = self.triplifySection(package.section)
-    self.g.add((ref, DEB['section'], sectionRef))
+    if package.section:
+      sectionRef = self.triplifySection(package.section)
+      self.g.add((ref, DEB['section'], sectionRef))
 
     # Priority
     if package.priority:
@@ -225,8 +226,9 @@ class Triplifier():
         self.g.add((node, TAG['isTagOf'], ref))
 
     # Section
-    sectionRef = self.triplifySection(package.section)
-    self.g.add((ref, DEB['section'], sectionRef))
+    if package.section:
+      sectionRef = self.triplifySection(package.section)
+      self.g.add((ref, DEB['section'], sectionRef))
 
     # Priority
     priorityRef = self.triplifyPriority(package.priority)
