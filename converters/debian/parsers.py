@@ -57,7 +57,7 @@ class BaseParser():
     # Assuming constraint comes from source in good shape. Validation
     # is not necessary.
     regex = re.compile(\
-      r"(?P<package>[-a-z0-9+.]+)(\s\((?P<operator>\S{1,2})\s(?P<version>\S+?)\))?(\s\[(?P<arches>.+)\])?")
+      r"(?P<package>[-a-zA-Z0-9+.]+)(\s\((?P<operator>\S{1,2})\s(?P<version>\S+?)\))?(\s\[(?P<arches>.+)\])?")
     
     match = regex.match(raw.strip())
 
