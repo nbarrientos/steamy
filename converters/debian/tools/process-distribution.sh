@@ -1,18 +1,21 @@
 #!/bin/bash
+# process-distributions.sh
+#
+# Nacho Barrientos Arias <nacho@debian.org>
 
-DATADIR=$1
-BASEOUT=$3
+# License: MIT
+
 
 BASEURI="http://rdf.debian.net"
-DISTRIBUTION="http://rdf.debian.net/distributions/$2"
 DEAR="./dear" # FIXME
 
 AREAS="non-free contrib main"
-ARCHES="i386"
+ARCHS="i386"
 ABC="a b c d e f g h i j k l m n o p q r s t u v w x y z"
 
 function processPackages {
-  local filename=$DATADIR/$1/binary-$2/Packages
+  mkdir -p $DISTOUT/$1/binary-$arch
+  local filename=$DISTDIR/$1/binary-$2/Packages
   if [ ! -e $filename ]
   then
     local t=$(mktemp)
@@ -22,7 +25,7 @@ function processPackages {
   
   #echo "Area: $1 Architecture: $2 Prefix: $3 File: $filename"
 
-  $DEAR -p $filename -P $BASEOUT/$1/binary-$2/Packages.$3.rdf \
+  $DEAR -p $filename -P $DISTOUT/$1/binary-$2/Packages.$3.rdf \
   -a -t -b $BASEURI -r "^$3.*" \
   -d $DISTRIBUTION
   
@@ -33,7 +36,8 @@ function processPackages {
 }
 
 function processSources {
-  local filename=$DATADIR/$1/source/Sources
+  mkdir -p $DISTOUT/$1/sources
+  local filename=$DISTDIR/$1/source/Sources
   if [ ! -e $filename ]
   then
     local t=$(mktemp)
@@ -43,7 +47,7 @@ function processSources {
   
   #echo "Area: $1 Prefix: $2 File: $filename"
 
-  $DEAR -s $filename -S $BASEOUT/$1/sources/Sources.$2.rdf \
+  $DEAR -s $filename -S $DISTOUT/$1/sources/Sources.$2.rdf \
   -a -t -b $BASEURI -r "^$2.*" \
   -d $DISTRIBUTION
 
@@ -53,39 +57,46 @@ function processSources {
   fi
 }
 
-if [ $# -ne 3 ]
+if [ $# -lt 2 ]
 then
-  echo "Usage: $0 <dists_dir> <distribution> <output_dir>"
+  echo "Usage: $0 <dists_dir> <output_dir> [distribution names list]"
   exit -1
 fi
 
-if [ ! -e $DATADIR/$2 ]
-then
-  echo "Directory $DATADIR/$2 does not exist"
-  exit -1
-else
-  DATADIR=$DATADIR/$2
-  BASEOUT=$BASEOUT/$2
-fi
+DATADIR=$1
+shift
+BASEOUT=$1
+shift
+DISTRIBUTIONS=$@
 
-mkdir -p $BASEOUT
-
-for y in $AREAS
+for dist in $DISTRIBUTIONS;
 do
-  mkdir -p $BASEOUT/$y
-  # Packages
-  for a in $ARCHES
+  if [ ! -e $DATADIR/$dist ]
+  then
+    echo "Directory '$DATADIR/$dist' does not exist. Skipping distribution '$dist'..."
+    continue
+  fi
+
+  DISTDIR=$DATADIR/$dist
+  DISTOUT=$BASEOUT/$dist
+  DISTRIBUTION="$BASEURI/distributions/$dist"
+
+  echo -e "\nProcessing distribution '$dist'"
+
+  for area in $AREAS
   do
-    mkdir -p $BASEOUT/$y/binary-$a
-    for l in $ABC
+    # Packages
+    for arch in $ARCHS
     do
-      processPackages $y $a $l
+      for initial in $ABC
+      do
+        processPackages $area $arch $initial
+      done
     done
-  done
-  # Sources
-  mkdir -p $BASEOUT/$y/sources
-  for l in $ABC
-  do
-    processSources $y $l
+    # Sources
+    for initial in $ABC
+    do
+      processSources $area $initial
+    done
   done
 done
