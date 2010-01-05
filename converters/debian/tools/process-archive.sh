@@ -7,11 +7,11 @@ BASEURI="http://rdf.debian.net"
 DISTRIBUTION="http://rdf.debian.net/distributions/$2"
 DEAR="./dear" # FIXME
 
-areas=(non-free contrib)
-#areas=(non-free contrib main)
-arches=(i386 amd64 powerpc)
-#abc=(a b c d e f g h i j k l m n o p q r s t u v w x y z)
-abc=(a b)
+AREAS="non-free contrib"
+#AREAS="non-free contrib main"
+ARCHES="i386 amd64 powerpc"
+#ABC="a b c d e f g h i j k l m n o p q r s t u v w x y z"
+ABC="a b"
 
 function processPackages {
   local filename=$DATADIR/$1/binary-$2/Packages
@@ -72,21 +72,21 @@ fi
 
 mkdir -p $BASEOUT
 
-for y in ${areas[@]}
+for y in $AREAS
 do
   mkdir -p $BASEOUT/$y
   # Packages
-  for a in ${arches[@]}
+  for a in $ARCHES
   do
     mkdir -p $BASEOUT/$y/binary-$a
-    for l in ${abc[@]}
+    for l in $ABC
     do
       processPackages $y $a $l
     done
   done
   # Sources
   mkdir -p $BASEOUT/$y/sources
-  for l in ${abc[@]}
+  for l in $ABC
   do
     processSources $y $l
   done
