@@ -7,11 +7,9 @@ BASEURI="http://rdf.debian.net"
 DISTRIBUTION="http://rdf.debian.net/distributions/$2"
 DEAR="./dear" # FIXME
 
-AREAS="non-free contrib"
-#AREAS="non-free contrib main"
-ARCHES="i386 amd64 powerpc"
-#ABC="a b c d e f g h i j k l m n o p q r s t u v w x y z"
-ABC="a b"
+AREAS="non-free contrib main"
+ARCHES="i386"
+ABC="a b c d e f g h i j k l m n o p q r s t u v w x y z"
 
 function processPackages {
   local filename=$DATADIR/$1/binary-$2/Packages
