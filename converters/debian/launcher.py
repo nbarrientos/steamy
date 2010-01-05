@@ -8,7 +8,8 @@ from rdflib.Graph import ConjunctiveGraph
 
 from parsers import PackagesParser, SourcesParser
 from export import Triplifier, Serializer
-from errors import ParsingException 
+from errors import PackageDoesNotMatchRegularExpressionException
+from errors import ParsingErrorException
 from errors import OptsParsingException
 
 VERSION = "0.1alpha"
@@ -32,16 +33,18 @@ class Launcher():
                     (self.opts.packages, self.opts.packagesOutput))
       try:
         self.processPackages()
-      except:
+      except Exception, e:
         logging.error("%s will not be processed, check application log" % self.opts.packages)
+        logging.debug(str(e))
 
     if self.opts.sources:
       logging.info("Trying to convert metadata from %s to %s..." % \
                     (self.opts.sources, self.opts.sourcesOutput))
       try:
         self.processSources()
-      except:
+      except Exception, e:
         logging.error("%s will not be processed, check application log" % self.opts.sources)
+        logging.debug(str(e))
 
   def configLogger(self):
     if self.opts.verbose:
@@ -130,8 +133,11 @@ class Launcher():
       try:
         parsedPackage = parser.parseBinaryPackage(p)
         counter += 1
-      except ParsingException, e:
+      except PackageDoesNotMatchRegularExpressionException, e:
         logging.debug("Won't process this package (reason: '%s')." % str(e))
+        continue
+      except ParsingErrorException, e:
+        logging.error("Won't process this package (reason: '%s')." % str(e))
         continue
 
       # Triplify
@@ -177,8 +183,11 @@ class Launcher():
       try:
         parsedPackage = parser.parseSourcePackage(p)
         counter += 1
-      except ParsingException, e:
+      except PackageDoesNotMatchRegularExpressionException, e:
         logging.debug("Won't process this package (reason: '%s')." % str(e))
+        continue
+      except ParsingErrorException, e:
+        logging.error("Won't process this package (reason: '%s')." % str(e))
         continue
 
       # Triplify
