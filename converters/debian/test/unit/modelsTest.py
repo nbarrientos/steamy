@@ -84,6 +84,21 @@ class BinaryPackageTest(unittest.TestCase):
   def testAsLabel(self):
     self.assertEqual("Binary: testpkgname (1.0-1)", self.b.asLabel())
 
+class UnversionedSourcePackageTest(unittest.TestCase):
+  def setUp(self):
+    self.ub = UnversionedSourcePackage("name")
+
+  def testAsURI(self):
+    baseURI = "http://example.org"
+    expected = baseURI + "/binary/name"
+    self.assertEqual(expected, self.ub.asURI(baseURI))
+
+  def testAsLabel(self):
+    self.assertEqual("Unversioned Binary: name", self.ub.asLabel())
+
+  def testAsStr(self):
+    self.assertEqual("name", self.ub.__str__())
+
 class BinaryPackageBuildTest(unittest.TestCase):
   def setUp(self):
     self.b = BinaryPackageBuild()
@@ -109,9 +124,24 @@ class BinaryPackageBuildTest(unittest.TestCase):
                      self.b.asLabel())
 
 class SourcePackageTest(unittest.TestCase):
-   def testAsLabel(self):
+  def testAsLabel(self):
     b = SourcePackage("testpkgname", "1.0-1")
     self.assertEqual("Source: testpkgname (1.0-1)", b.asLabel())
+
+class UnversionedSourcePackageTest(unittest.TestCase):
+  def setUp(self):
+    self.us = UnversionedSourcePackage("name")
+
+  def testAsURI(self):
+    baseURI = "http://example.org"
+    expected = baseURI + "/source/name"
+    self.assertEqual(expected, self.us.asURI(baseURI))
+
+  def testAsLabel(self):
+    self.assertEqual("Unversioned Source: name", self.us.asLabel())
+
+  def testAsStr(self):
+    self.assertEqual("name", self.us.__str__())
 
 class ConstraintTest(unittest.TestCase):
   def setUp(self):

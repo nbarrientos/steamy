@@ -60,20 +60,22 @@ class TriplifierTest(unittest.TestCase):
 
   def testTriplifyConstraintSimple(self):
     constraint = Constraint()
-    constraint.package = "pkg"
+    constraint.package = UnversionedBinaryPackage("pkg")
     constraint.operator = ">>"
     constraint.version = VersionNumber("1.0-1")
     self.t.triplifyVersionNumber =\
         self.mockTriplifyVersionNumber(constraint.version)
+    self.t.triplifyUnversionedBinaryPackage =\
+        self.mockUnversionedBinaryPackage(constraint.package)
     uriref = URIRef("b/constraint/%s" %\
-        hashlib.sha1(constraint.package + constraint.operator +\
+        hashlib.sha1(str(constraint.package) + constraint.operator +\
         str(constraint.version)).hexdigest())
     self.assertEqual(uriref, self.t.triplifyConstraint(constraint))
     self.mox.VerifyAll()
     self.assertEqual(5, len(self.graph))
     expected = [(uriref, RDF.type, DEB['SimplePackageConstraint']),\
                 (uriref, RDFS.label, Literal("Constraint: pkg (>> 1.0-1)")),\
-                (uriref, DEB['packageName'], Literal("pkg")),\
+                (uriref, DEB['package'], URIRef("b/binary/pkg")),\
                 (uriref, DEB['constraintOperator'], Literal(">>")),\
                 (uriref, DEB['versionNumber'], URIRef("b/version/1.0-1"))]
     self.compareGeneratedTriples(expected)
@@ -81,9 +83,9 @@ class TriplifierTest(unittest.TestCase):
   def testTriplifyOrConstraint(self):
     orconstraint = OrConstraint()
     constraint1 = Constraint()
-    constraint1.package = "pkg1"
+    constraint1.package = UnversionedBinaryPackage("pkg1")
     constraint2 = Constraint()
-    constraint2.package = "pkg2"
+    constraint2.package = UnversionedBinaryPackage("pkg2")
     orconstraint.add(constraint1)
     orconstraint.add(constraint2)
     self.t.triplifyConstraint = self.mockTriplifyConstraint([constraint1, constraint2])
@@ -187,6 +189,24 @@ class TriplifierTest(unittest.TestCase):
     expected = [(uriref, RDF.type, FOAF['Document'])]
     self.compareGeneratedTriples(expected)
 
+  def testTriplifyUnversionedSourcePackage(self):
+    us = UnversionedSourcePackage("name")
+    uriref = URIRef("b/source/name")
+    self.assertEqual(uriref, self.t.triplifyUnversionedSourcePackage(us))
+    self.assertEqual(2, len(self.graph))
+    expected = [(uriref, RDF.type, DEB['UnversionedSource']),\
+                (uriref, RDFS.label, Literal("Unversioned Source: name"))]
+    self.compareGeneratedTriples(expected)
+
+  def testTriplifyUnversionedBinaryPackage(self):
+    ub = UnversionedBinaryPackage("name")
+    uriref = URIRef("b/binary/name")
+    self.assertEqual(uriref, self.t.triplifyUnversionedBinaryPackage(ub))
+    self.assertEqual(2, len(self.graph))
+    expected = [(uriref, RDF.type, DEB['UnversionedBinary']),\
+                (uriref, RDFS.label, Literal("Unversioned Binary: name"))]
+    self.compareGeneratedTriples(expected)
+
   # Mocks
   def mockTriplifyVersionNumber(self, version):
     classMock = self.mox.CreateMock(Triplifier)
@@ -211,3 +231,9 @@ class TriplifierTest(unittest.TestCase):
     self.mox.ReplayAll()
     return classMock.triplifyArchitecture
 
+  def mockUnversionedBinaryPackage(self, ubinary):
+    classMock = self.mox.CreateMock(Triplifier)
+    classMock.triplifyUnversionedBinaryPackage(ubinary)\
+                                  .AndReturn(URIRef(ubinary.asURI("b")))
+    self.mox.ReplayAll()
+    return classMock.triplifyUnversionedBinaryPackage

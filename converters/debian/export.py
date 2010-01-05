@@ -33,6 +33,10 @@ class Triplifier():
     self.g.add((ref, RDF.type, DEB['Source']))
     self.g.add((ref, RDFS.label, Literal(package.asLabel())))
 
+    # Unversioned Source
+    unversionedRef = self.triplifyUnversionedSourcePackage(package.unversionedSource)
+    self.g.add((unversionedRef, DEB['version'], ref))
+
     # Package
     self.g.add((ref, DEB['packageName'], Literal(str(package.package))))
 
@@ -143,6 +147,10 @@ class Triplifier():
 
   def triplifyBinaryPackage(self, package):
     ref = self.triplifyBinaryPackageLite(package)
+
+    # Unversioned Source
+    unversionedRef = self.triplifyUnversionedBinaryPackage(package.unversionedBinary)
+    self.g.add((unversionedRef, DEB['version'], ref))
 
     # Build
     buildRef = self.triplifyBinaryPackageBuild(package.build)
@@ -270,7 +278,8 @@ class Triplifier():
     self.g.add((ref, RDF.type, DEB['SimplePackageConstraint']))
     self.g.add((ref, RDFS.label, Literal(constraint.asLabel())))
 
-    self.g.add((ref, DEB['packageName'], Literal(str(constraint.package))))
+    packageRef = self.triplifyUnversionedBinaryPackage(constraint.package)
+    self.g.add((ref, DEB['package'], packageRef))
 
     if constraint.operator and constraint.version:
       self.g.add((ref, DEB['constraintOperator'], Literal(str(constraint.operator))))
@@ -371,6 +380,19 @@ class Triplifier():
 
     return ref
 
+  def triplifyUnversionedSourcePackage(self, usource):
+    ref = URIRef(usource.asURI(self.baseURI))
+    self.g.add((ref, RDF.type, DEB['UnversionedSource']))
+    self.g.add((ref, RDFS.label, Literal(usource.asLabel())))
+
+    return ref
+
+  def triplifyUnversionedBinaryPackage(self, ubinary):
+    ref = URIRef(ubinary.asURI(self.baseURI))
+    self.g.add((ref, RDF.type, DEB['UnversionedBinary']))
+    self.g.add((ref, RDFS.label, Literal(ubinary.asLabel())))
+
+    return ref
 
 class Serializer():
   def __init__(self, opts):

@@ -13,12 +13,36 @@ class BasePackage():
   def __str__(self):
     return "%s (%s)" % (self.package, self.version)
 
+class BaseUnversionedPackage():
+  def __init__(self, package):
+    self.package = package
+  
+  def __str__(self):
+    return self.package
+
+  def __eq__(self, other):
+    return self.package.__eq__(other.package)
+
+class UnversionedSourcePackage(BaseUnversionedPackage):
+  def asURI(self, base):
+    return "%s/source/%s" % (base, self.package)
+
+  def asLabel(self):
+    return "Unversioned Source: %s" % (self.package)
+
 class SourcePackage(BasePackage):
   def asURI(self, base):
     return "%s/source/%s/%s" % (base, self.package, self.version)
 
   def asLabel(self):
     return "Source: %s (%s)" % (self.package, self.version)
+
+class UnversionedBinaryPackage(BaseUnversionedPackage):
+  def asURI(self, base):
+    return "%s/binary/%s" % (base, self.package)
+
+  def asLabel(self):
+    return "Unversioned Binary: %s" % (self.package)
 
 class BinaryPackage(BasePackage):
   def asURI(self, base):

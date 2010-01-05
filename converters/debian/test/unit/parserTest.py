@@ -379,10 +379,10 @@ class BaseParserTest(unittest.TestCase):
     ors = self.parser.parseConstraints(input)
     self.assertEqual(2, len(ors.orconstraints))
     self.assertEqual(2, len(ors.get(0).constraints))
-    self.assertEqual("exim4", ors.get(0).get(0).package)
+    self.assertEqual(UnversionedBinaryPackage("exim4"), ors.get(0).get(0).package)
     self.assertEqual(">>", ors.get(0).get(0).operator)
-    self.assertEqual("mail-transport-agent", ors.get(0).get(1).package)
-    self.assertEqual("mutt", ors.get(1).get(0).package)
+    self.assertEqual(UnversionedBinaryPackage("mail-transport-agent"), ors.get(0).get(1).package)
+    self.assertEqual(UnversionedBinaryPackage("mutt"), ors.get(1).get(0).package)
  
     input = "c1a | c1b,    c2,c3, c4,  c5"
     ors = self.parser.parseConstraints(input)
@@ -393,10 +393,10 @@ class BaseParserTest(unittest.TestCase):
     input = "exim4+r (>> 0.5.4-5) | mail-transport-agent | swaml.4"
     ord = self.parser.parseOrConstraint(input)
     self.assertEqual(3, len(ord.constraints))
-    self.assertEqual("exim4+r", ord.get(0).package)
+    self.assertEqual(UnversionedBinaryPackage("exim4+r"), ord.get(0).package)
     self.assertEqual(">>", ord.get(0).operator)
-    self.assertEqual("mail-transport-agent", ord.get(1).package)
-    self.assertEqual("swaml.4", ord.get(2).package)
+    self.assertEqual(UnversionedBinaryPackage("mail-transport-agent"), ord.get(1).package)
+    self.assertEqual(UnversionedBinaryPackage("swaml.4"), ord.get(2).package)
 
     input = "c1|    c2|c3 | c4"
     ord = self.parser.parseOrConstraint(input)
@@ -405,13 +405,13 @@ class BaseParserTest(unittest.TestCase):
   def testParseConstraintSimple(self):
     input = "libgnutls13"
     d = self.parser.parseConstraint(input)
-    self.assertEqual(input, d.package)
+    self.assertEqual(UnversionedBinaryPackage(input), d.package)
     self.assertEqual(None, d.version)
   
   def testParseConstraintWithVersionAndOperator(self):
     input = "libidn11 (>= 0.5.18)"
     d = self.parser.parseConstraint(input)
-    self.assertEqual("libidn11", d.package)
+    self.assertEqual(UnversionedBinaryPackage("libidn11"), d.package)
     self.assertEqual(">=", d.operator)
     self.assertEqual(None, d.version.epoch)
     self.assertEqual("0.5.18", d.version.upstream_version)
@@ -437,7 +437,7 @@ class BaseParserTest(unittest.TestCase):
   def testParseConstraintGuardExcept(self):
     input = "libasound2-dev [!kfreebsd-i386 !kfreebsd-amd64]"
     d = self.parser.parseConstraint(input)
-    self.assertEqual("libasound2-dev", d.package)
+    self.assertEqual(UnversionedBinaryPackage("libasound2-dev"), d.package)
     self.assertEqual(None, d.operator)
     self.assertEqual(2, len(d.exceptin))
     self.assertEqual(0, len(d.onlyin))
@@ -447,7 +447,7 @@ class BaseParserTest(unittest.TestCase):
   def testParseConstraintGuardOnly(self):
     input = "libasound2-dev [kfreebsd-i386]"
     d = self.parser.parseConstraint(input)
-    self.assertEqual("libasound2-dev", d.package)
+    self.assertEqual(UnversionedBinaryPackage("libasound2-dev"), d.package)
     self.assertEqual(None, d.operator)
     self.assertEqual(0, len(d.exceptin))
     self.assertEqual(1, len(d.onlyin))
@@ -457,7 +457,7 @@ class BaseParserTest(unittest.TestCase):
   def testParseFullConstraint(self):
     input = "libidn11 (>= 0.5.18) [!kfreebsd-i386 !kfreebsd-amd64]"
     d = self.parser.parseConstraint(input)
-    self.assertEqual("libidn11", d.package)
+    self.assertEqual(UnversionedBinaryPackage("libidn11"), d.package)
     self.assertEqual(">=", d.operator)
     self.assertEqual(None, d.version.epoch)
     self.assertEqual("0.5.18", d.version.upstream_version)

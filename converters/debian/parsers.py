@@ -62,7 +62,7 @@ class BaseParser():
     match = regex.match(raw.strip())
 
     if match and match.group('package'):
-      constraint.package = match.group('package')
+      constraint.package = UnversionedBinaryPackage(match.group('package'))
 
       if match.group('operator') and match.group('version'):
         constraint.operator = match.group('operator')
@@ -150,6 +150,8 @@ class SourcesParser(BaseParser):
     sourcePackage.uploaders = self.parseUploaders(raw)
     sourcePackage.homepage = self.parseHomepage(raw)
     sourcePackage.dmUploadAllowed = self.parseDmUploadAllowed(raw)
+    sourcePackage.unversionedSource = \
+                  UnversionedSourcePackage(sourcePackage.package)
     return sourcePackage
 
   def parseBinary(self, raw):
@@ -232,6 +234,8 @@ class PackagesParser(BaseParser):
     binaryPackage.section = self.parseSection(raw)
     binaryPackage.essential = self.parseEssential(raw)
     binaryPackage.buildEssential = self.parseBuildEssential(raw)
+    binaryPackage.unversionedBinary = \
+                  UnversionedBinaryPackage(binaryPackage.package)
     return binaryPackage
 
   def parseBinaryPackageBuild(self, raw, ancestor):
