@@ -29,6 +29,8 @@ class SourcesParserTest(unittest.TestCase):
     self.sourcePackage['Directory'] = "pool/main/s/srcpkg"
     self.sourcePackage['Vcs-Browser'] = "http://github.com/example"
     self.sourcePackage['Vcs-Git'] = "git://github.com/example"
+    self.sourcePackage['Format'] = "1.0"
+    self.sourcePackage['Standards-Version'] = "1.0.1"
     self.sourcePackage['Files'] = [\
       {'md5sum': 'd7f059964', 'size': '1234', 'name': 'srcpkg_0.5-2.dsc'},
       {'md5sum': '5b32fbe56', 'size': '5678', 'name': 'srcpkg_0.5.orig.tar.gz'},
@@ -70,6 +72,8 @@ class SourcesParserTest(unittest.TestCase):
     self.assertEqual("http://www.example.org", s.homepage)
     self.assertTrue(s.dmUploadAllowed)
     self.assertNotEqual(None, s.vcs)
+    self.assertEqual("1.0", str(s.format))
+    self.assertEqual("1.0.1", str(s.standardsVersion))
 
   def testParseSourcePackageNotMatchingRegex(self):
     self.values.ensure_value("regex", "^a.*")
@@ -176,6 +180,19 @@ class SourcesParserTest(unittest.TestCase):
     self.sourcePackage.pop('Dm-Upload-Allowed')
     self.assertEqual(None, self.parser.parseDmUploadAllowed(self.sourcePackage))
 
+  def testParseFormat(self):
+    self.assertEqual("1.0", self.parser.parseFormat(self.sourcePackage))
+  
+  def testParseFormatMissingField(self):
+    self.sourcePackage.pop('Format')
+    self.assertEqual(None, self.parser.parseFormat(self.sourcePackage))
+
+  def testParseStandardsVersion(self):
+    self.assertEqual("1.0.1", self.parser.parseStandardsVersion(self.sourcePackage))
+
+  def testParseStandardsVersionMissingField(self):
+    self.sourcePackage.pop('Standards-Version')
+    self.assertEqual(None, self.parser.parseStandardsVersion(self.sourcePackage))
 
 class PackagesParserTest(unittest.TestCase):
   def setUp(self):

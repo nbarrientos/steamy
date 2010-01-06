@@ -178,6 +178,8 @@ class SourcesParser(BaseParser):
     sourcePackage.homepage = self.parseHomepage(raw)
     sourcePackage.dmUploadAllowed = self.parseDmUploadAllowed(raw)
     sourcePackage.vcs = self.parseVcs(raw)
+    sourcePackage.format = self.parseFormat(raw)
+    sourcePackage.standardsVersion = self.parseStandardsVersion(raw)
     sourcePackage.unversionedSource = \
                   UnversionedSourcePackage(sourcePackage.package)
     return sourcePackage
@@ -226,8 +228,13 @@ class SourcesParser(BaseParser):
   def parsePriority(self, raw):
     return PriorityBox.get(raw['Priority'])
 
-  #@required('Format')
-  #@optional('Standards-Version')
+  @optional('Format')
+  def parseFormat(self, raw):
+    return raw['Format']
+
+  @optional('Standards-Version')
+  def parseStandardsVersion(self, raw):
+    return raw['Standards-Version']
 
   @optional('Dm-Upload-Allowed')
   def parseDmUploadAllowed(self, raw):
