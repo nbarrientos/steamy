@@ -52,8 +52,9 @@ class TriplifierTest(unittest.TestCase):
     version = VersionNumber("1.0-1")
     uriref = URIRef("b/version/1.0-1")
     self.assertEqual(uriref, self.t.triplifyVersionNumber(version))
-    self.assertEqual(3, len(self.graph))
+    self.assertEqual(4, len(self.graph))
     expected = [(uriref, RDF.type, DEB['VersionNumber']),\
+                (uriref, RDFS.label, Literal("Version: 1.0-1")),\
                 (uriref, DEB['upstreamVersion'], Literal("1.0")),\
                 (uriref, DEB['debianRevision'], Literal("1"))]
     self.compareGeneratedTriples(expected)

@@ -67,6 +67,9 @@ class VersionNumber(Version):
   def asURI(self, base):
     return "%s/version/%s" % (base, str(self))
 
+  def asLabel(self):
+    return "Version: %s" % (str(self))
+
 class Constraints():
   def __init__(self):
     self.orconstraints = []

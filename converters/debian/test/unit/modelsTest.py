@@ -29,6 +29,10 @@ class VersionNumberTest(unittest.TestCase):
     expected = baseURI + "/version/1.0-1"
     self.assertEqual(expected, v.asURI(baseURI))
 
+  def testAsLabel(self):
+    v = VersionNumber("1.0-1")
+    self.assertEqual("Version: 1.0-1", v.asLabel())
+
   def testComparable(self):
     v1 = VersionNumber("1.0-1")
     v2 = VersionNumber("1.0-2")
