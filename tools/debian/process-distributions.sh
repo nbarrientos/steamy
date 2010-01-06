@@ -79,7 +79,7 @@ do
 
   DISTDIR=$DATADIR/$dist
   DISTOUT=$BASEOUT/$dist
-  DISTRIBUTION="$BASEURI/distributions/$dist"
+  DISTRIBUTION="$BASEURI/distribution/$dist"
 
   echo -e "\nProcessing distribution '$dist'"
 
