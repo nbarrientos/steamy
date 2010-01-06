@@ -321,6 +321,8 @@ class Triplifier():
     ref = URIRef(version.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['VersionNumber']))
     self.g.add((ref, RDFS.label, Literal(version.asLabel())))
+
+    self.g.add((ref, DEB['fullVersion'], Literal(str(version))))
     
     if version.epoch:
       self.g.add((ref, DEB['epoch'], Literal(str(version.epoch))))
