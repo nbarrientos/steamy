@@ -437,6 +437,16 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#fullVersion -->
+
+    <owl:DatatypeProperty rdf:about="#fullVersion">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="#VersionNumber"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#installed-size -->
 
     <owl:DatatypeProperty rdf:about="#installed-size">
