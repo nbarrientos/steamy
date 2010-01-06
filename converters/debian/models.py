@@ -145,7 +145,9 @@ class Constraint():
   def operatorAsURI(self, op):
     d = {'>>': "StrictlyLater",\
      '>=': "LaterOrEqual",\
+     '>': "LaterOrEqual",\
      '=': "Equal",\
+     '<': "EarlierOrEqual",\
      '<=': "EarlierOrEqual",\
      "<<": "StrictlyEarlier"}
 
