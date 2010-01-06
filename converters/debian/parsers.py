@@ -346,4 +346,6 @@ class PackagesParser(BaseParser):
   @required('Description')
   def parseDescription(self, raw):
     split = raw['Description'].split("\n",1)
+    if len(split) == 1:
+      split.append(None)
     return tuple(split)

@@ -395,6 +395,13 @@ class PackagesParserTest(unittest.TestCase):
     self.assertEqual(expectedShort, short)
     self.assertEqual(expectedLong, long)
 
+  def testParseDescriptionEmptyExtended(self) :
+    self.binaryPackage['Description'] = "text-based mailreader supporting MIME, GPG, PGP and threading"
+    expectedShort = "text-based mailreader supporting MIME, GPG, PGP and threading"
+    (short, long) = self.parser.parseDescription(self.binaryPackage)
+    self.assertEqual(expectedShort, short)
+    self.assertEqual(None, long)
+
 class BaseParserTest(unittest.TestCase):
   def setUp(self):
     values = optparse.Values()
