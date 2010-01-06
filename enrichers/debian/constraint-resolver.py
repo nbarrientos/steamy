@@ -127,38 +127,15 @@ class ConstraintResolver():
 
   def composeVersion(self, versionURI):
     q = """
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        SELECT ?l
+        PREFIX deb: <http://idi.fundacionctic.org/steamy/debian.owl#>
+        SELECT ?v
         WHERE { 
-          <%s> rdfs:label ?l .
+          <%s> deb:fullVersion ?v .
         }
     """ % versionURI
-   #  q = """
-   #     PREFIX deb: <http://idi.fundacionctic.org/steamy/debian.owl#>
-   #     SELECT ?e ?u ?d
-   #     WHERE { 
-   #       <%s> deb:upstreamVersion ?u .
-   #       OPTIONAL {
-   #            <%s> deb:epoch ?e .
-   #       } .
-   #       OPTIONAL {
-   #            <%s> deb:debianRevision ?d .
-   #       } .
-   #     }
-   # """ % (versionURI, versionURI, versionURI)
     r = self.queryEndpoint(q)
 
-   # v = ""
-
-   # if "e" in r:
-   #   v = v + r["e"][0]["e"].value + ":"
-   # 
-   # v = v + r["u"][0]["u"].value
-  # 
-   # if "d" in r:
-   #   v = v + "-" + r["d"][0]["d"].value
-
-    v = r["l"][0]["l"].value.replace("Version: ","")
+    v = r["v"][0]["v"].value
 
     return Version(v)
 
