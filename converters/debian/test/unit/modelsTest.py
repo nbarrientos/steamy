@@ -314,6 +314,19 @@ class AreaBoxTest(unittest.TestCase):
     self.assertEqual(id(self.p1), id(self.p2))
     self.assertNotEqual(id(self.p1), id(self.p3))
 
+class RepositoryTest(unittest.TestCase):
+  def setUp(self):
+    self.baseRepository = Repository("http://example.com/", "svn://example.com")
+    self.gitRepository = GitRepository("http://example.com/", "git://example.com")
+
+  def testAsLabel(self):
+    self.assertEqual("Repository: svn://example.com",\
+                     self.baseRepository.asLabel())
+
+  def testRdfType(self):
+    self.assertEqual("Repository", self.baseRepository.rdfType())
+    self.assertEqual("GitRepository", self.gitRepository.rdfType())
+
 class ToolsTest(unittest.TestCase):
   def setUp(self):
     self.name1 = "Debian Cool Team"

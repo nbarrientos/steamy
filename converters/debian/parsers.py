@@ -127,6 +127,33 @@ class BaseParser():
     else:
       raise ParsingErrorException("parseArea", raw)
 
+  def parseVcs(self, raw):
+    browser = None
+    if 'Vcs-Browser' in raw:
+      browser = raw['Vcs-Browser']
+
+    if 'Vcs-Git' in raw:
+      return GitRepository(browser, raw['Vcs-Git'])
+    elif 'Vcs-Svn' in raw:
+      return SvnRepository(browser, raw['Vcs-Svn'])
+    elif 'Vcs-Bzr' in raw:
+      return BzrRepository(browser, raw['Vcs-Bzr'])
+    elif 'Vcs-Darcs' in raw:
+      return DarcsRepository(browser, raw['Vcs-Darcs'])
+    elif 'Vcs-Hg' in raw:
+      return HgRepository(browser, raw['Vcs-Hg'])
+    elif 'Vcs-Cvs' in raw:
+      return CvsRepository(browser, raw['Vcs-Cvs'])
+    elif 'Vcs-Arch' in raw:
+      return ArchRepository(browser, raw['Vcs-Arch'])
+    elif 'Vcs-Mtn' in raw:
+      return Repository(browser, raw['Vcs-Mtn'])
+
+    if browser:
+      return Repository(browser, None)
+    else:
+      return None
+
 
 class SourcesParser(BaseParser):
   def parseSourcePackage(self, raw):
@@ -150,6 +177,7 @@ class SourcesParser(BaseParser):
     sourcePackage.uploaders = self.parseUploaders(raw)
     sourcePackage.homepage = self.parseHomepage(raw)
     sourcePackage.dmUploadAllowed = self.parseDmUploadAllowed(raw)
+    sourcePackage.vcs = self.parseVcs(raw)
     sourcePackage.unversionedSource = \
                   UnversionedSourcePackage(sourcePackage.package)
     return sourcePackage
@@ -204,10 +232,6 @@ class SourcesParser(BaseParser):
   @optional('Dm-Upload-Allowed')
   def parseDmUploadAllowed(self, raw):
     return True
-
-  #@optional('Vcs-Browser')
-  #@optional('Vcs-{Git,Svn,Bzr,Darcs,Hg,Cvs,Arch,Mtn}')
-
 
 class PackagesParser(BaseParser):
   def parseBinaryPackage(self, raw):

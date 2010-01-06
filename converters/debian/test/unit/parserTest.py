@@ -27,6 +27,8 @@ class SourcesParserTest(unittest.TestCase):
     self.sourcePackage['Uploaders'] = "Alice <alice@d.o>, Bob <bob@d.o>"
     self.sourcePackage['Homepage'] = "http://www.example.org"
     self.sourcePackage['Directory'] = "pool/main/s/srcpkg"
+    self.sourcePackage['Vcs-Browser'] = "http://github.com/example"
+    self.sourcePackage['Vcs-Git'] = "git://github.com/example"
     self.sourcePackage['Files'] = [\
       {'md5sum': 'd7f059964', 'size': '1234', 'name': 'srcpkg_0.5-2.dsc'},
       {'md5sum': '5b32fbe56', 'size': '5678', 'name': 'srcpkg_0.5.orig.tar.gz'},
@@ -67,6 +69,7 @@ class SourcesParserTest(unittest.TestCase):
     self.assertEqual(2, len(s.uploaders))
     self.assertEqual("http://www.example.org", s.homepage)
     self.assertTrue(s.dmUploadAllowed)
+    self.assertNotEqual(None, s.vcs)
 
   def testParseSourcePackageNotMatchingRegex(self):
     self.values.ensure_value("regex", "^a.*")
@@ -582,3 +585,34 @@ class BaseParserTest(unittest.TestCase):
 
     input = 'dists/potato/failarea/source/games'
     self.assertRaises(ParsingErrorException, self.parser.parseArea, input)
+
+  def testParseVcs(self):
+    input = {'Vcs-Browser':'http://example.com', \
+    'Vcs-Git':'git://git.example.com'}
+    repo = self.parser.parseVcs(input)
+    self.assertNotEqual(None, repo)
+    self.assertEqual("http://example.com", repo.browser)
+    self.assertEqual("git://git.example.com", repo.uri)
+  
+    input = {'Vcs-Browser':'http://example.com', \
+    'Vcs-Svn':'svn://svn.example.com/repos/test'}
+    repo = self.parser.parseVcs(input)
+    self.assertNotEqual(None, repo)
+    self.assertEqual("http://example.com", repo.browser)
+    self.assertEqual("svn://svn.example.com/repos/test", repo.uri)
+
+    input = {'Vcs-Git':'git://git.example.com'}
+    repo = self.parser.parseVcs(input)
+    self.assertNotEqual(None, repo)
+    self.assertEqual(None, repo.browser)
+    self.assertEqual("git://git.example.com", repo.uri)
+ 
+    input = {'Vcs-Browser':'http://example.com'}
+    repo = self.parser.parseVcs(input)
+    self.assertNotEqual(None, repo)
+    self.assertEqual("http://example.com", repo.browser)
+    self.assertEqual(None, repo.uri)
+  
+    input = {}
+    repo = self.parser.parseVcs(input)
+    self.assertEqual(None, repo)

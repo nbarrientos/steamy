@@ -291,6 +291,45 @@ class Team(Contributor):
   def isTeam(self):
     return True
 
+class Repository():
+  def __init__(self, browser, uri):
+    self.browser = browser
+    self.uri = uri
+
+  def asLabel(self):
+    return "Repository: %s" % self.uri
+
+  def rdfType(self):
+    return "Repository"
+
+class ArchRepository(Repository):
+  def rdfType(self):
+    return "ArchRepository"
+
+class BzrRepository(Repository):
+  def rdfType(self):
+    return "BazaarRepository"
+
+class CvsRepository(Repository):
+  def rdfType(self):
+    return "CVSRepository"
+
+class DarcsRepository(Repository):
+  def rdfType(self):
+    return "DarcsRepository"
+
+class GitRepository(Repository):
+  def rdfType(self):
+    return "GitRepository"
+
+class HgRepository(Repository):
+  def rdfType(self):
+    return "HgRepository"
+
+class SvnRepository(Repository):
+  def rdfType(self):
+    return "SVNRepository"
+
 # Tools
 
 def guessRole(name, email):
