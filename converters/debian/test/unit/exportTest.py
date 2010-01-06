@@ -1,5 +1,4 @@
 import unittest
-import hashlib
 import mox
 import optparse
 
@@ -68,9 +67,7 @@ class TriplifierTest(unittest.TestCase):
         self.mockTriplifyVersionNumber(constraint.version)
     self.t.triplifyUnversionedBinaryPackage =\
         self.mockUnversionedBinaryPackage(constraint.package)
-    uriref = URIRef("b/constraint/%s" %\
-        hashlib.sha1(str(constraint.package) + constraint.operator +\
-        str(constraint.version)).hexdigest())
+    uriref = URIRef(urllib.quote_plus("b/constraint/pkg StrictlyLater 1.0-1", "/"))
     self.assertEqual(uriref, self.t.triplifyConstraint(constraint))
     self.mox.VerifyAll()
     self.assertEqual(5, len(self.graph))

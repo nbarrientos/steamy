@@ -1,5 +1,5 @@
-import hashlib
 import re
+import urllib
 
 from debian_bundle.changelog import Version
 
@@ -108,11 +108,17 @@ class Constraint():
     self.onlyin = []
 
   def asURI(self, base):
-    tail = "%s" % self.package
+    postfix = "constraint/%s" % (self.package)
     if self.operator and self.version:
-      tail = tail + "%s%s" % (self.operator, self.version)
-    # FIMXE: Add *in
-    return "%s/constraint/%s" % (base, hashlib.sha1(tail).hexdigest())
+      postfix = postfix + " %s %s" % (self.operatorAsURI(self.operator), self.version)
+
+    for arch in self.exceptin:
+      postfix = postfix + " ExceptIn_%s" % arch.name
+
+    for arch in self.onlyin:
+      postfix = postfix + " OnlyIn_%s" % arch.name
+
+    return "%s/%s" % (base, urllib.quote_plus(postfix, '/'))
 
   def asLabel(self):
     label = "Constraint: %s" % self.package
@@ -132,6 +138,18 @@ class Constraint():
       return "%s (%s %s)" % (self.package, self.operator, self.version)
     else:
       return "%s" % self.package
+
+  def operatorAsURI(self, op):
+    d = {'>>': "StrictlyLater",\
+     '>=': "LaterOrEqual",\
+     '=': "Equal",\
+     '<=': "EarlierOrEqual",\
+     "<<": "StrictlyEarlier"}
+
+    if op in d:
+      return d[op]
+    else:
+      raise Exception("Unable to lookup operator %s" % op)
 
 class File():
   def __init__(self, name, md5sum, size, ancestor = None):

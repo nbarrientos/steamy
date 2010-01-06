@@ -1,4 +1,5 @@
 import unittest
+import urllib
 
 from models import *
 
@@ -152,15 +153,26 @@ class ConstraintTest(unittest.TestCase):
 
   def testAsURI(self):
     baseURI = "http://example.org"
-    expected = baseURI + "/constraint/" +\
-               hashlib.sha1("testpackage>=4:4.5").hexdigest()
-    self.assertEqual(expected, self.c.asURI(baseURI))
+    expected = urllib.quote_plus("/constraint/testpackage LaterOrEqual 4:4.5", '/')
+    self.assertEqual(baseURI + expected, self.c.asURI(baseURI))
 
+    self.c.exceptin = [Architecture("i386"), Architecture("amd64")]
+    expected = "/constraint/testpackage LaterOrEqual 4:4.5 ExceptIn_i386 ExceptIn_amd64"
+    expected = urllib.quote_plus(expected, '/')
+    self.assertEqual(baseURI + expected, self.c.asURI(baseURI))
+    
+    self.c.exceptin = []
+    self.c.onlyin = [Architecture("a1")]
+    self.c.version = "4:4.5+svn1"
+    expected = "/constraint/testpackage LaterOrEqual 4:4.5+svn1 OnlyIn_a1"
+    expected = urllib.quote_plus(expected, '/')
+    self.assertEqual(baseURI + expected, self.c.asURI(baseURI))
+    
     self.c.operator = None
     self.c.version = None
-    expected = baseURI + "/constraint/" +\
-               hashlib.sha1("testpackage").hexdigest()
-    self.assertEqual(expected, self.c.asURI(baseURI))
+    self.c.onlyin = []
+    expected = urllib.quote_plus("/constraint/testpackage", '/')
+    self.assertEqual(baseURI + expected, self.c.asURI(baseURI))
 
   def testAsLabel(self):
     self.assertEqual("Constraint: testpackage (>= 4:4.5)",\
