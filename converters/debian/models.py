@@ -297,10 +297,13 @@ class Repository():
     self.uri = uri
 
   def asLabel(self):
-    return "Repository: %s" % self.uri
+      return "Repository: %s" % self.uri if self.uri else "Repository"
 
   def rdfType(self):
     return "Repository"
+
+  def __str__(self):
+      return "Repository: <%s> <%s>" % (self.uri, self.browser)
 
 class ArchRepository(Repository):
   def rdfType(self):

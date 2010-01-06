@@ -20,6 +20,7 @@ FOAF = Namespace(u"http://xmlns.com/foaf/0.1/")
 RDF = Namespace(u"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
 TAG = Namespace(u"http://www.holygoat.co.uk/owl/redwood/0.1/tags/")
+DOAP = Namespace(u"http://usefulinc.com/ns/doap#")
 
 ALLTRIPLES = BQ + "SELECT ?x ?y ?z WHERE { ?x ?y ?z . }"
 
@@ -205,6 +206,39 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(2, len(self.graph))
     expected = [(uriref, RDF.type, DEB['UnversionedBinary']),\
                 (uriref, RDFS.label, Literal("Unversioned Binary: name"))]
+    self.compareGeneratedTriples(expected)
+
+  def testTriplifyRepositoryFull(self):
+    r = GitRepository("http://example.com", "git://git.example.com")
+    bnode = self.t.triplifyRepository(r)
+    self.assertEqual(BNode, bnode.__class__)
+    self.assertEqual(5, len(self.graph))
+    expected = [(bnode, RDF.type, DOAP['GitRepository']),\
+                (bnode, RDFS.label, Literal("Repository: git://git.example.com")),\
+                (bnode, DOAP['location'], URIRef("git://git.example.com")),\
+                (bnode, DOAP['browse'], URIRef("http://example.com")),\
+                (URIRef("http://example.com"), RDF.type, FOAF['page'])]
+    self.compareGeneratedTriples(expected)
+
+  def testTriplifyRepositoryNoBrowser(self):
+    r = GitRepository(None, "git://git.example.com")
+    bnode = self.t.triplifyRepository(r)
+    self.assertEqual(BNode, bnode.__class__)
+    self.assertEqual(3, len(self.graph))
+    expected = [(bnode, RDF.type, DOAP['GitRepository']),\
+                (bnode, RDFS.label, Literal("Repository: git://git.example.com")),\
+                (bnode, DOAP['location'], URIRef("git://git.example.com"))]
+    self.compareGeneratedTriples(expected)
+
+  def testTriplifyRepositoryNoURI(self):
+    r = GitRepository("http://example.com", None)
+    bnode = self.t.triplifyRepository(r)
+    self.assertEqual(BNode, bnode.__class__)
+    self.assertEqual(4, len(self.graph))
+    expected = [(bnode, RDF.type, DOAP['GitRepository']),\
+                (bnode, RDFS.label, Literal("Repository")),\
+                (bnode, DOAP['browse'], URIRef("http://example.com")),\
+                (URIRef("http://example.com"), RDF.type, FOAF['page'])]
     self.compareGeneratedTriples(expected)
 
   # Mocks

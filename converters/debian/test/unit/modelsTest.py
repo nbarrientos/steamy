@@ -316,16 +316,23 @@ class AreaBoxTest(unittest.TestCase):
 
 class RepositoryTest(unittest.TestCase):
   def setUp(self):
-    self.baseRepository = Repository("http://example.com/", "svn://example.com")
-    self.gitRepository = GitRepository("http://example.com/", "git://example.com")
+    self.baseRepository = Repository("http://example.com", "svn://example.com")
+    self.gitRepository = GitRepository("http://example.com", "git://example.com")
+    self.noURIRepository = Repository("http://example.com", None)
 
   def testAsLabel(self):
     self.assertEqual("Repository: svn://example.com",\
                      self.baseRepository.asLabel())
+    self.assertEqual("Repository",\
+                     self.noURIRepository.asLabel())
 
   def testRdfType(self):
     self.assertEqual("Repository", self.baseRepository.rdfType())
     self.assertEqual("GitRepository", self.gitRepository.rdfType())
+
+  def testStr(self):
+    expected = "Repository: <git://example.com> <http://example.com>"
+    self.assertEqual(expected, str(self.gitRepository))
 
 class ToolsTest(unittest.TestCase):
   def setUp(self):
