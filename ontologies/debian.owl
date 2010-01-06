@@ -400,6 +400,15 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#extendedDescription -->
+
+    <owl:DatatypeProperty rdf:about="#extendedDescription">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="#Binary"/>
+    </owl:DatatypeProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#facetName -->
 
     <owl:DatatypeProperty rdf:about="#facetName">
@@ -439,6 +448,16 @@
     <owl:DatatypeProperty rdf:about="#standards-version">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
         <rdfs:domain rdf:resource="#Source"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#synopsis -->
+
+    <owl:DatatypeProperty rdf:about="#synopsis">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="#Binary"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
