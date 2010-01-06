@@ -249,6 +249,12 @@ class Triplifier():
     if package.buildEssential:
       self.g.add((ref, RDF.type, DEB['BuildEssentialBinary']))
 
+    # Synopsis
+    self.g.add((ref, DEB['synopsis'], Literal(package.sdescription)))
+
+    # Extended Description
+    self.g.add((ref, DEB['extendedDescription'], Literal(package.ldescription)))
+
   def triplifyBinaryPackageBuild(self, build):
     ref = URIRef(build.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['BinaryBuild']))
