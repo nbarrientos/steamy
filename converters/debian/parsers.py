@@ -258,6 +258,7 @@ class PackagesParser(BaseParser):
     binaryPackage.section = self.parseSection(raw)
     binaryPackage.essential = self.parseEssential(raw)
     binaryPackage.buildEssential = self.parseBuildEssential(raw)
+    (binaryPackage.sdescription, binaryPackage.ldescription) = self.parseDescription(raw)
     binaryPackage.unversionedBinary = \
                   UnversionedBinaryPackage(binaryPackage.package)
     return binaryPackage
@@ -335,4 +336,7 @@ class PackagesParser(BaseParser):
   def parseBuildEssential(self, raw):
     return True
   
-  #@required('Description')
+  @required('Description')
+  def parseDescription(self, raw):
+    split = raw['Description'].split("\n",1)
+    return tuple(split)

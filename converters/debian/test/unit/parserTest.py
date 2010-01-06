@@ -204,6 +204,12 @@ class PackagesParserTest(unittest.TestCase):
     self.binaryPackage['Priority'] = "optional"
     self.binaryPackage['Essential'] = "yes"
     self.binaryPackage['Build-Essential'] = "yes"
+    self.binaryPackage['Description'] = '''text-based mailreader supporting MIME, GPG, PGP and threading
+ Mutt is a sophisticated text-based Mail User Agent. Some highlights:
+ .
+  * MIME support (including RFC1522 encoding/decoding of 8-bit message
+    headers and UTF-8 support).
+  * Highly configurable through easy but powerful rc file.'''
 
   def tearDown(self):
     pass
@@ -314,6 +320,8 @@ class PackagesParserTest(unittest.TestCase):
     self.assertEqual(3, len(p.tag))
     self.assertTrue(p.essential)
     self.assertTrue(p.buildEssential)
+    self.assertTrue(len(p.ldescription) > 0)
+    self.assertTrue(len(p.sdescription) > 0)
 
   def testParseBinaryPackageNotMatchingRegex(self):
     self.values.ensure_value("regex", "^a.*")
@@ -358,6 +366,17 @@ class PackagesParserTest(unittest.TestCase):
     self.binaryPackage.pop('Build-Essential')
     self.assertEqual(None, self.parser.parseBuildEssential(self.binaryPackage))
 
+  def testParseDescription(self) :
+    expectedShort = "text-based mailreader supporting MIME, GPG, PGP and threading"
+    expectedLong =\
+    ''' Mutt is a sophisticated text-based Mail User Agent. Some highlights:
+ .
+  * MIME support (including RFC1522 encoding/decoding of 8-bit message
+    headers and UTF-8 support).
+  * Highly configurable through easy but powerful rc file.'''
+    (short, long) = self.parser.parseDescription(self.binaryPackage)
+    self.assertEqual(expectedShort, short)
+    self.assertEqual(expectedLong, long)
 
 class BaseParserTest(unittest.TestCase):
   def setUp(self):
