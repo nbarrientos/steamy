@@ -272,6 +272,15 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#satisfies -->
+
+    <owl:ObjectProperty rdf:about="#satisfies">
+        <rdfs:domain rdf:resource="#Binary"/>
+        <rdfs:range rdf:resource="#SimplePackageConstraint"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#section -->
 
     <owl:ObjectProperty rdf:about="#section">
