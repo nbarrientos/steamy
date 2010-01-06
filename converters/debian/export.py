@@ -137,6 +137,12 @@ class Triplifier():
       repoRef = self.triplifyRepository(package.vcs)
       self.g.add((ref, DEB['repository'], repoRef))
 
+    if package.format:
+      self.g.add((ref, DEB['format'], Literal(str(package.format))))
+
+    if package.standardsVersion:
+      self.g.add((ref, DEB['standardsVersion'], Literal(str(package.standardsVersion))))
+
   def triplifyBinaryPackageLite(self, package):
     ref = URIRef(package.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['Binary']))
