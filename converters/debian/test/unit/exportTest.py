@@ -41,7 +41,7 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(uriref, self.t.triplifyArchitecture(arch))
     self.assertEqual(2, len(self.graph))
     expected = [(uriref, RDF.type, DEB['Architecture']),\
-                (uriref, RDFS.label, Literal("Architecture: testArch"))]
+                (uriref, RDFS.label, Literal("Architecture: testArch", lang='en'))]
     self.compareGeneratedTriples(expected)
 
   def testTriplifyArchitectureOntologyInstance(self):
@@ -54,7 +54,7 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(uriref, self.t.triplifyVersionNumber(version))
     self.assertEqual(5, len(self.graph))
     expected = [(uriref, RDF.type, DEB['VersionNumber']),\
-                (uriref, RDFS.label, Literal("Version: 1.0-1")),\
+                (uriref, RDFS.label, Literal("Version: 1.0-1", lang='en')),\
                 (uriref, DEB['fullVersion'], Literal("1.0-1")),\
                 (uriref, DEB['upstreamVersion'], Literal("1.0")),\
                 (uriref, DEB['debianRevision'], Literal("1"))]
@@ -74,7 +74,7 @@ class TriplifierTest(unittest.TestCase):
     self.mox.VerifyAll()
     self.assertEqual(5, len(self.graph))
     expected = [(uriref, RDF.type, DEB['SimplePackageConstraint']),\
-                (uriref, RDFS.label, Literal("Constraint: pkg (>> 1.0-1)")),\
+                (uriref, RDFS.label, Literal("Constraint: pkg (>> 1.0-1)", lang='en')),\
                 (uriref, DEB['package'], URIRef("b/binary/pkg")),\
                 (uriref, DEB['constraintOperator'], Literal(">>")),\
                 (uriref, DEB['versionNumber'], URIRef("b/version/1.0-1"))]
@@ -103,7 +103,7 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(uriref, self.t.triplifyBinaryPackageBuild(b))
     self.assertEqual(4, len(self.graph))
     expected = [(uriref, RDF.type, DEB['BinaryBuild']),\
-                (uriref, RDFS.label, Literal("BinaryBuild: pkg1 (6.7) [arch]")),\
+                (uriref, RDFS.label, Literal("BinaryBuild: pkg1 (6.7) [arch]", lang='en')),\
                 (uriref, DEB['installed-size'], Literal("12345")),\
                 (uriref, DEB['architecture'], URIRef("b/arch/arch"))]
     self.compareGeneratedTriples(expected)
@@ -120,7 +120,7 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(uriref, self.t.triplifyTag(t))
     self.assertEqual(4, len(self.graph))
     expected = [(uriref, RDF.type, TAG['Tag']),\
-                (uriref, RDFS.label, Literal("Tag: facet::tag:tag")),\
+                (uriref, RDFS.label, Literal("Tag: facet::tag:tag", lang='en')),\
                 (uriref, DEB['facet'], Literal("facet")),\
                 (uriref, TAG['name'], Literal("tag:tag"))]
     self.compareGeneratedTriples(expected)
@@ -131,7 +131,7 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(uriref, self.t.triplifySection(s))
     self.assertEqual(3, len(self.graph))
     expected = [(uriref, RDF.type, DEB['Section']),\
-                (uriref, RDFS.label, Literal("Section: test")),\
+                (uriref, RDFS.label, Literal("Section: test", lang='en')),\
                 (uriref, DEB['sectionName'], Literal("test"))]
     self.compareGeneratedTriples(expected)
 
@@ -145,7 +145,7 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(uriref, self.t.triplifyContributor(c))
     self.assertEqual(4, len(self.graph))
     expected = [(uriref, RDF.type, FOAF['Person']),\
-                (uriref, RDFS.label, Literal("Human: Jon Doe <joe@debian.org>")),\
+                (uriref, RDFS.label, Literal("Human: Jon Doe <joe@debian.org>", lang='en')),\
                 (uriref, FOAF['name'], Literal("Jon Doe")),\
                 (uriref, FOAF['mbox'], Literal("joe@debian.org"))]
     self.compareGeneratedTriples(expected)
@@ -156,7 +156,7 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(uriref, self.t.triplifyContributor(c))
     self.assertEqual(4, len(self.graph))
     expected = [(uriref, RDF.type, FOAF['Group']),\
-                (uriref, RDFS.label, Literal("Team: Debian Love Team <love@lists.debian.org>")),\
+                (uriref, RDFS.label, Literal("Team: Debian Love Team <love@lists.debian.org>", lang='en')),\
                 (uriref, FOAF['name'], Literal("Debian Love Team")),\
                 (uriref, FOAF['mbox'], Literal("love@lists.debian.org"))]
     self.compareGeneratedTriples(expected)
@@ -195,7 +195,7 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(uriref, self.t.triplifyUnversionedSourcePackage(us))
     self.assertEqual(2, len(self.graph))
     expected = [(uriref, RDF.type, DEB['UnversionedSource']),\
-                (uriref, RDFS.label, Literal("Unversioned Source: name"))]
+                (uriref, RDFS.label, Literal("Unversioned Source: name", lang='en'))]
     self.compareGeneratedTriples(expected)
 
   def testTriplifyUnversionedBinaryPackage(self):
@@ -204,7 +204,7 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(uriref, self.t.triplifyUnversionedBinaryPackage(ub))
     self.assertEqual(2, len(self.graph))
     expected = [(uriref, RDF.type, DEB['UnversionedBinary']),\
-                (uriref, RDFS.label, Literal("Unversioned Binary: name"))]
+                (uriref, RDFS.label, Literal("Unversioned Binary: name", lang='en'))]
     self.compareGeneratedTriples(expected)
 
   def testTriplifyRepositoryFull(self):
@@ -213,7 +213,7 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(BNode, bnode.__class__)
     self.assertEqual(5, len(self.graph))
     expected = [(bnode, RDF.type, DOAP['GitRepository']),\
-                (bnode, RDFS.label, Literal("Repository: git://git.example.com")),\
+                (bnode, RDFS.label, Literal("Repository: git://git.example.com", lang='en')),\
                 (bnode, DOAP['location'], URIRef("git://git.example.com")),\
                 (bnode, DOAP['browse'], URIRef("http://example.com")),\
                 (URIRef("http://example.com"), RDF.type, FOAF['page'])]
@@ -225,7 +225,7 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(BNode, bnode.__class__)
     self.assertEqual(3, len(self.graph))
     expected = [(bnode, RDF.type, DOAP['GitRepository']),\
-                (bnode, RDFS.label, Literal("Repository: git://git.example.com")),\
+                (bnode, RDFS.label, Literal("Repository: git://git.example.com", lang='en')),\
                 (bnode, DOAP['location'], URIRef("git://git.example.com"))]
     self.compareGeneratedTriples(expected)
 
@@ -235,7 +235,7 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(BNode, bnode.__class__)
     self.assertEqual(4, len(self.graph))
     expected = [(bnode, RDF.type, DOAP['GitRepository']),\
-                (bnode, RDFS.label, Literal("Repository")),\
+                (bnode, RDFS.label, Literal("Repository", lang='en')),\
                 (bnode, DOAP['browse'], URIRef("http://example.com")),\
                 (URIRef("http://example.com"), RDF.type, FOAF['page'])]
     self.compareGeneratedTriples(expected)

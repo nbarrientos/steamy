@@ -35,4 +35,11 @@ class IndividualNotFoundException(Exception):
     self.individual = individual
 
   def __str__(self):
-    return "Unable to find individual '%s'" % self.individual 
+    return "Unable to find individual '%s'" % self.individual
+
+class UnavailableLanguageException(Exception):
+  def __init__(self, lang):
+    self.lang = lang
+
+  def __str__(self):
+    return "Cannot generate label: '%s' is not available" % self.lang

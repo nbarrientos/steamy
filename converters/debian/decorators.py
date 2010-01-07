@@ -1,4 +1,5 @@
 from errors import MissingMandatoryFieldException
+from errors import UnavailableLanguageException
 
 def required(fieldname):
   def decorator(f):
@@ -19,3 +20,11 @@ def optional(fieldname):
         return None
     return wrapper
   return decorator
+
+def checklang(f):
+  def wrapper(self, lang):
+    if lang in self.AVAILABLE_LANGS:
+      return f(self, lang)
+    else:
+      raise UnavailableLanguageException(lang)
+  return wrapper

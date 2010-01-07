@@ -4,6 +4,7 @@ import urllib
 from models import *
 
 from errors import IndividualNotFoundException
+from errors import UnavailableLanguageException
 
 class VersionNumberTest(unittest.TestCase):
   def testFieldParser(self):
@@ -31,7 +32,7 @@ class VersionNumberTest(unittest.TestCase):
 
   def testAsLabel(self):
     v = VersionNumber("1.0-1")
-    self.assertEqual("Version: 1.0-1", v.asLabel())
+    self.assertEqual("Version: 1.0-1", v.asLabel('en'))
 
   def testComparable(self):
     v1 = VersionNumber("1.0-1")
@@ -64,7 +65,7 @@ class ArchitectureTest(unittest.TestCase):
     self.assertEqual(expected, self.arch.asURI(baseURI))
 
   def testAsLabel(self):
-    self.assertEqual("Architecture: i386", self.arch.asLabel())
+    self.assertEqual("Architecture: i386", self.arch.asLabel('en'))
 
   def testToStr(self):
     self.assertEqual("i386", str(self.arch))
@@ -87,11 +88,11 @@ class BinaryPackageTest(unittest.TestCase):
     self.assertEqual(expected, self.b.asURI(baseURI))
 
   def testAsLabel(self):
-    self.assertEqual("Binary: testpkgname (1.0-1)", self.b.asLabel())
+    self.assertEqual("Binary: testpkgname (1.0-1)", self.b.asLabel('en'))
 
-class UnversionedSourcePackageTest(unittest.TestCase):
+class UnversionedBinaryPackageTest(unittest.TestCase):
   def setUp(self):
-    self.ub = UnversionedSourcePackage("name")
+    self.ub = UnversionedBinaryPackage("name")
 
   def testAsURI(self):
     baseURI = "http://example.org"
@@ -99,7 +100,7 @@ class UnversionedSourcePackageTest(unittest.TestCase):
     self.assertEqual(expected, self.ub.asURI(baseURI))
 
   def testAsLabel(self):
-    self.assertEqual("Unversioned Binary: name", self.ub.asLabel())
+    self.assertEqual("Unversioned Binary: name", self.ub.asLabel('en'))
 
   def testAsStr(self):
     self.assertEqual("name", self.ub.__str__())
@@ -122,16 +123,16 @@ class BinaryPackageBuildTest(unittest.TestCase):
 
   def testAsLabelNoAncestor(self):
     self.b.ancestor = None
-    self.assertRaises(AttributeError, self.b.asLabel)
+    self.assertRaises(AttributeError, self.b.asLabel, 'en')
 
   def testAsLabelAncestor(self):
     self.assertEqual("BinaryBuild: parent (4:4.5) [testarch]",\
-                     self.b.asLabel())
+                     self.b.asLabel('en'))
 
 class SourcePackageTest(unittest.TestCase):
   def testAsLabel(self):
     b = SourcePackage("testpkgname", "1.0-1")
-    self.assertEqual("Source: testpkgname (1.0-1)", b.asLabel())
+    self.assertEqual("Source: testpkgname (1.0-1)", b.asLabel('en'))
 
 class UnversionedSourcePackageTest(unittest.TestCase):
   def setUp(self):
@@ -143,7 +144,10 @@ class UnversionedSourcePackageTest(unittest.TestCase):
     self.assertEqual(expected, self.us.asURI(baseURI))
 
   def testAsLabel(self):
-    self.assertEqual("Unversioned Source: name", self.us.asLabel())
+    self.assertEqual("Unversioned Source: name", self.us.asLabel('en'))
+
+  def testAsLabelMissingLang(self):
+    self.assertRaises(UnavailableLanguageException, self.us.asLabel, 'foo')
 
   def testAsStr(self):
     self.assertEqual("name", self.us.__str__())
@@ -180,22 +184,22 @@ class ConstraintTest(unittest.TestCase):
 
   def testAsLabel(self):
     self.assertEqual("Constraint: testpackage (>= 4:4.5)",\
-                     self.c.asLabel())
+                     self.c.asLabel('en'))
 
     self.c.exceptin = [Architecture("a1"), Architecture("a2")]
     self.assertEqual("Constraint: testpackage (>= 4:4.5) !a1 !a2",\
-                     self.c.asLabel())
+                     self.c.asLabel('en'))
 
     self.c.exceptin = []
     self.c.onlyin = [Architecture("a1")]
     self.assertEqual("Constraint: testpackage (>= 4:4.5) a1",\
-                     self.c.asLabel())
+                     self.c.asLabel('en'))
 
     self.c.onlyin = []
     self.c.operator = None
     self.c.version = None
     self.assertEqual("Constraint: testpackage",\
-                     self.c.asLabel())
+                     self.c.asLabel('en'))
 
 class FileTest(unittest.TestCase):
   def setUp(self):
@@ -219,7 +223,7 @@ class FileTest(unittest.TestCase):
     self.assertRaises(AttributeError, self.f.asURI, baseURI)
 
   def testAsLabelAncestor(self):
-    self.assertEqual("File: filename", self.f.asLabel())
+    self.assertEqual("File: filename", self.f.asLabel('en'))
 
 class DirectoryTest(unittest.TestCase):
   def setUp(self):
@@ -233,7 +237,7 @@ class DirectoryTest(unittest.TestCase):
     self.assertEqual("b/path/test/path", self.d.asURI("b"))
 
   def testAsLabel(self):
-    self.assertEqual("Directory: test/path", self.d.asLabel())
+    self.assertEqual("Directory: test/path", self.d.asLabel('en'))
 
 class TagTest(unittest.TestCase):
   def setUp(self):
@@ -248,7 +252,7 @@ class TagTest(unittest.TestCase):
     self.assertEqual("b/tag/facet/tag", self.t.asURI("b"))
 
   def testAsLabel(self):
-    self.assertEqual("Tag: facet::tag", self.t.asLabel())
+    self.assertEqual("Tag: facet::tag", self.t.asLabel('en'))
 
 class SectionTest(unittest.TestCase):
   def setUp(self):
@@ -262,7 +266,7 @@ class SectionTest(unittest.TestCase):
     self.assertEqual("b/section/name", self.s.asURI("b"))
 
   def testAsLabel(self):
-    self.assertEqual("Section: name", self.s.asLabel())
+    self.assertEqual("Section: name", self.s.asLabel('en'))
 
 class PriorityTest(unittest.TestCase):
   def setUp(self):
@@ -301,7 +305,7 @@ class ContributorTest(unittest.TestCase):
     
   def testAsLabel(self):
     self.assertEqual("Contributor: Name Surname <mail@example.com>",\
-                     self.c.asLabel())
+                     self.c.asLabel('en'))
 
 class AreaTest(unittest.TestCase):
   def setUp(self):
@@ -338,9 +342,9 @@ class RepositoryTest(unittest.TestCase):
 
   def testAsLabel(self):
     self.assertEqual("Repository: svn://example.com",\
-                     self.baseRepository.asLabel())
+                     self.baseRepository.asLabel('en'))
     self.assertEqual("Repository",\
-                     self.noURIRepository.asLabel())
+                     self.noURIRepository.asLabel('en'))
 
   def testRdfType(self):
     self.assertEqual("Repository", self.baseRepository.rdfType())

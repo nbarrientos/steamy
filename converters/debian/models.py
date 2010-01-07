@@ -2,8 +2,10 @@ import re
 import urllib
 
 from debian_bundle.changelog import Version
+from rdflib import Literal
 
 from errors import IndividualNotFoundException
+from decorators import checklang
 
 class BasePackage():
   def __init__(self, package=None, version=None):
@@ -23,35 +25,56 @@ class BaseUnversionedPackage():
   def __eq__(self, other):
     return self.package.__eq__(other.package)
 
-class UnversionedSourcePackage(BaseUnversionedPackage):
+class Labelable():
+  def labelAsLiteral(self, lang):
+    return Literal(self.asLabel(lang), lang=lang)
+
+class UnversionedSourcePackage(BaseUnversionedPackage, Labelable):
+  AVAILABLE_LANGS = ('en',)
+
   def asURI(self, base):
     return "%s/source/%s" % (base, self.package)
 
-  def asLabel(self):
-    return "Unversioned Source: %s" % (self.package)
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "Unversioned Source"}
+    return "%s: %s" % (map[lang], self.package)
 
-class SourcePackage(BasePackage):
+class SourcePackage(BasePackage, Labelable):
+  AVAILABLE_LANGS = ('en',)
+
   def asURI(self, base):
     return "%s/source/%s/%s" % (base, self.package, self.version)
 
-  def asLabel(self):
-    return "Source: %s (%s)" % (self.package, self.version)
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "Source"}
+    return "%s: %s (%s)" % (map[lang], self.package, self.version)
 
-class UnversionedBinaryPackage(BaseUnversionedPackage):
+class UnversionedBinaryPackage(BaseUnversionedPackage, Labelable):
+  AVAILABLE_LANGS = ('en',)
+
   def asURI(self, base):
     return "%s/binary/%s" % (base, self.package)
 
-  def asLabel(self):
+  @checklang
+  def asLabel(self, lang):
     return "Unversioned Binary: %s" % (self.package)
 
-class BinaryPackage(BasePackage):
+class BinaryPackage(BasePackage, Labelable):
+  AVAILABLE_LANGS = ('en',)
+
   def asURI(self, base):
     return "%s/binary/%s/%s" % (base, self.package, self.version)
 
-  def asLabel(self):
-    return "Binary: %s (%s)" % (self.package, self.version)
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "Binary"}
+    return "%s: %s (%s)" % (map[lang], self.package, self.version)
 
-class BinaryPackageBuild():
+class BinaryPackageBuild(Labelable):
+  AVAILABLE_LANGS = ('en',)
+
   def __init__(self, ancestor = None):
     self.ancestor = ancestor # Cycles are OK in Python! :)
 
@@ -59,16 +82,22 @@ class BinaryPackageBuild():
     return "%s/binary/%s/%s/%s" % \
             (base, self.ancestor.package, self.ancestor.version, self.architecture)
 
-  def asLabel(self):
-    return "BinaryBuild: %s (%s) [%s]" % \
-            (self.ancestor.package, self.ancestor.version, self.architecture)
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "BinaryBuild"}
+    return "%s: %s (%s) [%s]" % \
+            (map[lang], self.ancestor.package, self.ancestor.version, self.architecture)
 
-class VersionNumber(Version):
+class VersionNumber(Version, Labelable):
+  AVAILABLE_LANGS = ('en',)
+
   def asURI(self, base):
     return "%s/version/%s" % (base, str(self))
 
-  def asLabel(self):
-    return "Version: %s" % (str(self))
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "Version"}
+    return "%s: %s" % (map[lang], str(self))
 
 class Constraints():
   def __init__(self):
@@ -102,7 +131,9 @@ class OrConstraint():
   def __str__(self):
     return "OrConstraint: %s" % str(self.constraints)
 
-class Constraint():
+class Constraint(Labelable):
+  AVAILABLE_LANGS = ('en',)
+
   def __init__(self):
     self.package = None
     self.operator = None
@@ -123,8 +154,10 @@ class Constraint():
 
     return "%s/%s" % (base, urllib.quote_plus(postfix, '/'))
 
-  def asLabel(self):
-    label = "Constraint: %s" % self.package
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "Constraint"}
+    label = "%s: %s" % (map[lang], self.package)
     if self.operator and self.version:
       label = label + " (%s %s)" % (self.operator, self.version)
 
@@ -156,7 +189,9 @@ class Constraint():
     else:
       raise Exception("Unable to lookup operator %s" % op)
 
-class File():
+class File(Labelable):
+  AVAILABLE_LANGS = ('en',)
+  
   def __init__(self, name, md5sum, size, ancestor = None):
     self.name = name
     self.md5sum = md5sum
@@ -167,8 +202,10 @@ class File():
     return "%s/path/%s/%s" % \
           (base, self.ancestor.path, self.name)
 
-  def asLabel(self):
-    return "File: %s" % self.name
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "File"}
+    return "%s: %s" % (map[lang], self.name)
 
   def __str__(self):
     return "%s %s %s" % (self.md5sum, self.size, self.name)
@@ -176,12 +213,16 @@ class File():
   def __eq__(self, other):
     return self.md5sum.__eq__(other.md5sum)
 
-class Directory():
+class Directory(Labelable):
+  AVAILABLE_LANGS = ('en',)
+  
   def __init__(self, path):
     self.path = path
 
-  def asLabel(self):
-    return "Directory: %s" % self.path
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "Directory"}
+    return "%s: %s" % (map[lang], self.path)
 
   def asURI(self, base):
     return "%s/path/%s" % (base, self.path)
@@ -189,7 +230,9 @@ class Directory():
   def __eq__(self, other):
     return self.path.__eq__(other.path)
 
-class Tag():
+class Tag(Labelable):
+  AVAILABLE_LANGS = ('en',)
+
   def __init__(self, facet, tag):
     self.facet = facet
     self.tag = tag
@@ -197,8 +240,10 @@ class Tag():
   def asURI(self, base):
     return "%s/tag/%s/%s" % (base, self.facet, self.tag)
 
-  def asLabel(self):
-    return "Tag: %s::%s" % (self.facet, self.tag)
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "Tag"}
+    return "%s: %s::%s" % (map[lang], self.facet, self.tag)
 
   def __str__(self):
     return "%s::%s" % (self.facet, self.tag)
@@ -222,28 +267,36 @@ class SimpleDataHolderIndividuals(SimpleDataHolder):
     raise Exception("No URI available, you should treat \
                      this object as an individual")
 
-  def asLabel(self):
+  @checklang
+  def asLabel(self, lang):
     raise Exception("No label available, you should treat \
                      this object as an individual")
 
-class Architecture(SimpleDataHolderResources):
+class Architecture(SimpleDataHolderResources, Labelable):
+  AVAILABLE_LANGS = ('en',)
   INSTANCES = ("all")
 
   def asURI(self, base):
     return "%s/arch/%s" % (base, self.name)
 
-  def asLabel(self):
-    return "Architecture: %s" % (self.name)
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "Architecture"}
+    return "%s: %s" % (map[lang], self.name)
 
   def hasIndividual(self):
     return self.name in self.INSTANCES
 
-class Section(SimpleDataHolderResources):
+class Section(SimpleDataHolderResources, Labelable):
+  AVAILABLE_LANGS = ('en',)
+
   def asURI(self, base):
     return "%s/section/%s" % (base, self.name)
 
-  def asLabel(self):
-    return "Section: %s" % (self.name)
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "Section"}
+    return "%s: %s" % (map[lang], self.name)
 
 class BaseBox():
   @classmethod
@@ -271,26 +324,34 @@ class AreaBox(BaseBox):
         'non-free': Area('non-free'),\
         'contrib': Area('contrib')}
 
-class Contributor():
+class Contributor(Labelable):
+  AVAILABLE_LANGS = ('en',)
+
   def __init__(self, name, email):
     self.name = name
     self.email = email
 
-  def asLabel(self):
-    return "Contributor: %s <%s>" % (self.name, self.email)
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "Contributor"}
+    return "%s: %s <%s>" % (map[lang], self.name, self.email)
 
   def __str__(self):
     return "%s <%s>" % (self.name, self.email)
 
-class Human(Contributor):
+class Human(Contributor, Labelable):
+  AVAILABLE_LANGS = ('en',)
+
   def __init__(self, name, email):
     Contributor.__init__(self, name, email)
 
   def asURI(self, base):
     return "%s/people/%s" % (base, self.name.replace(" ", "_"))
 
-  def asLabel(self):
-    return "Human: %s <%s>" % (self.name, self.email)
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "Human"}
+    return "%s: %s <%s>" % (map[lang], self.name, self.email)
 
   def rdfType(self):
     return "Person"
@@ -298,15 +359,19 @@ class Human(Contributor):
   def isTeam(self):
     return False
 
-class Team(Contributor):
+class Team(Contributor, Labelable):
+  AVAILABLE_LANGS = ('en',)
+
   def __init__(self, name, email):
     Contributor.__init__(self, name, email)
 
   def asURI(self, base):
     return "%s/team/%s" % (base, self.name.replace(" ", "_"))
 
-  def asLabel(self):
-    return "Team: %s <%s>" % (self.name, self.email)
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "Team"}
+    return "%s: %s <%s>" % (map[lang], self.name, self.email)
 
   def rdfType(self):
     return "Group"
@@ -314,13 +379,17 @@ class Team(Contributor):
   def isTeam(self):
     return True
 
-class Repository():
+class Repository(Labelable):
+  AVAILABLE_LANGS = ('en',)
+
   def __init__(self, browser, uri):
     self.browser = browser
     self.uri = uri
 
-  def asLabel(self):
-      return "Repository: %s" % self.uri if self.uri else "Repository"
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "Repository"}
+    return "%s: %s" % (map[lang], self.uri) if self.uri else map[lang]
 
   def rdfType(self):
     return "Repository"
