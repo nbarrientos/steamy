@@ -271,7 +271,7 @@ class Triplifier():
     self.g.add((ref, DEB['architecture'], archRef))
 
     # Installed-Size
-    self.g.add((ref, DEB['installed-size'], Literal(str(build.installedSize))))
+    self.g.add((ref, DEB['installed-size'], Literal(int(build.installedSize))))
 
     return ref
 
@@ -325,7 +325,7 @@ class Triplifier():
     self.g.add((ref, DEB['fullVersion'], Literal(str(version))))
     
     if version.epoch:
-      self.g.add((ref, DEB['epoch'], Literal(str(version.epoch))))
+      self.g.add((ref, DEB['epoch'], Literal(int(version.epoch))))
 
     self.g.add((ref, DEB['upstreamVersion'], Literal(str(version.upstream_version))))
     
@@ -347,7 +347,7 @@ class Triplifier():
     self.g.add((hash, NFO['hashValue'], Literal(file.md5sum)))
     self.g.add((ref, NFO['hasHash'], hash))
 
-    self.g.add((ref, NFO['fileSize'], Literal(file.size)))
+    self.g.add((ref, NFO['fileSize'], Literal(int(file.size))))
 
     return ref
 
