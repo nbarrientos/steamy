@@ -462,6 +462,17 @@
     
 
 
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#releaseDate -->
+
+    <owl:DatatypeProperty rdf:about="#releaseDate">
+        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:domain rdf:resource="#Distribution"/>
+        <rdfs:subPropertyOf rdf:resource="&terms;created"/>
+        <rdfs:range rdf:resource="&xsd;date"/>
+    </owl:DatatypeProperty>
+    
+
+
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#standards-version -->
 
     <owl:DatatypeProperty rdf:about="#standards-version">
@@ -496,6 +507,12 @@
     <owl:DatatypeProperty rdf:about="#upstreamVersion">
         <rdfs:domain rdf:resource="#VersionNumber"/>
     </owl:DatatypeProperty>
+    
+
+
+    <!-- http://purl.org/dc/terms/created -->
+
+    <owl:DatatypeProperty rdf:about="&terms;created"/>
     
 
 
