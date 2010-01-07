@@ -28,6 +28,15 @@ class Triplifier():
     self.g.bind("nfo", NFO)
     self.g.bind("tag", TAG)
 
+  ### Initial triples ###
+
+  def pushInitialTriples(self):
+    if self.opts.distribution:
+      ref = URIRef(self.opts.distribution)
+      self.g.add((ref, RDF.type, DEB['Distribution']))
+      if self.opts.distdate:
+        self.g.add((ref, DEB['releaseDate'], Literal(self.opts.parsedDistDate)))
+
   ### Sources ###
 
   def triplifySourcePackage(self, package):

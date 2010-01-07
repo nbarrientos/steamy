@@ -1,6 +1,7 @@
 import unittest
 import mox
 import optparse
+from datetime import date
 
 from rdflib.Graph import ConjunctiveGraph
 from rdflib import Namespace, URIRef, BNode, Literal
@@ -25,16 +26,27 @@ ALLTRIPLES = BQ + "SELECT ?x ?y ?z WHERE { ?x ?y ?z . }"
 
 class TriplifierTest(unittest.TestCase):
   def setUp(self):
-    values = optparse.Values()
-    values.ensure_value("baseURI", "b")
+    self.values = optparse.Values()
+    self.values.ensure_value("baseURI", "b")
     self.graph = ConjunctiveGraph()
-    self.t = Triplifier(self.graph, values)
+    self.t = Triplifier(self.graph, self.values)
     self.mox = mox.Mox()
 
   def compareGeneratedTriples(self, expected):
     for triple in self.graph.query(ALLTRIPLES):
       self.assertTrue(triple in expected, "%s is not in" % str(triple))
-  
+
+  def testPushInitialTriples(self):
+    self.values.ensure_value("distribution", "http://example.com/d")
+    self.values.ensure_value("distdate", "Not used")
+    self.values.ensure_value("parsedDistDate", date(1985, 07, 01))
+    self.t.pushInitialTriples()
+    self.assertEqual(2, len(self.graph))
+    uriref = URIRef("http://example.com/d")
+    expected = [(uriref, RDF.type, DEB['Distribution']),\
+                (uriref, DEB['releaseDate'], Literal(date(1985, 07, 01)))]
+    self.compareGeneratedTriples(expected)
+
   def testTriplifyArchitecture(self):
     arch = Architecture("testArch")
     uriref = URIRef("b/arch/testArch")

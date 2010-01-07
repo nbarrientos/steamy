@@ -1,6 +1,7 @@
 import sys
 import logging
 import re
+import time, rfc822, datetime
 
 from optparse import OptionParser
 from debian_bundle import deb822
@@ -69,6 +70,9 @@ class Launcher():
                       metavar="URI", help="attach distribution pointed by URI\
                       to every source package processed\
                       (e.g. 'http://rdf.debian.net/distribution/lenny')")
+    parser.add_option("-D", "--distribution-release-date", dest="distdate",\
+                      metavar="DATE", help="set distribution release date to\
+                      DATE (RFC822) (e.g. 'Mon, 20 Nov 1995 13:12:08 -0500')")
     parser.add_option("-P", "--packages-output", dest="packagesOutput",\
                       default="Packages.rdf",\
                       metavar="FILE", help="dump rdfized Packages to FILE [default: %default]")
@@ -112,6 +116,18 @@ class Launcher():
         self.opts.cRegex = re.compile(self.opts.regex)
       except:
         raise OptsParsingException("The Regular expression you provided is not valid")
+    elif self.opts.distdate and not self.opts.distribution:
+      raise OptsParsingException("No distribution provided, did you forget -d?")
+
+    if self.opts.distdate:
+      date = rfc822.parsedate(self.opts.distdate)
+      if date is not None:
+        stamp = time.mktime(date)
+        self.opts.parsedDistDate = datetime.date.fromtimestamp(stamp)
+      else:
+        raise OptsParsingException("'%s' is not a valid RFC822 date" % \
+        self.opts.distdate)
+
 
   def processPackages(self):
     try:
@@ -124,6 +140,7 @@ class Launcher():
     graph = ConjunctiveGraph()
     parser = PackagesParser(self.opts)
     triplifier = Triplifier(graph, self.opts)
+    triplifier.pushInitialTriples()
     serializer = Serializer(self.opts)
 
     rawPackages = deb822.Packages.iter_paragraphs(inputFile)
@@ -174,6 +191,7 @@ class Launcher():
     graph = ConjunctiveGraph()
     parser = SourcesParser(self.opts)
     triplifier = Triplifier(graph, self.opts)
+    triplifier.pushInitialTriples()
     serializer = Serializer(self.opts)
 
     rawPackages = deb822.Sources.iter_paragraphs(inputFile)
