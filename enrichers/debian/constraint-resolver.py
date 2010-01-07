@@ -7,6 +7,7 @@
 
 import sys
 import logging
+import random
 
 from optparse import OptionParser
 
@@ -19,6 +20,28 @@ VERSION = "0.1alpha"
 
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
 
+class GraphPool():
+  def __init__(self, size, prefix, base):
+    self.prefix = "%s/%s" % (base, prefix)
+    self.pool = [ConjunctiveGraph() for i in range(int(size))]
+    for graph in self.pool:
+      graph.bind("deb", DEB)
+
+  def addTriple(self, triple):
+    self.pool[int(random.uniform(0, len(self.pool)))].add(triple)
+
+  def countTriples(self):
+    return sum([len(i) for i in self.pool])
+
+  def serialize(self):
+    for i in range(len(self.pool)): # I'm sorry :(    
+      try:
+        f = open("%s-%d.rdf" % (self.prefix, i), "w")
+        f.write(self.pool[i].serialize())
+        f.close()
+      except IOError, e:
+        logging.error("Serialization failed: %s (does base dir exist?)", e)
+
 class ConstraintResolver():
   def __init__(self):
     self.opts = None
@@ -27,15 +50,21 @@ class ConstraintResolver():
     self.endpoint = SPARQLWrapper2(self.opts.endpoint)
     self.graph = ConjunctiveGraph()
     self.graph.bind("deb", DEB)
-    self.f = open(self.opts.output, "w")
+    self.pool = GraphPool(self.opts.pool, self.opts.prefix, self.opts.basedir)
 
   def parseArgs(self):
     parser = OptionParser(usage="%prog [options]", version="%prog " + VERSION)
     parser.add_option("-e", "--endpoint", dest="endpoint",\
                       metavar="URI", help="use URI as SPARQL endpoint")
-    parser.add_option("-o", "--output", dest="output",\
-                      default="Safisfies.rdf",\
-                      metavar="FILE", help="dump output to FILE [default: %default]")
+    parser.add_option("-o", "--output-prefix", dest="prefix",\
+                      default="Safisfies",\
+                      metavar="PREFIX", help="dump output to PREFIX-{index}.rdf [default: %default]")
+    parser.add_option("-b", "--base-dir", dest="basedir",\
+                      default=".",\
+                      metavar="DIR", help="use DIR as base directory to store output files [default: %default]")
+    parser.add_option("-p", "--pool-size", dest="pool",\
+                      default="1",\
+                      metavar="NUM", help="set graph pool size to NUM [default: %default]")
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose",\
                       default=False, help="increases debug level")
     parser.add_option("-q", "--quiet", action="store_true", dest="quiet",\
@@ -126,9 +155,8 @@ class ConstraintResolver():
     logging.info("Satisfied %s dependencies out of %s possible matches" % \
     (len(self.graph), counter))
 
-    self.f.write(self.graph.serialize())
-    self.f.close()
-
+    self.pool.serialize()
+    
   def composeVersion(self, versionURI):
     q = """
         PREFIX deb: <http://idi.fundacionctic.org/steamy/debian.owl#>
@@ -153,7 +181,7 @@ class ConstraintResolver():
   def satisfyConstraint(self, binaryPackage, constraint):
     logging.debug("True! Adding <%s> deb:satisfies <%s>" % \
     (binaryPackage, constraint))
-    self.graph.add((URIRef(binaryPackage), DEB['satisfies'], URIRef(constraint)))
+    self.pool.addTriple((URIRef(binaryPackage), DEB['satisfies'], URIRef(constraint)))
 
 if __name__ == "__main__":
   ConstraintResolver().run()
