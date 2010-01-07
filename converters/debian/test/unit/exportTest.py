@@ -104,12 +104,12 @@ class TriplifierTest(unittest.TestCase):
     self.assertEqual(4, len(self.graph))
     expected = [(uriref, RDF.type, DEB['BinaryBuild']),\
                 (uriref, RDFS.label, Literal("BinaryBuild: pkg1 (6.7) [arch]", lang='en')),\
-                (uriref, DEB['installed-size'], Literal("12345")),\
+                (uriref, DEB['installed-size'], Literal(int("12345"))),\
                 (uriref, DEB['architecture'], URIRef("b/arch/arch"))]
     self.compareGeneratedTriples(expected)
 
   def testTriplifyFile(self):
-    f = File("testname", "hash", "size", Directory("test/path"))
+    f = File("testname", "hash", "1234", Directory("test/path"))
     uriref = URIRef("b/path/test/path/testname")
     self.assertEqual(uriref, self.t.triplifyFile(f))
     self.assertEqual(8, len(self.graph))
