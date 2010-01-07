@@ -81,7 +81,11 @@ class ConstraintResolver():
         PREFIX deb: <http://idi.fundacionctic.org/steamy/debian.owl#>
         SELECT ?b ?c ?bvn ?cvn ?op
         WHERE { 
-          ?ub deb:version ?b .
+          { ?ub deb:version ?b . } # Straight
+          UNION 
+          { ?b deb:provides ?or . # Through provides
+            ?or deb:alternative ?a .
+            ?a deb:package ?ub . }
           ?b deb:versionNumber ?bvn .
           ?c deb:package ?ub .
           OPTIONAL { ?c deb:versionNumber ?cvn . } .
