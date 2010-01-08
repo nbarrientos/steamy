@@ -392,3 +392,15 @@ class ToolsTest(unittest.TestCase):
     
     self.assertEqual(1, teamRating(self.name5, self.email5))
     self.assertEqual(1, humanRating(self.name5, self.email5))
+
+  def testencodeURI(self):
+    base = "http://rdf.debian.net"
+    expected1 = "http://rdf.debian.net/" + \
+      urllib.quote_plus("binary/binname/3.4-2", '/')
+    expected2 = "http://rdf.debian.net/" + \
+      urllib.quote_plus("distribution/lenny", '/')
+    expected3 = "http://rdf.debian.net/" + \
+      urllib.quote_plus("foo", '/')
+    self.assertEqual(expected1, encodeURI(base, "binary", "binname", "3.4-2"))
+    self.assertEqual(expected2, encodeURI(base, "distribution", "lenny"))
+    self.assertEqual(expected3, encodeURI(base, "foo"))
