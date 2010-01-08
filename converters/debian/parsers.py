@@ -1,6 +1,6 @@
 import re
 
-from debian_bundle.changelog import Version
+from debian_bundle.changelog import Version, VersionError
 
 from models import *
 from errors import ParserError

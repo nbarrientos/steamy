@@ -404,6 +404,9 @@ class BaseParserTest(unittest.TestCase):
     self.assertEqual("1.0+svn20080909", ver.upstream_version)
     self.assertEqual("1.1", ver.debian_version)
 
+  def testParseVersionNumberWrongVersionNumber(self):
+    self.assertRaises(ParserError, self.parser.parseVersionNumber, "_")
+
   def testParseConstraints(self):
     input = "exim4 (>> 0.5.4-5) | mail-transport-agent, mutt"
     ors = self.parser.parseConstraints(input)
