@@ -43,7 +43,7 @@ class Triplifier():
   def triplifySourcePackage(self, package):
     ref = URIRef(package.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['Source']))
-    self.addLabelToGraph(ref, package)
+    self._addLabelToGraph(ref, package)
 
     # Unversioned Source
     unversionedRef = self.triplifyUnversionedSourcePackage(package.unversionedSource)
@@ -156,7 +156,7 @@ class Triplifier():
   def triplifyBinaryPackageLite(self, package):
     ref = URIRef(package.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['Binary']))
-    self.addLabelToGraph(ref, package)
+    self._addLabelToGraph(ref, package)
 
     # Package
     self.g.add((ref, DEB['packageName'], Literal(str(package.package))))
@@ -274,7 +274,7 @@ class Triplifier():
   def triplifyBinaryPackageBuild(self, build):
     ref = URIRef(build.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['BinaryBuild']))
-    self.addLabelToGraph(ref, build)
+    self._addLabelToGraph(ref, build)
 
     # Architecture
     archRef = self.triplifyArchitecture(build.architecture)
@@ -291,7 +291,7 @@ class Triplifier():
     else:
       ref = URIRef(arch.asURI(self.baseURI))
       self.g.add((ref, RDF.type, DEB['Architecture']))
-      self.addLabelToGraph(ref, arch)
+      self._addLabelToGraph(ref, arch)
       return ref
 
   def triplifyOrConstraint(self, orconstraint):
@@ -307,7 +307,7 @@ class Triplifier():
   def triplifyConstraint(self, constraint):
     ref = URIRef(constraint.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['SimplePackageConstraint']))
-    self.addLabelToGraph(ref, constraint)
+    self._addLabelToGraph(ref, constraint)
 
     packageRef = self.triplifyUnversionedBinaryPackage(constraint.package)
     self.g.add((ref, DEB['package'], packageRef))
@@ -330,7 +330,7 @@ class Triplifier():
   def triplifyVersionNumber(self, version):
     ref = URIRef(version.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['VersionNumber']))
-    self.addLabelToGraph(ref, version)
+    self._addLabelToGraph(ref, version)
 
     self.g.add((ref, DEB['fullVersion'], Literal(str(version))))
     
@@ -347,7 +347,7 @@ class Triplifier():
   def triplifyFile(self, file):
     ref = URIRef(file.asURI(self.baseURI))
     self.g.add((ref, RDF.type, NFO['FileDataObject']))
-    self.addLabelToGraph(ref, file)
+    self._addLabelToGraph(ref, file)
 
     self.g.add((ref, NFO['fileName'], Literal(file.name)))
 
@@ -364,14 +364,14 @@ class Triplifier():
   def triplifyDirectory(self, dir):
     ref = URIRef(dir.asURI(self.baseURI))
     self.g.add((ref, RDF.type, NFO['Folder']))
-    self.addLabelToGraph(ref, dir)
+    self._addLabelToGraph(ref, dir)
 
     return ref
 
   def triplifyTag(self, tag):
     ref = URIRef(tag.asURI(self.baseURI))
     self.g.add((ref, RDF.type, TAG['Tag']))
-    self.addLabelToGraph(ref, tag)
+    self._addLabelToGraph(ref, tag)
     self.g.add((ref, DEB['facet'], Literal(tag.facet)))
     self.g.add((ref, TAG['name'], Literal(tag.tag)))
 
@@ -380,7 +380,7 @@ class Triplifier():
   def triplifySection(self, section):
     ref = URIRef(section.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['Section']))
-    self.addLabelToGraph(ref, section)
+    self._addLabelToGraph(ref, section)
     self.g.add((ref, DEB['sectionName'], Literal(section.name)))
 
     return ref
@@ -391,7 +391,7 @@ class Triplifier():
   def triplifyContributor(self, contributor):
     ref = URIRef(contributor.asURI(self.baseURI))
     self.g.add((ref, RDF.type, FOAF[contributor.rdfType()]))
-    self.addLabelToGraph(ref, contributor)
+    self._addLabelToGraph(ref, contributor)
 
     self.g.add((ref, FOAF['name'], Literal(contributor.name)))
     self.g.add((ref, FOAF['mbox'], Literal(contributor.email)))
@@ -417,21 +417,21 @@ class Triplifier():
   def triplifyUnversionedSourcePackage(self, usource):
     ref = URIRef(usource.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['UnversionedSource']))
-    self.addLabelToGraph(ref, usource)
+    self._addLabelToGraph(ref, usource)
 
     return ref
 
   def triplifyUnversionedBinaryPackage(self, ubinary):
     ref = URIRef(ubinary.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['UnversionedBinary']))
-    self.addLabelToGraph(ref, ubinary)
+    self._addLabelToGraph(ref, ubinary)
 
     return ref
 
   def triplifyRepository(self, repo):
     node = BNode()
     self.g.add((node, RDF.type, DOAP[repo.rdfType()]))
-    self.addLabelToGraph(node, repo)
+    self._addLabelToGraph(node, repo)
     if repo.uri is not None:
       self.g.add((node, DOAP['location'], URIRef(repo.uri)))
     if repo.browser is not None:
@@ -440,8 +440,7 @@ class Triplifier():
 
     return node
 
-  # Tools
-  def addLabelToGraph(self, subject, object):
+  def _addLabelToGraph(self, subject, object):
     for lang in object.AVAILABLE_LANGS:
       self.g.add((subject, RDFS.label, object.labelAsLiteral(lang)))
 
