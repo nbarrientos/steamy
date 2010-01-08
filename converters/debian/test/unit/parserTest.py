@@ -166,14 +166,6 @@ class SourcesParserTest(unittest.TestCase):
     self.sourcePackage.pop('Uploaders')
     self.assertEqual(None, self.parser.parseUploaders(self.sourcePackage))
 
-  def testParsePriority(self):
-    self.assertEqual(PriorityBox.get("optional"),\
-                     self.parser.parsePriority(self.sourcePackage))
-
-  def testParsePriorityMissingField(self):
-    self.sourcePackage.pop('Priority')
-    self.assertEqual(None, self.parser.parsePriority(self.sourcePackage))
-
   def testParseDmUploadAllowed(self):
     self.assertTrue(self.parser.parseDmUploadAllowed(self.sourcePackage))
 
@@ -360,15 +352,6 @@ class PackagesParserTest(unittest.TestCase):
                         "460578", "4566", Directory("pool/main/m/mutt"))
     file = self.parser.parseFilename(self.binaryPackage)
     self.assertEqual(expectedFile, file)
-
-  def testParsePriority(self):
-    self.assertEqual(PriorityBox.get("optional"),\
-                     self.parser.parsePriority(self.binaryPackage))
-
-  def testParsePriorityMissingField(self):
-    self.binaryPackage.pop('Priority')
-    self.assertRaises(MissingMandatoryFieldError,\
-                      self.parser.parsePriority, self.binaryPackage)
 
   def testParseEssential(self):
     self.assertTrue(self.parser.parseEssential(self.binaryPackage))
@@ -577,7 +560,20 @@ class BaseParserTest(unittest.TestCase):
   def testParseSection(self):
     input = {'Section': "utils"}
     self.assertEqual(Section("utils"), self.parser.parseSection(input))
- 
+
+  def testParseSectionMissingField(self):
+    input = {}
+    self.assertEqual(None, self.parser.parseSection(input))
+  
+  def testParsePriority(self):
+    input = {'Priority': "optional"}
+    self.assertEqual(PriorityBox.get("optional"),\
+                     self.parser.parsePriority(input))
+
+  def testParsePriorityMissingField(self):
+    input = {}
+    self.assertEqual(None, self.parser.parsePriority(input))
+  
   def testParseContributor(self):
     input = "Name Surname     <mail@example.com>"
     contributor = self.parser.parseContributor(input)

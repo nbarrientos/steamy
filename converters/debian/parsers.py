@@ -27,6 +27,10 @@ class BaseParser():
   def parseSection(self, raw):
     return Section(raw['Section'])
 
+  @optional('Priority')
+  def parsePriority(self, raw):
+    return PriorityBox.get(raw['Priority'])
+
   @optional('Homepage')
   def parseHomepage(self, raw):
     return raw['Homepage']
@@ -229,10 +233,6 @@ class SourcesParser(BaseParser):
   def parseUploaders(self, raw):
     return self.parseContributors(raw['Uploaders'])
 
-  @optional('Priority')
-  def parsePriority(self, raw):
-    return PriorityBox.get(raw['Priority'])
-
   @optional('Format')
   def parseFormat(self, raw):
     return raw['Format']
@@ -337,10 +337,6 @@ class PackagesParser(BaseParser):
   @optional('Tag')
   def parseTag(self, raw):
     return self.parseTags(raw['Tag'])
-
-  @required('Priority')
-  def parsePriority(self, raw):
-    return PriorityBox.get(raw['Priority'])
 
   @optional('Essential')
   def parseEssential(self, raw):

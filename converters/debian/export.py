@@ -254,8 +254,9 @@ class Triplifier():
       self.g.add((ref, DEB['section'], sectionRef))
 
     # Priority
-    priorityRef = self.triplifyPriority(package.priority)
-    self.g.add((ref, DEB['priority'], priorityRef))
+    if package.priority is not None:
+      priorityRef = self.triplifyPriority(package.priority)
+      self.g.add((ref, DEB['priority'], priorityRef))
 
     # Essential
     if package.essential is not None:
