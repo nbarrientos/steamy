@@ -31,7 +31,7 @@ class Launcher():
 
     self.configLogger()
 
-    if self.opts.packages:
+    if self.opts.packages is not None:
       logging.info("Trying to convert metadata from %s to %s..." % \
                     (self.opts.packages, self.opts.packagesOutput))
       try:
@@ -40,7 +40,7 @@ class Launcher():
         logging.error("%s will not be processed, check application log" % self.opts.packages)
         logging.debug(str(e))
 
-    if self.opts.sources:
+    if self.opts.sources is not None:
       logging.info("Trying to convert metadata from %s to %s..." % \
                     (self.opts.sources, self.opts.sourcesOutput))
       try:
@@ -104,24 +104,25 @@ class Launcher():
     (self.opts, args) = parser.parse_args()
 
     # FIXME: Add more checks
-    if not self.opts.packages and not self.opts.sources:
+    if self.opts.packages is None and self.opts.sources is None:
       raise UserOptionsError("Nothing to do, did you forget -p and/or -s?")
-    elif (self.opts.packages or self.opts.packages) and not self.opts.baseURI:
+    elif (self.opts.sources is not None or self.opts.packages is not None) \
+          and self.opts.baseURI is None:
       raise UserOptionsError("Required base URI is missing, did you forget -b?")
     elif self.opts.verbose and self.opts.quiet:
       raise UserOptionsError("Verbose (-v) and Quiet (-q) are mutually exclusive")
-    elif self.opts.distribution and \
+    elif self.opts.distribution is not None and \
          re.match(r"^%s.+" % self.opts.baseURI, self.opts.distribution) == None:
       raise UserOptionsError("Distribution (-d) is not prefixed by base URI (-b)")
-    elif self.opts.regex:
+    elif self.opts.regex is not None:
       try:
         self.opts.cRegex = re.compile(self.opts.regex)
       except:
-        raise UserOptionsError("The Regular expression you provided is not valid")
-    elif self.opts.distdate and not self.opts.distribution:
+        raise UserOptionsError("The regular expression you provided is not valid")
+    elif self.opts.distdate is not None and self.opts.distribution is None:
       raise UserOptionsError("No distribution provided, did you forget -d?")
 
-    if self.opts.distdate:
+    if self.opts.distdate is not None:
       date = rfc822.parsedate(self.opts.distdate)
       if date is not None:
         stamp = time.mktime(date)

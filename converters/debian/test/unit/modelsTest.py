@@ -4,6 +4,7 @@ import urllib
 from models import *
 from errors import IndividualNotFoundError, UnavailableLanguageError
 
+
 class VersionNumberTest(unittest.TestCase):
   def testFieldParser(self):
     v = VersionNumber("2:1.2~svn54-1.5")

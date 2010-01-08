@@ -60,14 +60,14 @@ class BaseParser():
     
     match = regex.match(raw.strip())
 
-    if match and match.group('package'):
+    if match is not None and match.group('package') is not None:
       constraint.package = UnversionedBinaryPackage(match.group('package'))
 
-      if match.group('operator') and match.group('version'):
+      if match.group('operator') is not None and match.group('version') is not None:
         constraint.operator = match.group('operator')
         constraint.version = self.parseVersionNumber(match.group('version'))
 
-      if match.group('arches'):
+      if match.group('arches') is not None:
         split = match.group('arches').split()
         for arch in split:
           if arch.startswith("!"):
@@ -87,11 +87,11 @@ class BaseParser():
 
     for rtag in split:
       match = regex.match(rtag)
-      if match and match.group('facet'):
+      if match is not None and match.group('facet') is not None:
         facet = match.group('facet')
-        if match.group('tag'):
+        if match.group('tag') is not None:
           tags.append(Tag(facet, match.group('tag')))
-        elif match.group('tags'):
+        elif match.group('tags') is not None:
           for t in match.group('tags').split(","):
             tags.append(Tag(facet, t))
       else:
@@ -103,7 +103,8 @@ class BaseParser():
     regex = re.compile(r"(?P<name>.*?)\s*\<(?P<email>\S+)\>")
     match = regex.match(raw)
 
-    if match and match.group("name") and match.group("email"):
+    if match is not None and match.group("name") is not None \
+                         and match.group("email") is not None:
       return guessRole(match.group("name"), match.group("email"))
     else:
       raise ParserError("parseContributor", raw)
@@ -121,7 +122,7 @@ class BaseParser():
     regex = re.compile(r"^(pool|dists/[a-z]+)/(?P<area>(main|non-free|contrib))/.+?/.+?")
     match = regex.match(raw)
 
-    if match and match.group("area"):
+    if match is not None and match.group("area") is not None:
       return AreaBox.get(match.group("area"))
     else:
       raise ParserError("parseArea", raw)
@@ -148,7 +149,7 @@ class BaseParser():
     elif 'Vcs-Mtn' in raw:
       return Repository(browser, raw['Vcs-Mtn'])
 
-    if browser:
+    if browser is not None:
       return Repository(browser, None)
     else:
       return None
@@ -158,8 +159,8 @@ class SourcesParser(BaseParser):
   def parseSourcePackage(self, raw):
     sourcePackage = SourcePackage(self.parsePackage(raw), self.parseVersion(raw))
 
-    if self.opts.regex:
-      if not self.opts.cRegex.match(sourcePackage.package):
+    if self.opts.regex is not None:
+      if self.opts.cRegex.match(sourcePackage.package) is None:
         raise PackageDoesNotMatchRegularExpression(sourcePackage.package)
     
     sourcePackage.binary = self.parseBinary(raw)
@@ -244,8 +245,8 @@ class PackagesParser(BaseParser):
   def parseBinaryPackage(self, raw):
     binaryPackage = BinaryPackage(self.parsePackage(raw), self.parseVersion(raw))
 
-    if self.opts.regex:
-      if not self.opts.cRegex.match(binaryPackage.package):
+    if self.opts.regex is not None:
+      if self.opts.cRegex.match(binaryPackage.package) is None:
         raise PackageDoesNotMatchRegularExpression(binaryPackage.package)
 
     binaryPackage.depends = self.parseDepends(raw)

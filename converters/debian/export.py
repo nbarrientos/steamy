@@ -32,10 +32,10 @@ class Triplifier():
   ### Initial triples ###
 
   def pushInitialTriples(self):
-    if self.opts.distribution:
+    if self.opts.distribution is not None:
       ref = URIRef(self.opts.distribution)
       self.g.add((ref, RDF.type, DEB['Distribution']))
-      if self.opts.distdate:
+      if self.opts.distdate is not None:
         self.g.add((ref, DEB['releaseDate'], Literal(self.opts.parsedDistDate)))
 
   ### Sources ###
@@ -57,37 +57,37 @@ class Triplifier():
     self.g.add((ref, DEB['versionNumber'], versionRef))
 
     # Binary
-    if package.binary:
+    if package.binary is not None:
       for binary in package.binary:
         binaryRef = self.triplifyBinaryPackageLite(binary)
         self.g.add((ref, DEB['binary'], binaryRef))
 
     # Build-Depends
-    if package.buildDepends:
+    if package.buildDepends is not None:
       for ord in package.buildDepends:
         node = self.triplifyOrConstraint(ord)
         self.g.add((ref, DEB['build-depends'], node))
 
     # Build-Depends-Indep
-    if package.buildDependsIndep:
+    if package.buildDependsIndep is not None:
       for ord in package.buildDependsIndep:
         node = self.triplifyOrConstraint(ord)
         self.g.add((ref, DEB['build-depends-indep'], node))
 
     # Build-Conflicts
-    if package.buildConflicts:
+    if package.buildConflicts is not None:
       for ord in package.buildConflicts:
         node = self.triplifyOrConstraint(ord)
         self.g.add((ref, DEB['build-conflicts'], node))
     
     # Build-Conflicts-Indep
-    if package.buildConflictsIndep:
+    if package.buildConflictsIndep is not None:
       for ord in package.buildConflictsIndep:
         node = self.triplifyOrConstraint(ord)
         self.g.add((ref, DEB['build-conflicts-indep'], node))
 
     # Architecture
-    if package.architecture:
+    if package.architecture is not None:
       for arch in package.architecture:
         archRef = self.triplifyArchitecture(arch)
         self.g.add((ref, DEB['shouldBuildIn'], archRef))
@@ -103,12 +103,12 @@ class Triplifier():
       self.g.add((fileRef, DEB['productOf'], ref))
 
     # Section
-    if package.section:
+    if package.section is not None:
       sectionRef = self.triplifySection(package.section)
       self.g.add((ref, DEB['section'], sectionRef))
 
     # Priority
-    if package.priority:
+    if package.priority is not None:
       priorityRef = self.triplifyPriority(package.priority)
       self.g.add((ref, DEB['priority'], priorityRef))
 
@@ -117,7 +117,7 @@ class Triplifier():
     self.g.add((ref, DEB['maintainer'], maintainerRef))
 
     # Uploaders
-    if package.uploaders:
+    if package.uploaders is not None:
       for uploader in package.uploaders:
         uploaderRef = self.triplifyContributor(uploader)
         self.g.add((ref, DEB['uploader'], uploaderRef))
@@ -125,32 +125,32 @@ class Triplifier():
           self.triplifyTeamAddMember(package.maintainer, uploader)
 
     # Distribution
-    if self.opts.distribution:
+    if self.opts.distribution is not None:
       self.g.add((ref, DEB['distribution'], URIRef(self.opts.distribution)))
 
     # Area
-    if self.opts.area:
+    if self.opts.area is not None:
       areaRef = self.triplifyArea(package.area)
       self.g.add((ref, DEB['area'], areaRef))
 
     # Homepage
-    if package.homepage:
+    if package.homepage is not None:
       homepageRef = self.triplifyHomepage(package.homepage)
       self.g.add((ref, FOAF['page'], URIRef(package.homepage)))
 
     # Dm-Upload-Allowed
-    if package.dmUploadAllowed:
+    if package.dmUploadAllowed is not None:
       self.g.add((ref, RDF.type, DEB['DMUploadAllowedSource']))
 
     # Vcs-*
-    if package.vcs:
+    if package.vcs is not None:
       repoRef = self.triplifyRepository(package.vcs)
       self.g.add((ref, DEB['repository'], repoRef))
 
-    if package.format:
+    if package.format is not None:
       self.g.add((ref, DEB['format'], Literal(str(package.format))))
 
-    if package.standardsVersion:
+    if package.standardsVersion is not None:
       self.g.add((ref, DEB['standardsVersion'], Literal(str(package.standardsVersion))))
 
   def triplifyBinaryPackageLite(self, package):
@@ -181,55 +181,55 @@ class Triplifier():
     self.g.add((ref, DEB['build'], buildRef))
 
     # Depends
-    if package.depends:
+    if package.depends is not None:
       for ord in package.depends:
         node = self.triplifyOrConstraint(ord)
         self.g.add((ref, DEB['depends'], node))
 
     # Recommends
-    if package.recommends:
+    if package.recommends is not None:
       for orr in package.recommends:
         node = self.triplifyOrConstraint(orr)
         self.g.add((ref, DEB['recommends'], node))
 
     # Pre-Depends
-    if package.preDepends:
+    if package.preDepends is not None:
       for orr in package.preDepends:
         node = self.triplifyOrConstraint(orr)
         self.g.add((ref, DEB['pre-depends'], node))
 
     # Suggests
-    if package.suggests:
+    if package.suggests is not None:
       for orr in package.suggests:
         node = self.triplifyOrConstraint(orr)
         self.g.add((ref, DEB['suggests'], node))
 
     # Breaks
-    if package.breaks:
+    if package.breaks is not None:
       for orr in package.breaks:
         node = self.triplifyOrConstraint(orr)
         self.g.add((ref, DEB['breaks'], node))
 
     # Conflicts
-    if package.conflicts:
+    if package.conflicts is not None:
       for orr in package.conflicts:
         node = self.triplifyOrConstraint(orr)
         self.g.add((ref, DEB['conflicts'], node))
 
     # Provides
-    if package.provides:
+    if package.provides is not None:
       for orr in package.provides:
         node = self.triplifyOrConstraint(orr)
         self.g.add((ref, DEB['provides'], node))
 
     # Replaces
-    if package.replaces:
+    if package.replaces is not None:
       for orr in package.replaces:
         node = self.triplifyOrConstraint(orr)
         self.g.add((ref, DEB['replaces'], node))
 
     # Enhances
-    if package.enhances:
+    if package.enhances is not None:
       for orr in package.enhances:
         node = self.triplifyOrConstraint(orr)
         self.g.add((ref, DEB['enhances'], node))
@@ -242,14 +242,14 @@ class Triplifier():
     self.g.add((fileRef, DEB['productOf'], buildRef))
 
     # Tag
-    if package.tag:
+    if package.tag is not None:
       for tag in package.tag:
         node = self.triplifyTag(tag)
         self.g.add((ref, TAG['taggedWithTag'], node))
         self.g.add((node, TAG['isTagOf'], ref))
 
     # Section
-    if package.section:
+    if package.section is not None:
       sectionRef = self.triplifySection(package.section)
       self.g.add((ref, DEB['section'], sectionRef))
 
@@ -258,11 +258,11 @@ class Triplifier():
     self.g.add((ref, DEB['priority'], priorityRef))
 
     # Essential
-    if package.essential:
+    if package.essential is not None:
       self.g.add((ref, RDF.type, DEB['EssentialBinary']))
 
     # Build-Essential
-    if package.buildEssential:
+    if package.buildEssential is not None:
       self.g.add((ref, RDF.type, DEB['BuildEssentialBinary']))
 
     # Synopsis
@@ -312,7 +312,7 @@ class Triplifier():
     packageRef = self.triplifyUnversionedBinaryPackage(constraint.package)
     self.g.add((ref, DEB['package'], packageRef))
 
-    if constraint.operator and constraint.version:
+    if constraint.operator is not None and constraint.version is not None:
       self.g.add((ref, DEB['constraintOperator'], Literal(str(constraint.operator))))
       versionRef = self.triplifyVersionNumber(constraint.version)
       self.g.add((ref, DEB['versionNumber'], versionRef))
@@ -334,12 +334,12 @@ class Triplifier():
 
     self.g.add((ref, DEB['fullVersion'], Literal(str(version))))
     
-    if version.epoch:
+    if version.epoch is not None:
       self.g.add((ref, DEB['epoch'], Literal(int(version.epoch))))
 
     self.g.add((ref, DEB['upstreamVersion'], Literal(str(version.upstream_version))))
     
-    if version.debian_version:
+    if version.debian_version is not None:
       self.g.add((ref, DEB['debianRevision'], Literal(str(version.debian_version))))
     
     return ref
@@ -432,9 +432,9 @@ class Triplifier():
     node = BNode()
     self.g.add((node, RDF.type, DOAP[repo.rdfType()]))
     self.addLabelToGraph(node, repo)
-    if repo.uri:
+    if repo.uri is not None:
       self.g.add((node, DOAP['location'], URIRef(repo.uri)))
-    if repo.browser:
+    if repo.browser is not None:
       self.g.add((node, DOAP['browse'], URIRef(repo.browser)))
       self.g.add((URIRef(repo.browser), RDF.type, FOAF['page']))
 
