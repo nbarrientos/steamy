@@ -466,8 +466,8 @@ def computeRating(name, email, eregex, nregex):
   return rating
 
 def encodeURI(base, prefix, *args):
-  postfix = prefix
+  uri = prefix
   for element in args:
-    postfix = "%s/%s" % (postfix, element)
+    uri = "%s/%s" % (uri, element)
 
-  return "%s/%s" % (base, urllib.quote_plus(postfix, '/'))
+  return "%s/%s" % (base, urllib.quote_plus(uri, '/'))
