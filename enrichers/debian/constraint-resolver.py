@@ -48,8 +48,6 @@ class ConstraintResolver():
 
   def initData(self):
     self.endpoint = SPARQLWrapper2(self.opts.endpoint)
-    self.graph = ConjunctiveGraph()
-    self.graph.bind("deb", DEB)
     self.pool = GraphPool(self.opts.pool, self.opts.prefix, self.opts.basedir)
 
   def parseArgs(self):
@@ -127,7 +125,6 @@ class ConstraintResolver():
 
   def resolveConstraints(self):
     counter = 0
-    vcounter = 0
 
     for b in self.getCandidateLinksBindings():
         counter = counter + 1
@@ -153,7 +150,7 @@ class ConstraintResolver():
             self.satisfyConstraint(binaryPackage, constraint)
 
     logging.info("Satisfied %s dependencies out of %s possible matches" % \
-    (len(self.graph), counter))
+    (self.pool.countTriples(), counter))
 
     self.pool.serialize()
     
