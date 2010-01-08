@@ -2,9 +2,7 @@ import unittest
 import urllib
 
 from models import *
-
-from errors import IndividualNotFoundException
-from errors import UnavailableLanguageException
+from errors import IndividualNotFoundError, UnavailableLanguageError
 
 class VersionNumberTest(unittest.TestCase):
   def testFieldParser(self):
@@ -154,7 +152,7 @@ class UnversionedSourcePackageTest(unittest.TestCase):
     self.assertEqual("Unversioned Source: name", self.us.asLabel('en'))
 
   def testAsLabelMissingLang(self):
-    self.assertRaises(UnavailableLanguageException, self.us.asLabel, 'foo')
+    self.assertRaises(UnavailableLanguageError, self.us.asLabel, 'foo')
 
   def testAsStr(self):
     self.assertEqual("name", self.us.__str__())
@@ -295,7 +293,7 @@ class PriorityBoxTest(unittest.TestCase):
     self.p3 = PriorityBox.get("extra")
 
   def testGetNotExistingIndividual(self):
-    self.assertRaises(IndividualNotFoundException, PriorityBox.get, "foo")
+    self.assertRaises(IndividualNotFoundError, PriorityBox.get, "foo")
 
   def testSameIDs(self):
     self.assertEqual(id(self.p1), id(self.p1))
@@ -334,7 +332,7 @@ class AreaBoxTest(unittest.TestCase):
     self.p3 = AreaBox.get("contrib")
 
   def testGetNotExistingIndividual(self):
-    self.assertRaises(IndividualNotFoundException, PriorityBox.get, "foo")
+    self.assertRaises(IndividualNotFoundError, PriorityBox.get, "foo")
 
   def testSameIDs(self):
     self.assertEqual(id(self.p1), id(self.p1))

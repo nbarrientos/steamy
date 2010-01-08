@@ -4,8 +4,9 @@ import urllib
 from debian_bundle.changelog import Version
 from rdflib import Literal
 
-from errors import IndividualNotFoundException
+from errors import IndividualNotFoundError
 from decorators import checklang
+
 
 class BasePackage():
   def __init__(self, package=None, version=None):
@@ -14,6 +15,7 @@ class BasePackage():
 
   def __str__(self):
     return "%s (%s)" % (self.package, self.version)
+
 
 class BaseUnversionedPackage():
   def __init__(self, package):
@@ -25,9 +27,11 @@ class BaseUnversionedPackage():
   def __eq__(self, other):
     return self.package.__eq__(other.package)
 
+
 class Labelable():
   def labelAsLiteral(self, lang):
     return Literal(self.asLabel(lang), lang=lang)
+
 
 class UnversionedSourcePackage(BaseUnversionedPackage, Labelable):
   AVAILABLE_LANGS = ('en',)
@@ -40,6 +44,7 @@ class UnversionedSourcePackage(BaseUnversionedPackage, Labelable):
     map = {'en': "Unversioned Source"}
     return "%s: %s" % (map[lang], self.package)
 
+
 class SourcePackage(BasePackage, Labelable):
   AVAILABLE_LANGS = ('en',)
 
@@ -51,6 +56,7 @@ class SourcePackage(BasePackage, Labelable):
     map = {'en': "Source"}
     return "%s: %s (%s)" % (map[lang], self.package, self.version)
 
+
 class UnversionedBinaryPackage(BaseUnversionedPackage, Labelable):
   AVAILABLE_LANGS = ('en',)
 
@@ -60,6 +66,7 @@ class UnversionedBinaryPackage(BaseUnversionedPackage, Labelable):
   @checklang
   def asLabel(self, lang):
     return "Unversioned Binary: %s" % (self.package)
+
 
 class BinaryPackage(BasePackage, Labelable):
   AVAILABLE_LANGS = ('en',)
@@ -72,11 +79,12 @@ class BinaryPackage(BasePackage, Labelable):
     map = {'en': "Binary"}
     return "%s: %s (%s)" % (map[lang], self.package, self.version)
 
+
 class BinaryPackageBuild(Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def __init__(self, ancestor = None):
-    self.ancestor = ancestor # Cycles are OK in Python! :)
+    self.ancestor = ancestor  # Cycles are OK in Python! :)
 
   def asURI(self, base):
     return escapeURI(base, "binary",\
@@ -88,6 +96,7 @@ class BinaryPackageBuild(Labelable):
     return "%s: %s (%s) [%s]" % \
             (map[lang], self.ancestor.package, self.ancestor.version, self.architecture)
 
+
 class VersionNumber(Version, Labelable):
   AVAILABLE_LANGS = ('en',)
 
@@ -98,6 +107,7 @@ class VersionNumber(Version, Labelable):
   def asLabel(self, lang):
     map = {'en': "Version"}
     return "%s: %s" % (map[lang], str(self))
+
 
 class Constraints():
   def __init__(self):
@@ -118,6 +128,7 @@ class Constraints():
   def __iter__(self):
     return self.orconstraints.__iter__()
 
+
 class OrConstraint():
   def __init__(self):
     self.constraints = []
@@ -130,6 +141,7 @@ class OrConstraint():
 
   def __str__(self):
     return "OrConstraint: %s" % str(self.constraints)
+
 
 class Constraint(Labelable):
   AVAILABLE_LANGS = ('en',)
@@ -189,6 +201,7 @@ class Constraint(Labelable):
     else:
       raise Exception("Unable to lookup operator %s" % op)
 
+
 class File(Labelable):
   AVAILABLE_LANGS = ('en',)
   
@@ -212,6 +225,7 @@ class File(Labelable):
   def __eq__(self, other):
     return self.md5sum.__eq__(other.md5sum)
 
+
 class Directory(Labelable):
   AVAILABLE_LANGS = ('en',)
   
@@ -228,6 +242,7 @@ class Directory(Labelable):
 
   def __eq__(self, other):
     return self.path.__eq__(other.path)
+
 
 class Tag(Labelable):
   AVAILABLE_LANGS = ('en',)
@@ -250,6 +265,7 @@ class Tag(Labelable):
   def __eq__(self, other):
     return self.facet.__eq__(other.facet) and self.tag.__eq__(other.tag)
 
+
 class SimpleDataHolder():
   def __init__(self, name):
     self.name = name
@@ -257,9 +273,11 @@ class SimpleDataHolder():
   def __str__(self):
     return str(self.name)
 
+
 class SimpleDataHolderResources(SimpleDataHolder):
   def __eq__(self, other):
     return self.name.__eq__(other.name)
+
 
 class SimpleDataHolderIndividuals(SimpleDataHolder):
   def asURI(self, base):
@@ -270,6 +288,7 @@ class SimpleDataHolderIndividuals(SimpleDataHolder):
   def asLabel(self, lang):
     raise Exception("No label available, you should treat \
                      this object as an individual")
+
 
 class Architecture(SimpleDataHolderResources, Labelable):
   AVAILABLE_LANGS = ('en',)
@@ -286,6 +305,7 @@ class Architecture(SimpleDataHolderResources, Labelable):
   def hasIndividual(self):
     return self.name in self.INSTANCES
 
+
 class Section(SimpleDataHolderResources, Labelable):
   AVAILABLE_LANGS = ('en',)
 
@@ -297,13 +317,15 @@ class Section(SimpleDataHolderResources, Labelable):
     map = {'en': "Section"}
     return "%s: %s" % (map[lang], self.name)
 
+
 class BaseBox():
   @classmethod
   def get(cls, name):
     if name in cls._I:
       return cls._I[name]
     else:
-      raise IndividualNotFoundException(name)
+      raise IndividualNotFoundError(name)
+
 
 class PriorityBox(BaseBox):
   class Priority(SimpleDataHolderIndividuals):
@@ -315,6 +337,7 @@ class PriorityBox(BaseBox):
         'optional': Priority('optional'),\
         'extra': Priority('extra')}
 
+
 class AreaBox(BaseBox):
   class Area(SimpleDataHolderIndividuals):
     pass
@@ -322,6 +345,7 @@ class AreaBox(BaseBox):
   _I = {'main': Area('main'),\
         'non-free': Area('non-free'),\
         'contrib': Area('contrib')}
+
 
 class Contributor(Labelable):
   AVAILABLE_LANGS = ('en',)
@@ -337,6 +361,7 @@ class Contributor(Labelable):
 
   def __str__(self):
     return "%s <%s>" % (self.name, self.email)
+
 
 class Human(Contributor, Labelable):
   AVAILABLE_LANGS = ('en',)
@@ -358,6 +383,7 @@ class Human(Contributor, Labelable):
   def isTeam(self):
     return False
 
+
 class Team(Contributor, Labelable):
   AVAILABLE_LANGS = ('en',)
 
@@ -378,6 +404,7 @@ class Team(Contributor, Labelable):
   def isTeam(self):
     return True
 
+
 class Repository(Labelable):
   AVAILABLE_LANGS = ('en',)
 
@@ -396,29 +423,36 @@ class Repository(Labelable):
   def __str__(self):
       return "Repository: <%s> <%s>" % (self.uri, self.browser)
 
+
 class ArchRepository(Repository):
   def rdfType(self):
     return "ArchRepository"
+
 
 class BzrRepository(Repository):
   def rdfType(self):
     return "BazaarRepository"
 
+
 class CvsRepository(Repository):
   def rdfType(self):
     return "CVSRepository"
+
 
 class DarcsRepository(Repository):
   def rdfType(self):
     return "DarcsRepository"
 
+
 class GitRepository(Repository):
   def rdfType(self):
     return "GitRepository"
 
+
 class HgRepository(Repository):
   def rdfType(self):
     return "HgRepository"
+
 
 class SvnRepository(Repository):
   def rdfType(self):

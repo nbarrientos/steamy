@@ -3,9 +3,10 @@ import re
 from debian_bundle.changelog import Version
 
 from models import *
-from errors import MissingMandatoryFieldException, ParsingErrorException
-from errors import PackageDoesNotMatchRegularExpressionException
+from errors import ParserError
+from errors import PackageDoesNotMatchRegularExpression
 from decorators import required, optional
+
 
 class BaseParser():
   def __init__(self, opts):
@@ -54,8 +55,6 @@ class BaseParser():
 
   def parseConstraint(self, raw):
     constraint = Constraint()
-    # Assuming constraint comes from source in good shape. Validation
-    # is not necessary.
     regex = re.compile(\
       r"(?P<package>[-a-zA-Z0-9+.]+)(\s\((?P<operator>\S{1,2})\s(?P<version>\S+?)\))?(\s\[(?P<arches>.+)\])?")
     
@@ -76,7 +75,7 @@ class BaseParser():
           else:
             constraint.onlyin.append(Architecture(arch))
     else:
-      raise ParsingErrorException("parseConstraint", raw)
+      raise ParserError("parseConstraint", raw)
 
     return constraint
 
@@ -96,7 +95,7 @@ class BaseParser():
           for t in match.group('tags').split(","):
             tags.append(Tag(facet, t))
       else:
-        raise ParsingErrorException("parseTags", raw)
+        raise ParserError("parseTags", raw)
 
     return tags
 
@@ -107,7 +106,7 @@ class BaseParser():
     if match and match.group("name") and match.group("email"):
       return guessRole(match.group("name"), match.group("email"))
     else:
-      raise ParsingErrorException("parseContributor", raw)
+      raise ParserError("parseContributor", raw)
 
   def parseContributors(self, raw):
     split = re.split(",\s*", raw)
@@ -125,7 +124,7 @@ class BaseParser():
     if match and match.group("area"):
       return AreaBox.get(match.group("area"))
     else:
-      raise ParsingErrorException("parseArea", raw)
+      raise ParserError("parseArea", raw)
 
   def parseVcs(self, raw):
     browser = None
@@ -161,7 +160,7 @@ class SourcesParser(BaseParser):
 
     if self.opts.regex:
       if not self.opts.cRegex.match(sourcePackage.package):
-        raise PackageDoesNotMatchRegularExpressionException(sourcePackage.package)
+        raise PackageDoesNotMatchRegularExpression(sourcePackage.package)
     
     sourcePackage.binary = self.parseBinary(raw)
     sourcePackage.buildDepends = self.parseBuildDepends(raw)
@@ -240,13 +239,14 @@ class SourcesParser(BaseParser):
   def parseDmUploadAllowed(self, raw):
     return True
 
+
 class PackagesParser(BaseParser):
   def parseBinaryPackage(self, raw):
     binaryPackage = BinaryPackage(self.parsePackage(raw), self.parseVersion(raw))
 
     if self.opts.regex:
       if not self.opts.cRegex.match(binaryPackage.package):
-        raise PackageDoesNotMatchRegularExpressionException(binaryPackage.package)
+        raise PackageDoesNotMatchRegularExpression(binaryPackage.package)
 
     binaryPackage.depends = self.parseDepends(raw)
     binaryPackage.recommends = self.parseRecommends(raw)

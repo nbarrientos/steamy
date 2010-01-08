@@ -1,13 +1,13 @@
-from errors import MissingMandatoryFieldException
-from errors import UnavailableLanguageException
+from errors import MissingMandatoryFieldError
+from errors import UnavailableLanguageError
 
 def required(fieldname):
   def decorator(f):
     def wrapper(*args):
-      if fieldname in args[1]: # Workaround, kwargs!
+      if fieldname in args[1]:  # Workaround, kwargs!
         return f(*args) 
       else:
-        raise MissingMandatoryFieldException(fieldname)
+        raise MissingMandatoryFieldError(fieldname)
     return wrapper
   return decorator
 
@@ -26,5 +26,5 @@ def checklang(f):
     if lang in self.AVAILABLE_LANGS:
       return f(self, lang)
     else:
-      raise UnavailableLanguageException(lang)
+      raise UnavailableLanguageError(lang)
   return wrapper

@@ -13,6 +13,7 @@ NFO = Namespace(u"http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#")
 TAG = Namespace(u"http://www.holygoat.co.uk/owl/redwood/0.1/tags/")
 DOAP = Namespace(u"http://usefulinc.com/ns/doap#")
 
+
 class Triplifier():
   def __init__(self, graph, opts):
     self.g = graph
@@ -443,6 +444,7 @@ class Triplifier():
   def addLabelToGraph(self, subject, object):
     for lang in object.AVAILABLE_LANGS:
       self.g.add((subject, RDFS.label, object.labelAsLiteral(lang)))
+
 
 class Serializer():
   def __init__(self, opts):

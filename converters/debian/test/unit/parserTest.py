@@ -3,8 +3,9 @@ import optparse
 
 from models import *
 from parsers import SourcesParser, PackagesParser, BaseParser
-from errors import MissingMandatoryFieldException, ParsingErrorException
-from errors import PackageDoesNotMatchRegularExpressionException
+from errors import MissingMandatoryFieldError, ParserError
+from errors import PackageDoesNotMatchRegularExpression
+
 
 class SourcesParserTest(unittest.TestCase):
   def setUp(self):
@@ -79,7 +80,7 @@ class SourcesParserTest(unittest.TestCase):
     self.values.ensure_value("regex", "^a.*")
     self.parser.opts = self.values
     self.parser.opts.cRegex = re.compile("^a.*")
-    self.assertRaises(PackageDoesNotMatchRegularExpressionException,\
+    self.assertRaises(PackageDoesNotMatchRegularExpression,\
                       self.parser.parseSourcePackage, self.sourcePackage)
    
   def testParseSourcePackageMatchingRegex(self):
@@ -123,7 +124,7 @@ class SourcesParserTest(unittest.TestCase):
 
   def testParseArchitectureMissingField(self):
     self.sourcePackage.pop('Architecture')
-    self.assertRaises(MissingMandatoryFieldException,\
+    self.assertRaises(MissingMandatoryFieldError,\
                       self.parser.parseArchitecture, self.sourcePackage)
 
   def testParseFilesAncestor(self):
@@ -135,7 +136,7 @@ class SourcesParserTest(unittest.TestCase):
 
   def testParseFilesMissingField(self):
     self.sourcePackage.pop('Files')
-    self.assertRaises(MissingMandatoryFieldException,\
+    self.assertRaises(MissingMandatoryFieldError,\
                       self.parser.parseFiles, self.sourcePackage, None)
 
   def testParseDirectory(self):
@@ -144,7 +145,7 @@ class SourcesParserTest(unittest.TestCase):
 
   def testParseDirectoryMissingField(self):
     self.sourcePackage.pop('Directory')
-    self.assertRaises(MissingMandatoryFieldException,\
+    self.assertRaises(MissingMandatoryFieldError,\
                       self.parser.parseDirectory, self.sourcePackage)
 
   def testParseMaintainer(self):
@@ -154,7 +155,7 @@ class SourcesParserTest(unittest.TestCase):
 
   def testParseMaintainerMissingField(self):
     self.sourcePackage.pop('Maintainer')
-    self.assertRaises(MissingMandatoryFieldException,\
+    self.assertRaises(MissingMandatoryFieldError,\
                       self.parser.parseMaintainer, self.sourcePackage)
 
   def testParseUploaders(self):
@@ -238,7 +239,7 @@ class PackagesParserTest(unittest.TestCase):
 
   def testParsePackageMissingField(self):
     self.binaryPackage.pop('Package')
-    self.assertRaises(MissingMandatoryFieldException,\
+    self.assertRaises(MissingMandatoryFieldError,\
                       self.parser.parsePackage, self.binaryPackage)
 
   def testParseDepends(self):
@@ -286,7 +287,7 @@ class PackagesParserTest(unittest.TestCase):
 
   def testParseInstalledSizeMissingField(self):
     self.binaryPackage.pop('Installed-Size')
-    self.assertRaises(MissingMandatoryFieldException,\
+    self.assertRaises(MissingMandatoryFieldError,\
                       self.parser.parseInstalledSize, self.binaryPackage)
 
   def testParseArchitecture(self):
@@ -294,7 +295,7 @@ class PackagesParserTest(unittest.TestCase):
 
   def testParseArchitectureMissingField(self):
     self.binaryPackage.pop('Architecture')
-    self.assertRaises(MissingMandatoryFieldException,\
+    self.assertRaises(MissingMandatoryFieldError,\
                       self.parser.parseArchitecture, self.binaryPackage)
 
   def testParseBinaryPackageBuildWithoutAncestorReference(self):
@@ -344,7 +345,7 @@ class PackagesParserTest(unittest.TestCase):
     self.values.ensure_value("regex", "^a.*")
     self.parser.opts = self.values
     self.parser.opts.cRegex = re.compile("^a.*")
-    self.assertRaises(PackageDoesNotMatchRegularExpressionException,\
+    self.assertRaises(PackageDoesNotMatchRegularExpression,\
                       self.parser.parseBinaryPackage, self.binaryPackage)
    
   def testParseBinaryPackageMatchingRegex(self):
@@ -366,7 +367,7 @@ class PackagesParserTest(unittest.TestCase):
 
   def testParsePriorityMissingField(self):
     self.binaryPackage.pop('Priority')
-    self.assertRaises(MissingMandatoryFieldException,\
+    self.assertRaises(MissingMandatoryFieldError,\
                       self.parser.parsePriority, self.binaryPackage)
 
   def testParseEssential(self):
@@ -515,15 +516,15 @@ class BaseParserTest(unittest.TestCase):
 
   def testParseMalformedConstraint(self):
     input = "()"
-    self.assertRaises(ParsingErrorException, self.parser.parseConstraint, input)
+    self.assertRaises(ParserError, self.parser.parseConstraint, input)
     input = "(>= 6.8)"
-    self.assertRaises(ParsingErrorException, self.parser.parseConstraint, input)
+    self.assertRaises(ParserError, self.parser.parseConstraint, input)
     input = "[]"
-    self.assertRaises(ParsingErrorException, self.parser.parseConstraint, input)
+    self.assertRaises(ParserError, self.parser.parseConstraint, input)
     input = "[powerpc]"
-    self.assertRaises(ParsingErrorException, self.parser.parseConstraint, input)
+    self.assertRaises(ParserError, self.parser.parseConstraint, input)
     input = "(>= 5.6) [powerpc]"
-    self.assertRaises(ParsingErrorException, self.parser.parseConstraint, input)
+    self.assertRaises(ParserError, self.parser.parseConstraint, input)
 
   def testParseTags(self):
     input = "implemented-in::lisp"
@@ -562,16 +563,16 @@ class BaseParserTest(unittest.TestCase):
     #self.assertEqual(3,len(tags))
 
     input = "::"
-    self.assertRaises(ParsingErrorException, self.parser.parseTags, input)
+    self.assertRaises(ParserError, self.parser.parseTags, input)
 
     input = "hardware::"
-    self.assertRaises(ParsingErrorException, self.parser.parseTags, input)
+    self.assertRaises(ParserError, self.parser.parseTags, input)
 
     input = "::lang:c"
-    self.assertRaises(ParsingErrorException, self.parser.parseTags, input)
+    self.assertRaises(ParserError, self.parser.parseTags, input)
 
     input = "hardware::, ::lang:c"
-    self.assertRaises(ParsingErrorException, self.parser.parseTags, input)
+    self.assertRaises(ParserError, self.parser.parseTags, input)
 
   def testParseSection(self):
     input = {'Section': "utils"}
@@ -589,7 +590,7 @@ class BaseParserTest(unittest.TestCase):
     self.assertEqual("mail+fax@example-rt.com", contributor.email)
 
     input = "Name Surname"
-    self.assertRaises(ParsingErrorException, self.parser.parseContributor, input)
+    self.assertRaises(ParserError, self.parser.parseContributor, input)
 
   def testParseContributors(self):
     input = "Name Surname <mail@example.com>"
@@ -615,7 +616,7 @@ class BaseParserTest(unittest.TestCase):
     self.assertEquals(AreaBox.get("contrib"), self.parser.parseArea(input))
     
     input = 'pool/failarea/f/foo'
-    self.assertRaises(ParsingErrorException, self.parser.parseArea, input)
+    self.assertRaises(ParserError, self.parser.parseArea, input)
     
     input = 'dists/slink/main/source/games'
     self.assertEquals(AreaBox.get("main"), self.parser.parseArea(input))
@@ -627,7 +628,7 @@ class BaseParserTest(unittest.TestCase):
     self.assertEquals(AreaBox.get("contrib"), self.parser.parseArea(input))
 
     input = 'dists/potato/failarea/source/games'
-    self.assertRaises(ParsingErrorException, self.parser.parseArea, input)
+    self.assertRaises(ParserError, self.parser.parseArea, input)
 
   def testParseVcs(self):
     input = {'Vcs-Browser':'http://example.com', \
