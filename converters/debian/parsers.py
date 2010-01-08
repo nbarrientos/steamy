@@ -9,6 +9,7 @@ from decorators import required, optional
 
 
 class BaseParser():
+  """Base parser to parse common fields and implement parsing tools."""
   def __init__(self, opts):
     self.opts = opts
 
@@ -156,6 +157,7 @@ class BaseParser():
 
 
 class SourcesParser(BaseParser):
+  """Sources parser."""
   def parseSourcePackage(self, raw):
     sourcePackage = SourcePackage(self.parsePackage(raw), self.parseVersion(raw))
 
@@ -242,6 +244,7 @@ class SourcesParser(BaseParser):
 
 
 class PackagesParser(BaseParser):
+  """Packages parser."""
   def parseBinaryPackage(self, raw):
     binaryPackage = BinaryPackage(self.parsePackage(raw), self.parseVersion(raw))
 
