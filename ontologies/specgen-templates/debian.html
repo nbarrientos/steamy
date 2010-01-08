@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">
+<html 
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:mvcb="http://webns.net/mvcb/"
+  xml:lang="en"
+> 
+
+  <head>
+    <title>DEB: DEBian Archive Ontology</title>
+    <meta http-equiv="content-type" content="text/xhtml+xml; charset=utf-8" />
+    <link rel="mvvb:generatorAgent" type="application/rdf+xml" title="DOAP" href="http://rdfohloh.wikier.org/project/specgen" />
+    <link rel="stylesheet" type="text/css" href="http://rdfs.org/sioc/spec/img/style.css" />
+  </head>
+
+  <body>
+
+    <h1 id="title">DEBian Archive Ontology</h1>
+
+    <h2 id="subtitle">A semantic approach to Debian Archive metadata</h2>
+
+    <h3 id="mymw-doctype">Working Draft &mdash; 08 January 2010</h3>
+
+    <dl>
+
+      <dt>This version:</dt>
+      <dd><a href="http://example.org/TR/NAME-YYYYMMDD/">http://example.org/TR/NAME-YYYYMMDD/</a></dd>
+
+      <dt>Latest version:</dt>
+      <dd><a href="http://example.org/TR/NAME/">http://example.org/TR/NAME/</a></dd>
+
+      <dt>Last Update:</dt>
+      <dd>Date: </dd>
+
+      <dt>Editors:</dt>
+      <dd>Nacho Barrientos, CTIC Foundation. Diego Berrueta, CTIC Foundation.</dd>
+
+      <dt>Authors:</dt>
+      <dd>Nacho Barrientos, CTIC Foundation. Diego Berrueta, CTIC Foundation.</dd>
+
+    </dl>
+
+    <p class="copyright">You are granted a license to use, reproduce and create derivative works of this document.</p>
+
+    <!-- ===================================================================== -->
+
+    <hr />
+    <h2 id="abstract">Abstract</h2>
+    <p>
+      This specification defines an ontology modeling the Debian Archive.
+    </p>
+
+    <h2 id="status">Status of this Document</h2>
+    <p>
+      <strong>This is a work in progress!</strong> This document is changing
+      on a daily if not hourly basis. Comments are very welcome, please send
+      them to <a href="mailto:devel@example.org">nacho@debian.org</a>. Thank you.
+    </p>
+
+    <h2 id="contents">Table of Contents</h2>    <ol id="toc">
+      <li><a href="#intro">Introduction</a>
+        <ol>
+          <li><a href="#s11">X</a></li>
+          <li><a href="#s12">Y</a></li>
+          <li>
+            <a href="#s13">Z</a>
+            <ol>
+              <li><a href="#s131">K</a></li>
+              <li><a href="#s132">M</a></li>
+            </ol>
+          </li>
+        </ol>
+      </li>
+      <li><a href="#sec-glance">NAME ontology at a glance</a></li>
+      <li>
+        <a href="#overview">NAME ontology overview</a>
+        <ol>
+          <li><a href="#s31">Example</a></li>
+        </ol>
+      </li>
+      <li><a href="#reference">Cross-reference for NAME classes and properties</a></li>
+    </ol>
+
+    <h3>Appendixes</h3>
+    <ol id="appendix">
+      <li><a href="#references">Normative References</a></li>
+      <!--
+      <li><a href="#changes">Changes in this version</a> (Non-Normative)</li>
+      <li><a href="#acknowledgements">Acknowledgements</a>
+      (Non-Normative)</li>-->
+    </ol>
+
+    <hr />
+
+    <!-- ===================================================================== -->
+    <h2 id="intro">1 Introduction</h2>
+
+    <p>This ontology will try to cover every piece of information about
+    packages available in Debian Archive.</p>
+
+    <h3 id="s11">1.1 Packages</h3>
+
+    <p>Source and binary packages are modeled as versioned and unversioned
+    elements. For each unversioned package, several versioned ones may be
+    available.</p>
+
+    <h3 id="s12">1.2 Relationships</h3>
+
+    <p>Both source and binary package relationships are represented by
+    properties matching the name of the relationship.</p>
+    
+    <h3 id="s13">1.3 Constraints</h3>
+
+    <p>
+
+    <p>...</p>
+
+    <h4 id="s131">1.3.1 K</h4>
+
+    <p>...</p>
+
+    <h4 id="s132">1.3.2 M</h4>
+
+    <p>...</p>
+
+    <!-- ===================================================================== -->
+
+    <h2 id="sec-glance">2. NAME ontology at a glance</h2>
+
+    <p>
+      An alphabetical index of NAME terms, by class (concepts) and by property 
+      (relationships, attributes), are given below. All the terms are hyperlinked 
+      to their detailed description for quick reference.
+    </p>
+
+    <!-- The list of classes and properties goes here -->
+    %s
+    <!-- End of the terms list -->
+
+    <!-- ===================================================================== -->
+
+    <h2 id="overview">3. NAME ontology overview</h2>
+
+    <p>The NAME definitions presented here are ...</p>
+
+    <h3 id="s31">3.1. Example</h3>
+
+    <p>Here is a very basic document describing a source package:</p>
+
+    <div class="example" style="white-space: pre-wrap;">
+      <pre>
+&lt;rdf:RDF&gt;
+  &lt;rdf:Description rdf:about="http://debian.org/source/acl/2.2.47-2"&gt;
+    &lt;deb:container rdf:resource="http://debian.org/path/pool/main/a/acl"/&gt;
+    &lt;deb:priority rdf:resource="http://idi.fundacionctic.org/steamy/debian.owl#required"/&gt;
+    &lt;deb:uploader rdf:resource="http://debian.org/people/Anibal+Monsalve+Salazar"/&gt;
+    &lt;foaf:page rdf:resource="http://oss.sgi.com/projects/xfs/"/&gt;
+    &lt;rdf:type rdf:resource="http://idi.fundacionctic.org/steamy/debian.owl#Source"/&gt;
+    &lt;deb:build-depends rdf:nodeID="OtEsEhlN24"/&gt;
+    &lt;deb:build-depends rdf:nodeID="OtEsEhlN27"/&gt;
+    &lt;deb:build-depends rdf:nodeID="OtEsEhlN25"/&gt;
+    &lt;deb:build-depends rdf:nodeID="OtEsEhlN26"/&gt;
+    &lt;deb:build-depends rdf:nodeID="OtEsEhlN28"/&gt;
+    &lt;deb:packageName&gt;acl&lt;/deb:packageName&gt;
+    &lt;deb:format&gt;1.0&lt;/deb:format&gt;
+    &lt;deb:standardsVersion&gt;3.7.3&lt;/deb:standardsVersion&gt;
+    &lt;deb:versionNumber rdf:resource="http://debian.org/version/2.2.47-2"/&gt;
+    &lt;deb:distribution rdf:resource="http://debian.org/distribution/lenny"/&gt;
+    &lt;deb:section rdf:resource="http://debian.org/section/utils"/&gt;
+    &lt;deb:shouldBuildIn rdf:resource="http://debian.org/arch/any"/&gt;
+    &lt;deb:area rdf:resource="http://idi.fundacionctic.org/steamy/debian.owl#main"/&gt;
+    &lt;deb:maintainer rdf:resource="http://debian.org/team/Debian+ACL+Team"/&gt;
+    &lt;deb:binary rdf:resource="http://debian.org/binary/libacl1/2.2.47-2"/&gt;
+    &lt;deb:binary rdf:resource="http://debian.org/binary/libacl1-dev/2.2.47-2"/&gt;
+    &lt;deb:binary rdf:resource="http://debian.org/binary/acl/2.2.47-2"/&gt;
+    &lt;rdfs:label xml:lang="en"&gt;Source: acl (2.2.47-2)&lt;/rdfs:label&gt;
+  &lt;/rdf:Description&gt;
+&lt;/rdf:RDF&gt;
+      </pre>
+    </div>
+
+    <!-- ===================================================================== -->
+
+    <h2 id="reference">4. Cross-reference for NAME classes and properties</h2>
+
+    <p>...</p>
+
+    <!-- The following is the script-generated list of classes and properties -->
+    %s
+    <!-- End of the terms list -->
+
+    <p>...</p>
+
+    <!-- ===================================================================== -->
+
+    <h2 id="references">A References</h2>
+
+    <dl>
+      <dt class="label" id="ref-some">name</dt>
+      <dd><em><a href="http://.../">long name</a></em> description...</dd>
+    </dl>
+
+    <h3 id="references-other">A.2 Other references</h3>
+
+    <dl>
+      <dt class="label" id="ref-rfc2119">IETF RFC 2119</dt>
+      <dd>
+        <em><a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119: Key words
+        for use in RFCs to Indicate Requirement Levels</a></em>. Internet
+        Engineering Task Force, 1997 (see http://www.ietf.org/rfc/rfc2119.txt).
+      </dd>
+    </dl>
+
+    <!-- ===================================================================== -->
+    <!--
+
+    <h2 id="changes">B Changes in this version (Non-Normative)</h2>
+
+    <ul>
+      <li><p>changelog</p></li> 
+    </ul>
+
+    <h2><a id="acknowledgements"></a>C Acknowledgements (Non-Normative)</h2>
+
+    <p>...</p> -->
+
+  </body>
+
+</html>
+
