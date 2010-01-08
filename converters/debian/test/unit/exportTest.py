@@ -128,7 +128,7 @@ class TriplifierTest(unittest.TestCase):
 
   def testTriplifyTag(self):
     t = Tag("facet", "tag:tag")
-    uriref = URIRef("b/tag/facet/tag:tag")
+    uriref = URIRef("b/tag/facet/tag%3Atag")
     self.assertEqual(uriref, self.t.triplifyTag(t))
     self.assertEqual(4, len(self.graph))
     expected = [(uriref, RDF.type, TAG['Tag']),\
@@ -153,7 +153,7 @@ class TriplifierTest(unittest.TestCase):
 
   def testTriplifyContributorHuman(self):
     c = Human("Jon Doe", "joe@debian.org")
-    uriref = URIRef("b/people/Jon_Doe")
+    uriref = URIRef("b/people/Jon+Doe")
     self.assertEqual(uriref, self.t.triplifyContributor(c))
     self.assertEqual(4, len(self.graph))
     expected = [(uriref, RDF.type, FOAF['Person']),\
@@ -164,7 +164,7 @@ class TriplifierTest(unittest.TestCase):
 
   def testTriplifyContributorTeam(self):
     c = Team("Debian Love Team", "love@lists.debian.org")
-    uriref = URIRef("b/team/Debian_Love_Team")
+    uriref = URIRef("b/team/Debian+Love+Team")
     self.assertEqual(uriref, self.t.triplifyContributor(c))
     self.assertEqual(4, len(self.graph))
     expected = [(uriref, RDF.type, FOAF['Group']),\
@@ -176,8 +176,8 @@ class TriplifierTest(unittest.TestCase):
   def testTriplifyTeamAddMemberHumanToGroup(self):
     t = Team("Debian Love Team", "love@lists.debian.org")
     h = Human("Jon Doe", "joe@debian.org")
-    tRef = URIRef("b/team/Debian_Love_Team")
-    hRef = URIRef("b/people/Jon_Doe")
+    tRef = URIRef("b/team/Debian+Love+Team")
+    hRef = URIRef("b/people/Jon+Doe")
     self.t.triplifyTeamAddMember(t,h)
     self.assertEqual(1, len(self.graph))
     expected = [(tRef, FOAF['member'], hRef)]
@@ -185,7 +185,7 @@ class TriplifierTest(unittest.TestCase):
 
   def testTriplifyTeamAddMemberGroupToGroup(self):
     t = Team("Debian Love Team", "love@lists.debian.org")
-    tRef = URIRef("b/team/Debian_Love_Team")
+    tRef = URIRef("b/team/Debian+Love+Team")
     self.t.triplifyTeamAddMember(t,t)
     self.assertEqual(0, len(self.graph))
 

@@ -118,7 +118,7 @@ class BinaryPackageBuildTest(unittest.TestCase):
 
   def testAsURIAncestor(self):
     baseURI = "http://example.org"
-    expected = baseURI + "/binary/parent/4:4.5/testarch"
+    expected = baseURI + urllib.quote_plus("/binary/parent/4:4.5/testarch", '/')
     self.assertEqual(expected, self.b.asURI(baseURI))
 
   def testAsLabelNoAncestor(self):
@@ -130,9 +130,16 @@ class BinaryPackageBuildTest(unittest.TestCase):
                      self.b.asLabel('en'))
 
 class SourcePackageTest(unittest.TestCase):
+  def setUp(self):
+    self.b = SourcePackage("testpkgname", "1.0-1")
+
   def testAsLabel(self):
-    b = SourcePackage("testpkgname", "1.0-1")
-    self.assertEqual("Source: testpkgname (1.0-1)", b.asLabel('en'))
+    self.assertEqual("Source: testpkgname (1.0-1)", self.b.asLabel('en'))
+
+  def testAsURI(self):
+    baseURI = "http://example.org"
+    expected = baseURI + "/source/testpkgname/1.0-1"
+    self.assertEqual(expected, self.b.asURI(baseURI))
 
 class UnversionedSourcePackageTest(unittest.TestCase):
   def setUp(self):
@@ -393,7 +400,7 @@ class ToolsTest(unittest.TestCase):
     self.assertEqual(1, teamRating(self.name5, self.email5))
     self.assertEqual(1, humanRating(self.name5, self.email5))
 
-  def testencodeURI(self):
+  def testescapeURI(self):
     base = "http://rdf.debian.net"
     expected1 = "http://rdf.debian.net/" + \
       urllib.quote_plus("binary/binname/3.4-2", '/')
@@ -401,6 +408,6 @@ class ToolsTest(unittest.TestCase):
       urllib.quote_plus("distribution/lenny", '/')
     expected3 = "http://rdf.debian.net/" + \
       urllib.quote_plus("foo", '/')
-    self.assertEqual(expected1, encodeURI(base, "binary", "binname", "3.4-2"))
-    self.assertEqual(expected2, encodeURI(base, "distribution", "lenny"))
-    self.assertEqual(expected3, encodeURI(base, "foo"))
+    self.assertEqual(expected1, escapeURI(base, "binary", "binname", "3.4-2"))
+    self.assertEqual(expected2, escapeURI(base, "distribution", "lenny"))
+    self.assertEqual(expected3, escapeURI(base, "foo"))

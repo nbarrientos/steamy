@@ -33,7 +33,7 @@ class UnversionedSourcePackage(BaseUnversionedPackage, Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def asURI(self, base):
-    return "%s/source/%s" % (base, self.package)
+    return escapeURI(base, "source", self.package)
 
   @checklang
   def asLabel(self, lang):
@@ -44,7 +44,7 @@ class SourcePackage(BasePackage, Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def asURI(self, base):
-    return "%s/source/%s/%s" % (base, self.package, self.version)
+    return escapeURI(base, "source", *(self.package, self.version))
 
   @checklang
   def asLabel(self, lang):
@@ -55,7 +55,7 @@ class UnversionedBinaryPackage(BaseUnversionedPackage, Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def asURI(self, base):
-    return "%s/binary/%s" % (base, self.package)
+    return escapeURI(base, "binary", self.package)
 
   @checklang
   def asLabel(self, lang):
@@ -65,7 +65,7 @@ class BinaryPackage(BasePackage, Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def asURI(self, base):
-    return "%s/binary/%s/%s" % (base, self.package, self.version)
+    return escapeURI(base, "binary", *(self.package, self.version))
 
   @checklang
   def asLabel(self, lang):
@@ -79,8 +79,8 @@ class BinaryPackageBuild(Labelable):
     self.ancestor = ancestor # Cycles are OK in Python! :)
 
   def asURI(self, base):
-    return "%s/binary/%s/%s/%s" % \
-            (base, self.ancestor.package, self.ancestor.version, self.architecture)
+    return escapeURI(base, "binary",\
+            *(self.ancestor.package, self.ancestor.version, self.architecture))
 
   @checklang
   def asLabel(self, lang):
@@ -92,7 +92,7 @@ class VersionNumber(Version, Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def asURI(self, base):
-    return "%s/version/%s" % (base, str(self))
+    return escapeURI(base, "version", str(self))
 
   @checklang
   def asLabel(self, lang):
@@ -142,7 +142,7 @@ class Constraint(Labelable):
     self.onlyin = []
 
   def asURI(self, base):
-    postfix = "constraint/%s" % (self.package)
+    postfix = str(self.package)
     if self.operator and self.version:
       postfix = postfix + " %s %s" % (self.operatorAsURI(self.operator), self.version)
 
@@ -152,7 +152,7 @@ class Constraint(Labelable):
     for arch in self.onlyin:
       postfix = postfix + " OnlyIn_%s" % arch.name
 
-    return "%s/%s" % (base, urllib.quote_plus(postfix, '/'))
+    return escapeURI(base, "constraint", postfix)
 
   @checklang
   def asLabel(self, lang):
@@ -199,8 +199,7 @@ class File(Labelable):
     self.ancestor = ancestor
 
   def asURI(self, base):
-    return "%s/path/%s/%s" % \
-          (base, self.ancestor.path, self.name)
+    return escapeURI(base, "path", *(self.ancestor.path, self.name))
 
   @checklang
   def asLabel(self, lang):
@@ -225,7 +224,7 @@ class Directory(Labelable):
     return "%s: %s" % (map[lang], self.path)
 
   def asURI(self, base):
-    return "%s/path/%s" % (base, self.path)
+    return escapeURI(base, "path", self.path)
 
   def __eq__(self, other):
     return self.path.__eq__(other.path)
@@ -238,7 +237,7 @@ class Tag(Labelable):
     self.tag = tag
 
   def asURI(self, base):
-    return "%s/tag/%s/%s" % (base, self.facet, self.tag)
+    return escapeURI(base, "tag", *(self.facet, self.tag))
 
   @checklang
   def asLabel(self, lang):
@@ -277,7 +276,7 @@ class Architecture(SimpleDataHolderResources, Labelable):
   INSTANCES = ("all")
 
   def asURI(self, base):
-    return "%s/arch/%s" % (base, self.name)
+    return escapeURI(base, "arch", self.name)
 
   @checklang
   def asLabel(self, lang):
@@ -291,7 +290,7 @@ class Section(SimpleDataHolderResources, Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def asURI(self, base):
-    return "%s/section/%s" % (base, self.name)
+    return escapeURI(base, "section", self.name)
 
   @checklang
   def asLabel(self, lang):
@@ -346,7 +345,7 @@ class Human(Contributor, Labelable):
     Contributor.__init__(self, name, email)
 
   def asURI(self, base):
-    return "%s/people/%s" % (base, self.name.replace(" ", "_"))
+    return escapeURI(base, "people", self.name)
 
   @checklang
   def asLabel(self, lang):
@@ -366,7 +365,7 @@ class Team(Contributor, Labelable):
     Contributor.__init__(self, name, email)
 
   def asURI(self, base):
-    return "%s/team/%s" % (base, self.name.replace(" ", "_"))
+    return escapeURI(base, "team", self.name)
 
   @checklang
   def asLabel(self, lang):
@@ -465,7 +464,7 @@ def computeRating(name, email, eregex, nregex):
 
   return rating
 
-def encodeURI(base, prefix, *args):
+def escapeURI(base, prefix, *args):
   uri = prefix
   for element in args:
     uri = "%s/%s" % (uri, element)
