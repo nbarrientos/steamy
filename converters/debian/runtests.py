@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf8 -*-
+
 from optparse import OptionParser
 import unittest
 import xmlrunner

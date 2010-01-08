@@ -1,3 +1,5 @@
+# -*- coding: utf8 -*-
+
 import unittest
 import mox
 import optparse

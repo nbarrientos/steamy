@@ -1,3 +1,5 @@
+# -*- coding: utf8 -*-
+
 class BaseError(Exception):
   pass
 

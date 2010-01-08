@@ -1,3 +1,5 @@
+# -*- coding: utf8 -*-
+
 from errors import MissingMandatoryFieldError
 from errors import UnavailableLanguageError
 

@@ -1,3 +1,5 @@
+# -*- coding: utf8 -*-
+
 import re
 
 from debian_bundle.changelog import Version, VersionError
