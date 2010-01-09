@@ -311,9 +311,29 @@ class ContributorTest(unittest.TestCase):
     self.assertEqual("Name Surname", self.c.name)
     self.assertEqual("mail@example.com", self.c.email)
     
+class HumanTest(unittest.TestCase):
+  def setUp(self):
+    self.h = Human("Name Surname", "mail@example.com")
+    
   def testAsLabel(self):
-    self.assertEqual("Contributor: Name Surname <mail@example.com>",\
-                     self.c.asLabel('en'))
+    self.assertEqual("Human: mail@example.com",\
+                     self.h.asLabel('en'))
+
+  def testAsURI(self):
+    expected = urllib.quote_plus("b/people/mail@example.com", '/')
+    self.assertEqual(expected, self.h.asURI("b"))
+
+class TeamTest(unittest.TestCase):
+  def setUp(self):
+    self.t = Human("Debian Harmony Maintainers", "mail@d.example.com")
+    
+  def testAsLabel(self):
+    self.assertEqual("Human: mail@d.example.com",\
+                     self.t.asLabel('en'))
+
+  def testAsURI(self):
+    expected = urllib.quote_plus("b/people/mail@d.example.com", '/')
+    self.assertEqual(expected, self.t.asURI("b"))
 
 class AreaTest(unittest.TestCase):
   def setUp(self):

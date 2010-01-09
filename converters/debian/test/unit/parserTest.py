@@ -590,6 +590,11 @@ class BaseParserTest(unittest.TestCase):
     self.assertEqual("Name Surname (Some notes)", contributor.name)
     self.assertEqual("mail+fax@example-rt.com", contributor.email)
 
+    input = "<mail@example.com>"
+    contributor = self.parser.parseContributor(input)
+    self.assertEqual(None, contributor.name)
+    self.assertEqual("mail@example.com", contributor.email)
+
     input = "Name Surname"
     self.assertRaises(ParserError, self.parser.parseContributor, input)
 

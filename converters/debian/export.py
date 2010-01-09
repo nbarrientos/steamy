@@ -393,8 +393,9 @@ class Triplifier():
     self.g.add((ref, RDF.type, FOAF[contributor.rdfType()]))
     self._addLabelToGraph(ref, contributor)
 
-    self.g.add((ref, FOAF['name'], Literal(contributor.name)))
     self.g.add((ref, FOAF['mbox'], Literal(contributor.email)))
+    if contributor.name is not None:
+      self.g.add((ref, FOAF['name'], Literal(contributor.name)))
 
     return ref
 

@@ -356,11 +356,6 @@ class Contributor(Labelable):
     self.name = name
     self.email = email
 
-  @checklang
-  def asLabel(self, lang):
-    map = {'en': "Contributor"}
-    return "%s: %s <%s>" % (map[lang], self.name, self.email)
-
   def __str__(self):
     return "%s <%s>" % (self.name, self.email)
 
@@ -372,12 +367,12 @@ class Human(Contributor, Labelable):
     Contributor.__init__(self, name, email)
 
   def asURI(self, base):
-    return escapeURI(base, "people", self.name)
+    return escapeURI(base, "people", self.email)
 
   @checklang
   def asLabel(self, lang):
     map = {'en': "Human"}
-    return "%s: %s <%s>" % (map[lang], self.name, self.email)
+    return "%s: %s" % (map[lang], self.email)
 
   def rdfType(self):
     return "Person"
@@ -393,12 +388,12 @@ class Team(Contributor, Labelable):
     Contributor.__init__(self, name, email)
 
   def asURI(self, base):
-    return escapeURI(base, "team", self.name)
+    return escapeURI(base, "team", self.email)
 
   @checklang
   def asLabel(self, lang):
     map = {'en': "Team"}
-    return "%s: %s <%s>" % (map[lang], self.name, self.email)
+    return "%s: %s" % (map[lang], self.email)
 
   def rdfType(self):
     return "Group"
@@ -464,9 +459,9 @@ class SvnRepository(Repository):
 
 def guessRole(name, email):
   if teamRating(name, email) > humanRating(name, email) + 1: # FIXME?
-    return Team(name, email)
+    return Team(None if not name else name, email)
   else:
-    return Human(name, email)
+    return Human(None if not name else name, email)
 
 def teamRating(name, email):
   mailRegexPool = (".*@lists\.alioth\.debian\.org",\
