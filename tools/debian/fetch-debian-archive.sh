@@ -46,7 +46,7 @@ function processFile {
 
 # Old distributions
 
-BASE_URL="http://ftp.de.debian.org/archive/debian/dists"
+BASE_URL="http://ftp.nl.debian.org/debian-archive/dists"
 ARCHS="i386 m68k"
 processDist "hamm"
 
