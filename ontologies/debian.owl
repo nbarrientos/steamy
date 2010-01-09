@@ -45,6 +45,8 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#alternative -->
 
     <owl:ObjectProperty rdf:about="#alternative">
+        <rdfs:comment xml:lang="en"
+            >Indicates a constraint is an alternative of a disjuctive constraint</rdfs:comment>
         <rdfs:domain rdf:resource="#DisjunctivePackageConstraint"/>
         <rdfs:range rdf:resource="#SimplePackageConstraint"/>
     </owl:ObjectProperty>
@@ -55,6 +57,8 @@
 
     <owl:ObjectProperty rdf:about="#architecture">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >Indicates the architecture of a binary build</rdfs:comment>
         <rdfs:range rdf:resource="#Architecture"/>
     </owl:ObjectProperty>
     
@@ -64,6 +68,8 @@
 
     <owl:ObjectProperty rdf:about="#area">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >Indicates a package belongs to an area</rdfs:comment>
         <rdfs:range rdf:resource="#ArchiveArea"/>
         <rdfs:domain rdf:resource="#Source"/>
     </owl:ObjectProperty>
@@ -74,6 +80,8 @@
 
     <owl:ObjectProperty rdf:about="#binary">
         <rdf:type rdf:resource="&owl;InverseFunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >Indicates a binary package is a product of a source package</rdfs:comment>
         <rdfs:range rdf:resource="#Binary"/>
         <rdfs:domain rdf:resource="#Source"/>
     </owl:ObjectProperty>
@@ -101,6 +109,8 @@
 
     <owl:ObjectProperty rdf:about="#build">
         <rdf:type rdf:resource="&owl;InverseFunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >Indicates a binary build is one of the available builds of a binary package</rdfs:comment>
         <rdfs:domain rdf:resource="#Binary"/>
         <rdfs:range rdf:resource="#BinaryBuild"/>
     </owl:ObjectProperty>
@@ -151,6 +161,8 @@
 
     <owl:ObjectProperty rdf:about="#container">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >Indicates a directory is a container for the files of a source or a binary package</rdfs:comment>
     </owl:ObjectProperty>
     
 
@@ -166,6 +178,8 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#distribution -->
 
     <owl:ObjectProperty rdf:about="#distribution">
+        <rdfs:comment xml:lang="en"
+            >Indicates a source package is part of a distribution</rdfs:comment>
         <rdfs:range rdf:resource="#Distribution"/>
     </owl:ObjectProperty>
     
@@ -182,6 +196,8 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#exceptInArchitecture -->
 
     <owl:ObjectProperty rdf:about="#exceptInArchitecture">
+        <rdfs:comment xml:lang="en"
+            >Indicates it is not necessary to satisfy a contraint when building the package in a particular architecture</rdfs:comment>
         <rdfs:range rdf:resource="#Architecture"/>
         <rdfs:domain rdf:resource="#SimplePackageConstraint"/>
     </owl:ObjectProperty>
@@ -192,6 +208,8 @@
 
     <owl:ObjectProperty rdf:about="#maintainer">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >Indicates an agent is maintainer of a source package</rdfs:comment>
         <rdfs:domain rdf:resource="#Source"/>
     </owl:ObjectProperty>
     
@@ -200,6 +218,8 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#onlyInArchitecture -->
 
     <owl:ObjectProperty rdf:about="#onlyInArchitecture">
+        <rdfs:comment xml:lang="en"
+            >Indicates a contraint must only be satisfied when building the package in a particular architecture</rdfs:comment>
         <rdfs:range rdf:resource="#Architecture"/>
         <rdfs:domain rdf:resource="#SimplePackageConstraint"/>
     </owl:ObjectProperty>
@@ -210,6 +230,8 @@
 
     <owl:ObjectProperty rdf:about="#package">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >Indicates a package belongs to a constraint</rdfs:comment>
         <rdfs:range rdf:resource="#UnversionedBinary"/>
     </owl:ObjectProperty>
     
@@ -235,6 +257,8 @@
 
     <owl:ObjectProperty rdf:about="#priority">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >Indicates a package has a particular level of priority</rdfs:comment>
         <rdfs:range rdf:resource="#Priority"/>
     </owl:ObjectProperty>
     
@@ -267,6 +291,8 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#repository -->
 
     <owl:ObjectProperty rdf:about="#repository">
+        <rdfs:comment xml:lang="en"
+            >Indicates package packaging is being tracked in a VCS</rdfs:comment>
         <rdfs:domain rdf:resource="#Source"/>
     </owl:ObjectProperty>
     
@@ -275,6 +301,8 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#satisfies -->
 
     <owl:ObjectProperty rdf:about="#satisfies">
+        <rdfs:comment xml:lang="en"
+            >Indicates a package satisfies a constraint</rdfs:comment>
         <rdfs:domain rdf:resource="#Binary"/>
         <rdfs:range rdf:resource="#SimplePackageConstraint"/>
     </owl:ObjectProperty>
@@ -285,6 +313,8 @@
 
     <owl:ObjectProperty rdf:about="#section">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >Indicates a package was classified into a section</rdfs:comment>
         <rdfs:range rdf:resource="#Section"/>
     </owl:ObjectProperty>
     
@@ -293,6 +323,8 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#shouldBuildIn -->
 
     <owl:ObjectProperty rdf:about="#shouldBuildIn">
+        <rdfs:comment xml:lang="en"
+            >Indicates a source package should build in the given architecture</rdfs:comment>
         <rdfs:range rdf:resource="#Architecture"/>
         <rdfs:domain rdf:resource="#Source"/>
     </owl:ObjectProperty>
@@ -319,6 +351,8 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#uploader -->
 
     <owl:ObjectProperty rdf:about="#uploader">
+        <rdfs:comment xml:lang="en"
+            >Indicates an agent is uploader of a source package</rdfs:comment>
         <rdfs:domain rdf:resource="#Source"/>
     </owl:ObjectProperty>
     
@@ -328,14 +362,6 @@
 
     <owl:ObjectProperty rdf:about="#version">
         <rdfs:subPropertyOf rdf:resource="&terms;hasVersion"/>
-        <rdfs:domain>
-            <owl:Class>
-                <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="#UnversionedBinary"/>
-                    <rdf:Description rdf:about="#UnversionedSource"/>
-                </owl:unionOf>
-            </owl:Class>
-        </rdfs:domain>
         <rdfs:range>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
@@ -344,6 +370,14 @@
                 </owl:unionOf>
             </owl:Class>
         </rdfs:range>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#UnversionedBinary"/>
+                    <rdf:Description rdf:about="#UnversionedSource"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
     </owl:ObjectProperty>
     
 
@@ -351,6 +385,8 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#versionNumber -->
 
     <owl:ObjectProperty rdf:about="#versionNumber">
+        <rdfs:comment xml:lang="en"
+            >Indicates an element has a version number</rdfs:comment>
         <rdfs:range rdf:resource="#VersionNumber"/>
     </owl:ObjectProperty>
     
@@ -375,7 +411,10 @@
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#constraintOperator -->
 
-    <owl:DatatypeProperty rdf:about="#constraintOperator"/>
+    <owl:DatatypeProperty rdf:about="#constraintOperator">
+        <rdfs:comment
+            >The operator of a constraint</rdfs:comment>
+    </owl:DatatypeProperty>
     
 
 
@@ -529,101 +568,172 @@
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#Architecture -->
 
-    <owl:Class rdf:about="#Architecture"/>
+    <owl:Class rdf:about="#Architecture">
+        <rdfs:label xml:lang="en">Architecture</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >An architecture, with a different meaning depending on the type of the resource it is linked to</rdfs:comment>
+    </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#ArchiveArea -->
 
-    <owl:Class rdf:about="#ArchiveArea"/>
+    <owl:Class rdf:about="#ArchiveArea">
+        <rdfs:label xml:lang="en">Area</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >An area inside the archive, for instance &#39;main&#39;</rdfs:comment>
+    </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#Binary -->
 
-    <owl:Class rdf:about="#Binary"/>
+    <owl:Class rdf:about="#Binary">
+        <rdfs:label xml:lang="en">Binary Package</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >A binary package with an explicit version declaration.</rdfs:comment>
+    </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#BinaryBuild -->
 
-    <owl:Class rdf:about="#BinaryBuild"/>
+    <owl:Class rdf:about="#BinaryBuild">
+        <rdfs:label xml:lang="en"
+            >Binary Package Build</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >A build of a binary package for a specific architecture</rdfs:comment>
+    </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#BuildEssentialBinary -->
 
-    <owl:Class rdf:about="#BuildEssentialBinary"/>
+    <owl:Class rdf:about="#BuildEssentialBinary">
+        <rdfs:label xml:lang="en"
+            >Build Essential Binary</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >A binary package inside the set of build essential packages</rdfs:comment>
+    </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#DMUploadAllowedSource -->
 
     <owl:Class rdf:about="#DMUploadAllowedSource">
+        <rdfs:label xml:lang="en"
+            >DM Upload Allowed Source</rdfs:label>
         <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+        <rdfs:comment xml:lang="en"
+            >A source package that can be uploaded to the archive without being signed by a Debian Developer</rdfs:comment>
     </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#DisjunctivePackageConstraint -->
 
-    <owl:Class rdf:about="#DisjunctivePackageConstraint"/>
+    <owl:Class rdf:about="#DisjunctivePackageConstraint">
+        <rdfs:label xml:lang="en"
+            >Dicjunctive Package Constraint</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >A special constraint to represent a logic OR between several SimplePackageConstaints</rdfs:comment>
+    </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#Distribution -->
 
-    <owl:Class rdf:about="#Distribution"/>
+    <owl:Class rdf:about="#Distribution">
+        <rdfs:label xml:lang="en">Distribution</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >A distribution holding several binary and source packages, e.g. &#39;Hamm&#39;.</rdfs:comment>
+    </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#EssentialBinary -->
 
-    <owl:Class rdf:about="#EssentialBinary"/>
+    <owl:Class rdf:about="#EssentialBinary">
+        <rdfs:label xml:lang="en"
+            >Essential Binary</rdfs:label>
+        <owl:disjointWith rdf:resource="#Source"/>
+        <rdfs:comment xml:lang="en"
+            >A binary package marked as essential</rdfs:comment>
+    </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#Priority -->
 
-    <owl:Class rdf:about="#Priority"/>
+    <owl:Class rdf:about="#Priority">
+        <rdfs:label xml:lang="en">Priority</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >A level of priority representing how important that it is that the user have the package installed</rdfs:comment>
+    </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#Section -->
 
-    <owl:Class rdf:about="#Section"/>
+    <owl:Class rdf:about="#Section">
+        <rdfs:label xml:lang="en">Section</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >An application area into which a package is classified</rdfs:comment>
+    </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#SimplePackageConstraint -->
 
-    <owl:Class rdf:about="#SimplePackageConstraint"/>
+    <owl:Class rdf:about="#SimplePackageConstraint">
+        <rdfs:label xml:lang="en"
+            >Simple Package Constraint</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >A generic package constraint. May include an operator and a version.</rdfs:comment>
+    </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#Source -->
 
-    <owl:Class rdf:about="#Source"/>
+    <owl:Class rdf:about="#Source">
+        <rdfs:label xml:lang="en">Source Package</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >A source package with an explicit version declaration</rdfs:comment>
+    </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#UnversionedBinary -->
 
-    <owl:Class rdf:about="#UnversionedBinary"/>
+    <owl:Class rdf:about="#UnversionedBinary">
+        <rdfs:label xml:lang="en"
+            >Unversioned Binary Package</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >An abstract binary package without explicit version declaration</rdfs:comment>
+    </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#UnversionedSource -->
 
     <owl:Class rdf:about="#UnversionedSource">
+        <rdfs:label xml:lang="en"
+            >Unversioned Source Package</rdfs:label>
         <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+        <rdfs:comment xml:lang="en"
+            >An abstract source package without explicit version declaration</rdfs:comment>
     </owl:Class>
     
 
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#VersionNumber -->
 
-    <owl:Class rdf:about="#VersionNumber"/>
+    <owl:Class rdf:about="#VersionNumber">
+        <rdfs:label xml:lang="en">Version Number</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >A version number as it is found in packages and relationships</rdfs:comment>
+    </owl:Class>
     
 
 
