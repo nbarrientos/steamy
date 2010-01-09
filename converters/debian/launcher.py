@@ -89,10 +89,15 @@ class Launcher():
                       format [options: xml, n3, nt] [default: %default]")
     parser.add_option("-r", "--regex", dest="regex",\
                       metavar="REGEX", help="skip source and binary packages not matching REGEX")
+    parser.add_option("-l", "--guess-role", action="store_true", dest="role",\
+                      default=False,\
+                      help="role heuristic: tries to determine if each fetched\
+                      contributor is an individual (foaf:Person) or a team (foaf:Group)")
     parser.add_option("-t", "--guess-team", action="store_true", dest="team",\
                       default=False,\
                       help="team membership heuristic: every human uploader\
-                      will be added as team member if maintainer is classified as a team")
+                      will be added as team member if maintainer is\
+                      classified as a team (implies -l)")
     parser.add_option("-a", "--guess-area", action="store_true", dest="area",\
                       default=False,\
                       help="package area heuristic: attach source package to an\
@@ -133,7 +138,9 @@ class Launcher():
         raise UserOptionsError("'%s' is not a valid RFC822 date" % \
         self.opts.distdate)
 
-
+    # Force role guessing if team association is enabled
+    if self.opts.team: self.opts.role = True
+      
   def processPackages(self):
     try:
       inputFile = open(self.opts.packages)

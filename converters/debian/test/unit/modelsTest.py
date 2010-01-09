@@ -310,7 +310,16 @@ class ContributorTest(unittest.TestCase):
   def testInit(self):
     self.assertEqual("Name Surname", self.c.name)
     self.assertEqual("mail@example.com", self.c.email)
-    
+  
+  def testAsLabel(self):
+    self.assertEqual("Contributor: mail@example.com",\
+                     self.c.asLabel('en'))
+
+  def testAsURI(self):
+    expected = urllib.quote_plus("b/contributor/mail@example.com", '/')
+    self.assertEqual(expected, self.c.asURI("b"))
+
+   
 class HumanTest(unittest.TestCase):
   def setUp(self):
     self.h = Human("Name Surname", "mail@example.com")

@@ -13,6 +13,7 @@ class SourcesParserTest(unittest.TestCase):
   def setUp(self):
     self.values = optparse.Values()
     self.values.ensure_value("regex", None)
+    self.values.ensure_value("role", True)
     self.parser = SourcesParser(self.values)
     self.sourcePackage = {}
     self.sourcePackage['Package'] = "srcpkg"
@@ -388,11 +389,13 @@ class PackagesParserTest(unittest.TestCase):
     self.assertEqual(expectedShort, short)
     self.assertEqual(None, long)
 
+
 class BaseParserTest(unittest.TestCase):
   def setUp(self):
-    values = optparse.Values()
-    values.ensure_value("regex", None)
-    self.parser = BaseParser(values)
+    self.values = optparse.Values()
+    self.values.ensure_value("regex", None)
+    self.values.ensure_value("role", True)
+    self.parser = BaseParser(self.values)
 
   def testParseVersionNumberNoEpoch(self):
     ver = self.parser.parseVersionNumber("1.0-1")
@@ -579,24 +582,42 @@ class BaseParserTest(unittest.TestCase):
     input = {}
     self.assertEqual(None, self.parser.parsePriority(input))
   
-  def testParseContributor(self):
+  def testParseContributorGuessRoleOn(self):
     input = "Name Surname     <mail@example.com>"
     contributor = self.parser.parseContributor(input)
     self.assertEqual("Name Surname", contributor.name)
     self.assertEqual("mail@example.com", contributor.email)
+    self.assertEqual(Human, contributor.__class__)
 
     input = "Name Surname (Some notes) <mail+fax@example-rt.com>"
     contributor = self.parser.parseContributor(input)
     self.assertEqual("Name Surname (Some notes)", contributor.name)
     self.assertEqual("mail+fax@example-rt.com", contributor.email)
+    self.assertEqual(Human, contributor.__class__)
 
     input = "<mail@example.com>"
     contributor = self.parser.parseContributor(input)
     self.assertEqual(None, contributor.name)
     self.assertEqual("mail@example.com", contributor.email)
+    self.assertEqual(Human, contributor.__class__)
 
     input = "Name Surname"
     self.assertRaises(ParserError, self.parser.parseContributor, input)
+
+  def testParseContributorGuessRoleOff(self):
+    values = optparse.Values() # Unable to reset a boolean value!
+    values.ensure_value('role', False)
+    self.parser.opts = values
+
+    input = "Name Surname     <mail@example.com>"
+    contributor = self.parser.parseContributor(input)
+    self.assertEqual(Contributor, contributor.__class__)
+    
+    input = "<mail@example.com>"
+    contributor = self.parser.parseContributor(input)
+    self.assertEqual(None, contributor.name)
+    self.assertEqual("mail@example.com", contributor.email)
+    self.assertEqual(Contributor, contributor.__class__)
 
   def testParseContributors(self):
     input = "Name Surname <mail@example.com>"

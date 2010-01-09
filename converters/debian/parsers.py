@@ -115,7 +115,11 @@ class BaseParser():
 
     if match is not None and match.group("name") is not None \
                          and match.group("email") is not None:
-      return guessRole(match.group("name"), match.group("email"))
+      if self.opts.role:
+        return guessRole(match.group("name"), match.group("email"))
+      else:
+        return Contributor(match.group("name") if match.group("name") else \
+        None, match.group("email"))
     else:
       raise ParserError("parseContributor", raw)
 

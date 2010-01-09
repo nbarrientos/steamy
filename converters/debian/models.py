@@ -2,6 +2,7 @@
 
 import re
 import urllib
+import logging
 
 from debian_bundle.changelog import Version
 from rdflib import Literal
@@ -356,6 +357,17 @@ class Contributor(Labelable):
     self.name = name
     self.email = email
 
+  def rdfType(self):
+    return "Agent"
+
+  def asURI(self, base):
+    return escapeURI(base, "contributor", self.email)
+
+  @checklang
+  def asLabel(self, lang):
+    map = {'en': "Contributor"}
+    return "%s: %s" % (map[lang], self.email)
+
   def __str__(self):
     return "%s <%s>" % (self.name, self.email)
 
@@ -459,8 +471,10 @@ class SvnRepository(Repository):
 
 def guessRole(name, email):
   if teamRating(name, email) > humanRating(name, email) + 1: # FIXME?
+    logging.debug("Looks like %s is a team" % email)
     return Team(None if not name else name, email)
   else:
+    logging.debug("Looks like %s is a human" % email)
     return Human(None if not name else name, email)
 
 def teamRating(name, email):
