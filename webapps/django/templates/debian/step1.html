@@ -5,6 +5,11 @@
 <body>
 <p>This is step number one. Will ask you a few simple questions to guide your
 search.</p>
-<a href="{{ next_step }}">Next</a>
+<form method="post" action="{{ next_step }}">
+<fieldset>
+    {{ form }}
+<input type="submit" name="submit_step1" value="Next >>">
+</fieldset>
+</form>
 </body>
 </html>
