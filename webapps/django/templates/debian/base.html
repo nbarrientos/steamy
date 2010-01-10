@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <link rel="stylesheet" href="style.css" />
+    <title>{% block title %}Semantic Debian Packages Search{% endblock %}</title>
+</head>
+
+<body>
+    <div class="header">
+    <h1>STEAMY</h2>
+    <h2>Debian Packages Semantic Search Engine (experimental)</h2>
+    </div>
+
+    <div class="content">
+    {% block content %}{% endblock %}
+    </div>
+    
+    <a href="{% url debian.views.index %}">Home</a>
+</body>
+</html>

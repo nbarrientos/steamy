@@ -24,13 +24,31 @@ PKGTYPE_CHOICES = (
 )
 
 class Step1Form(forms.Form):
-   distribution = forms.CharField(widget=widgets.Select(choices=DIST_CHOICES))
-   area = forms.CharField(widget=widgets.Select(choices=AREA_CHOICES))
-   pkgtype = forms.CharField(widget=widgets.RadioSelect(choices=PKGTYPE_CHOICES))
+    distribution = forms.CharField(widget=widgets.Select(choices=DIST_CHOICES))
+    area = forms.CharField(widget=widgets.Select(choices=AREA_CHOICES))
+    pkgtype = forms.CharField(widget=widgets.RadioSelect(choices=PKGTYPE_CHOICES))
 
 class Step2Form(forms.Form):
-   filter = forms.CharField(max_length=30)
-   description = forms.BooleanField(required=False)
+    filter = forms.CharField(max_length=30)
+    description = forms.BooleanField(required=False)
+
+class SPARQLForm(forms.Form):
+    default = """
+PREFIX deb:<http://idi.fundacionctic.org/steamy/debian.owl#>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX nfo:<http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#>
+PREFIX tag:<http://www.holygoat.co.uk/owl/redwood/0.1/tags#>
+PREFIX foaf:<http://xmlns.com/foaf/0.1/#>
+PREFIX doap:<http://usefulinc.com/ns/doap#>
+
+SELECT ?s
+WHERE {
+    ?s a deb:Source
+} 
+LIMIT 10"""
+    attrs = {'rows': '25', 'cols': '150'}
+    query = forms.CharField(label=None, initial=default, widget=widgets.Textarea(attrs=attrs))
 
 class SearchWizard(FormWizard):
     def done(self, request, form_list):

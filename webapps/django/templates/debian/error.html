@@ -4,8 +4,6 @@
     <div class="subheader">
         <h3>Try your own SPARQL query!</h3>
     </div>
-    <form action="{% url debian.views.sparql %}" method="POST">
-    {{ form }}
-    <input type="submit" value="Go!"/>
-    </form>
+    <p>Ooops, couldn't execute query: {{ reason }}<p>
+    <p><a href="{% url debian.views.sparql %}">Try again</a></p>
 {% endblock %}

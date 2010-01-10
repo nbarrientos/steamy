@@ -1,22 +1,18 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-    <link rel="stylesheet" href="style.css" />
-    <title>{% block title %}Debian Packages Search Wizard (step {{ step }}){% endblock %}</title>
-</head>
+{% extends "debian/base.html" %}
 
-<body>
-    <p>Step {{ step }} of {{ step_count }}</p>
-      <div id="content">
-      <div id="form">
+{% block title %}Debian Packages Search Wizard (step {{ step }}){% endblock %}
+
+{% block content %}
+    <div class="subheader">
+        <h3>Search wizard (step {{ step }} of {{ step_count }})</h3>
+    </div>
+
+    <div id="wizard-form">
         <form action="." method="post">
           {% block form-content %}{% endblock %}
           <p><input type="submit" value="Next >>" /></p>
           <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
           {{ previous_fields|safe }}
         </form>
-      </div> <!-- form -->
-    </div> <!-- content -->
-</body>
-</html>
+    </div>
+{% endblock %}

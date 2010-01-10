@@ -1,10 +1,25 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 
-from debian.models import Step1Form, step2_form_builder
+from debian.forms import SPARQLForm
+from debian.services import SPARQLQueryProcessor, SPARQLQueryProcessorError
 
 def index(request):
-  return render_to_response('debian/index.html', {})
+    return render_to_response('debian/index.html', {})
 
 def sparql(request):
-  return render_to_response('debian/sparql.html', {})
+    if request.method == 'POST':
+        f = SPARQLForm(request.POST)
+        f.is_valid()
+        
+        processor = SPARQLQueryProcessor()
+        try:
+            results = processor.execute_query((f.cleaned_data['query']))
+        except SPARQLQueryProcessorError, e:
+            return render_to_response('debian/error.html', {'reason': e.reason})
+
+        return render_to_response('debian/results.html', {'results': results})  # FIXME
+    else:
+        form = SPARQLForm()
+        dict = {'form': form}
+        return render_to_response('debian/sparql.html', dict)
