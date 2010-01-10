@@ -49,3 +49,10 @@ def step2_form_builder(pkgtype):
       fields = fieldtuple
 
   return Step2Form
+
+class StepSparql(models.Model):
+  query = models.TextField()
+
+class StepSparqlForm(forms.ModelForm):
+  class Meta:
+    model = StepSparql
