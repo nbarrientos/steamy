@@ -67,3 +67,9 @@ class SelectQueryHelperTest(unittest.TestCase):
         st1 = Triple(Variable("a"), Variable("b"), Variable("c"))
         self.s.add_triple_variables(st1)
         self.assertEqual(3, len(self.s.query.variables))
+
+    def test_set_limit_and_offset(self):
+        self.s.set_limit("2")
+        self.s.set_offset("2")
+        self.assertEqual(["2", "2"], [limit.value for limit in self.s.query.modifiers])
+

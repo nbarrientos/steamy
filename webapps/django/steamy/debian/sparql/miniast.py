@@ -5,6 +5,7 @@ class SelectQuery():
         self.variables = []
         self.distinct = distinct
         self.whereclause = WhereClause()
+        self.modifiers = []
  
 
 class WhereClause():
@@ -50,3 +51,11 @@ class Triple():
         return self.subject.__eq__(other.subject) \
                 and self.property.__eq__(other.property) \
                 and self.object.__eq__(other.object)
+
+class Limit():
+    def __init__(self, value):
+        self.value = value
+
+class Offset():
+    def __init__(self, value):
+        self.value = value

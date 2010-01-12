@@ -43,6 +43,16 @@ class VisitorTest(unittest.TestCase):
         expected = '"Literal"'
         self.assertEqual(expected, self.v.visit(literal))
 
+    def test_visit_Limit(self):
+        limit = Limit("10")
+        expected = "LIMIT 10"
+        self.assertEqual(expected, self.v.visit(limit))
+
+    def test_visit_Offset(self):
+        offset = Offset("10")
+        expected = "OFFSET 10"
+        self.assertEqual(expected, self.v.visit(offset))
+
     def test_visit_Triple(self):
         expected = "?var1 <http://www.w3.org/2000/01/rdf-schema#type> \
 <http://idi.fundacionctic.org/steamy/debian.owl#Source>."
@@ -87,17 +97,32 @@ class VisitorTest(unittest.TestCase):
     def test_visit_SelectQuery(self):
         st2 = Triple(Variable("d"), Variable("e"), Variable("f"))
         helper = SelectQueryHelper()
+        expected = "SELECT WHERE{}"
+        result = self.v.visit(helper.query)
+        self.assertEqual(expected, result) 
+
+        helper.set_limit("50")
+        expected = "SELECT WHERE{}LIMIT 50"
+        result = self.v.visit(helper.query)
+        self.assertEqual(expected, result) 
+
         helper.add_triple_variables(st2)
         helper.add_filter(FunCall("regex", [Variable("var"), '"regex"']))
-        expected = "SELECT?e?f?d WHERE{?d ?e ?f.FILTER(regex(?var,\"regex\"))}"
+        expected = "SELECT?e?f?d WHERE{?d ?e ?f.FILTER(regex(?var,\"regex\"))}LIMIT 50"
+        result = self.v.visit(helper.query)
+        self.assertEqual(expected, result) 
+        self.assertEqual(Query, Parse(result).__class__)
+
+        helper.set_offset("2")
+        expected = "SELECT?e?f?d WHERE{?d ?e ?f.FILTER(regex(?var,\"regex\"))}LIMIT 50 OFFSET 2"
         result = self.v.visit(helper.query)
         self.assertEqual(expected, result) 
         self.assertEqual(Query, Parse(result).__class__)
 
         helper.add_optional([st2, st2])
-        result = self.v.visit(helper.query)
+        result = self.v.visit(helper.query, True)
         self.assertEqual(Query, Parse(result).__class__)
 
         helper.add_union([st2, st2], [st2], [st2])
-        result = self.v.visit(helper.query)
+        result = self.v.visit(helper.query, True)
         self.assertEqual(Query, Parse(result).__class__)

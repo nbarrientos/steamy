@@ -1,5 +1,7 @@
 from sparql.miniast import *
 
+from config import SPARQL_PREFIXES as PREFIX
+
 class QueryStringVisitor():
     def visit(self, node, *args):
         className = node.__class__.__name__
@@ -17,6 +19,12 @@ class QueryStringVisitor():
 
     def visit_Literal(self, node):
         return '"%s"' % str(node)
+
+    def visit_Limit(self, node):
+        return "LIMIT %s" % node.value
+
+    def visit_Offset(self, node):
+        return "OFFSET %s" % node.value
 
     def visit_Triple(self, node):
         out = [self.visit(node.subject), " ", self.visit(node.property), " ",\
@@ -45,10 +53,12 @@ class QueryStringVisitor():
             strs.append(merged_graphpattern)
         return '{' + '}UNION{'.join(strs) + '}'
 
-    def visit_SelectQuery(self, node):
+    def visit_SelectQuery(self, node, add_prefixes=False):
+        prefix = PREFIX if add_prefixes else ""
         variables = ''.join(map(self.visit, node.variables))
         where = ''.join(map(self.visit, node.whereclause.stmts))
-        query = ["SELECT", variables, " WHERE{", where, "}"] 
+        modifiers = ' '.join(map(self.visit, node.modifiers))
+        query = [prefix, "SELECT", variables, " WHERE{", where, "}", modifiers] 
         return ''.join(query)
 
     # Tools

@@ -3,6 +3,7 @@
 from rdflib import Variable
 
 from sparql.miniast import SelectQuery, Optional, Filter, Union
+from sparql.miniast import Limit, Offset 
 
 class SelectQueryHelper():
     def __init__(self):
@@ -35,3 +36,9 @@ class SelectQueryHelper():
         for k,v in triple.__dict__.items():
             if isinstance(v, Variable):
                 self.add_variable(v)
+
+    def set_limit(self, value):
+        self.query.modifiers.append(Limit(value))
+
+    def set_offset(self, value):
+        self.query.modifiers.append(Offset(value))
