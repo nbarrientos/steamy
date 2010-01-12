@@ -65,3 +65,6 @@ class QueryStringVisitor():
 
     def visit_str(self, node):
         return node
+
+    def visit_unicode(self, node):
+        return node
