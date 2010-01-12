@@ -2,8 +2,7 @@
 
 from rdflib import Variable
 
-from debian.sparql.miniast import SelectQuery, Optional, Filter, Union
-from debian.sparql.miniast import Limit, Offset 
+from debian.sparql.miniast import * 
 from debian.sparql.visitor import QueryStringVisitor
 
 class SelectQueryHelper():
@@ -17,6 +16,11 @@ class SelectQueryHelper():
     def add_triple(self, triple):
         if not triple in self.query.whereclause.stmts:
             self.query.whereclause.stmts.append(triple)
+
+    # TESTME
+    def push_triple(self, subject, property, object):
+        triple = Triple(subject, property, object)
+        self.add_triple(triple)
 
     def add_optional(self, triple_list):
         self.query.whereclause.stmts.append(Optional(triple_list))
@@ -38,6 +42,12 @@ class SelectQueryHelper():
             if isinstance(v, Variable):
                 self.add_variable(v)
 
+
+    # TESTME
+    def push_triple_variables(self, subject, property, object):
+        triple = Triple(subject, property, object)
+        self.add_triple_variables(triple)
+
     def set_limit(self, value):
         self.query.modifiers.append(Limit(value))
 
@@ -47,3 +57,13 @@ class SelectQueryHelper():
     def __str__(self):
         v = QueryStringVisitor()
         return v.visit(self.query) 
+
+    def add_filter_regex(self, var, regex):
+        f = FunCall("regex", [var, '"%s"' % regex])
+        self.add_filter(f)
+
+    def add_or_filter_regex(self, var1, var2, regex):
+        f1 = FunCall("regex", [var1, '"%s"' % regex])
+        f2 = FunCall("regex", [var2, '"%s"' % regex])
+        binexp = BinaryExpression(f1, "||", f2)
+        self.add_filter(binaryexp)
