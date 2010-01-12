@@ -1,7 +1,5 @@
 # -*- coding: utf8 -*-
 
-from rdflib import Variable
-
 class SelectQuery():
     def __init__(self, distinct=False):
         self.variables = []

@@ -2,7 +2,7 @@
 
 import unittest
 
-from rdflib import Namespace, URIRef, BNode, Literal, Variable
+from rdflib import Namespace, URIRef, Literal, Variable
 
 from sparql.helpers import SelectQueryHelper
 from sparql.miniast import Triple, Optional

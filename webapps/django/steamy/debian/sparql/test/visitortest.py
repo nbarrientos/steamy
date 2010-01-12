@@ -2,18 +2,14 @@
 
 import unittest
 
-from rdflib import Namespace, URIRef, BNode, Literal, Variable
+from rdflib import Namespace, URIRef, Literal, Variable
 
 from sparql.miniast import *
 from sparql.visitor import QueryStringVisitor
 from sparql.helpers import SelectQueryHelper
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
-FOAF = Namespace(u"http://xmlns.com/foaf/0.1/")
-RDF = Namespace(u"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
-TAG = Namespace(u"http://www.holygoat.co.uk/owl/redwood/0.1/tags/")
-DOAP = Namespace(u"http://usefulinc.com/ns/doap#")
 
 class VisitorTest(unittest.TestCase):
     def setUp(self):

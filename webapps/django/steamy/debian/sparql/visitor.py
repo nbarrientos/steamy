@@ -1,10 +1,3 @@
-from rdflib.sparql.bison.Query import SelectQuery, WhereClause
-from rdflib.sparql.bison.GraphPattern import ParsedGroupGraphPattern, GraphPattern
-from rdflib.sparql.bison.Resource import Resource
-from rdflib.sparql.bison.Triples import PropertyValue
-
-from rdflib import Variable
-
 from sparql.miniast import *
 
 class QueryStringVisitor():
