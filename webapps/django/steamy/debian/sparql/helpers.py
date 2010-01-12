@@ -4,6 +4,7 @@ from rdflib import Variable
 
 from sparql.miniast import SelectQuery, Optional, Filter, Union
 from sparql.miniast import Limit, Offset 
+from sparql.visitor import QueryStringVisitor
 
 class SelectQueryHelper():
     def __init__(self):
@@ -42,3 +43,7 @@ class SelectQueryHelper():
 
     def set_offset(self, value):
         self.query.modifiers.append(Offset(value))
+
+    def __str__(self):
+        v = QueryStringVisitor()
+        return v.visit(self.query) 
