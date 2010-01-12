@@ -24,8 +24,8 @@ class SelectQueryHelper():
         triple = Triple(subject, property, object)
         self.add_triple(triple)
 
-    def add_optional(self, triple_list):
-        self.query.whereclause.stmts.append(Optional(triple_list))
+    def add_optional(self, *args):
+        self.query.whereclause.stmts.append(Optional(list(args)))
 
     def add_filter(self, expr):
         self.query.whereclause.stmts.append(Filter(expr))

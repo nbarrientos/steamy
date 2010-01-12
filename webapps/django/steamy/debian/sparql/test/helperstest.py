@@ -36,11 +36,11 @@ class SelectQueryHelperTest(unittest.TestCase):
         self.assertEqual(2, len(self.s.query.whereclause.stmts))
 
     def test_add_optional(self):
-        self.s.add_optional([self.triple1])
+        self.s.add_optional(self.triple1)
         self.assertEqual(1, len(self.s.query.whereclause.stmts))
         self.assertEqual(1, len(self.s.query.whereclause.stmts[0].stmts))
         self.assertEqual(Optional, self.s.query.whereclause.stmts[0].__class__)
-        self.s.add_optional([self.triple1, self.triple2])
+        self.s.add_optional(self.triple1, self.triple2)
         self.assertEqual(2, len(self.s.query.whereclause.stmts))
         self.assertEqual(2, len(self.s.query.whereclause.stmts[1].stmts))
         self.assertEqual(Optional, self.s.query.whereclause.stmts[1].__class__)

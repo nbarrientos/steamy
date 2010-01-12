@@ -119,7 +119,7 @@ class VisitorTest(unittest.TestCase):
         self.assertEqual(expected, result) 
         self.assertEqual(Query, Parse(result).__class__)
 
-        helper.add_optional([st2, st2])
+        helper.add_optional(st2, st2)
         result = self.v.visit(helper.query, True)
         self.assertEqual(Query, Parse(result).__class__)
 
