@@ -3,12 +3,8 @@
 {% block form-content %}
  <div class="form-field">
       {{ form.filter.errors }}
-      <label for="id_1-filter">Filter (regexps allowed):</label>
+      <label for="id_1-filter">Keyword:</label>
       {{ form.filter }}
-  </div>
-  <div class="form-field">
-      {{ form.description.errors }}
-      <label for="id_1-description">Extend filter to package descriptions?</label>
-      {{ form.description }}
+      <p class="Note">Required</p>
   </div>
 {% endblock %}

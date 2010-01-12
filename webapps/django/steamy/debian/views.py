@@ -14,11 +14,11 @@ def sparql(request):
         
         processor = SPARQLQueryProcessor()
         try:
-            results = processor.execute_query((f.cleaned_data['query']))
+            htmlresults = processor.execute_query((f.cleaned_data['query']))
         except SPARQLQueryProcessorError, e:
             return render_to_response('debian/error.html', {'reason': e.reason})
 
-        return render_to_response('debian/results.html', {'results': results})  # FIXME
+        return render_to_response('debian/results.html', {'results': htmlresults})  # FIXME
     else:
         form = SPARQLForm()
         dict = {'form': form}
