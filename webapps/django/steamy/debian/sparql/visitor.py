@@ -1,6 +1,6 @@
-from sparql.miniast import *
+from debian.sparql.miniast import *
 
-from config import SPARQL_PREFIXES as PREFIX
+from debian.config import SPARQL_PREFIXES as PREFIX
 
 class QueryStringVisitor():
     def visit(self, node, *args):

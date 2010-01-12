@@ -6,9 +6,9 @@ from rdflib import Namespace, URIRef, Literal, Variable
 from rdflib.sparql.bison import Parse
 from rdflib.sparql.bison.Query import Query
 
-from sparql.miniast import *
-from sparql.visitor import QueryStringVisitor
-from sparql.helpers import SelectQueryHelper
+from debian.sparql.miniast import *
+from debian.sparql.visitor import QueryStringVisitor
+from debian.sparql.helpers import SelectQueryHelper
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")

@@ -5,7 +5,7 @@ from optparse import OptionParser
 import unittest
 import xmlrunner
 
-from sparql.test import helperstest, visitortest
+from debian.sparql.test import helperstest, visitortest
 
 class TestRunner:
   def __init__(self):

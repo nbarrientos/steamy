@@ -4,9 +4,9 @@ import unittest
 
 from rdflib import Namespace, URIRef, Literal, Variable
 
-from sparql.helpers import SelectQueryHelper
-from sparql.miniast import Triple, Optional
-from sparql.miniast import FunCall, BinaryExpression
+from debian.sparql.helpers import SelectQueryHelper
+from debian.sparql.miniast import Triple, Optional
+from debian.sparql.miniast import FunCall, BinaryExpression
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")

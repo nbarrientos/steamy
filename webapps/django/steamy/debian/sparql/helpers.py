@@ -2,9 +2,9 @@
 
 from rdflib import Variable
 
-from sparql.miniast import SelectQuery, Optional, Filter, Union
-from sparql.miniast import Limit, Offset 
-from sparql.visitor import QueryStringVisitor
+from debian.sparql.miniast import SelectQuery, Optional, Filter, Union
+from debian.sparql.miniast import Limit, Offset 
+from debian.sparql.visitor import QueryStringVisitor
 
 class SelectQueryHelper():
     def __init__(self):
