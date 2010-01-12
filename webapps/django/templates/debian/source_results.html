@@ -1,0 +1,15 @@
+{% extends "debian/base.html" %}
+
+{% block content %}
+    <div class="subheader">
+        <h3>Search results (query: {{filter}})</h3>
+    </div>
+    {% for result in results %}
+    <div class="result">
+        <ul>
+        <li><a href="{{result.sourceurilink}}">{{result.sourcename}} ({{result.fullversion}})</a></li>
+        <li>Maintainer: <a href="{{result.mainturilink}}">{{result.maintname}} ({{result.maintmail}})</a></li>
+        </ul>
+    </div>
+    {% endfor %}
+{% endblock %}

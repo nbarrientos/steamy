@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 
-from debian.forms import SearchWizard
+from debian.views import SearchWizard
 from debian.forms import Step1Form, Step2Form
 
 urlpatterns = patterns('debian.views',

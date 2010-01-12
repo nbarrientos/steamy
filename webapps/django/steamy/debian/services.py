@@ -19,9 +19,8 @@ NFO = Namespace(u"http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#")
 TAG = Namespace(u"http://www.holygoat.co.uk/owl/redwood/0.1/tags/")
 DOAP = Namespace(u"http://usefulinc.com/ns/doap#")
 
-class SPARQLQueryProcessorError(Exception):
-    def __init__(self, reason):
-        self.reason = reason
+class Result():
+    pass
 
 class SPARQLQueryProcessor():
     def _init_endpoint(self):
@@ -32,14 +31,28 @@ class SPARQLQueryProcessor():
         self.endpoint.setQuery(query)
         return self.endpoint.query().convert()
 
-    def _result_as_html(self, results):
+    def format_source_results(self):
+        resultlist = []
+        for result in self.results['results']['bindings']:
+            obj = Result()
+            obj.sourcename = result['sourcename']['value']
+            obj.sourceurilink = result['source']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
+            obj.fullversion = result['fullversion']['value']
+            obj.maintname = result['maintname']['value']
+            obj.maintmail = result['maintmail']['value']
+            obj.mainturilink = result['maint']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
+            resultlist.append(obj)
+
+        return resultlist
+
+    def format_htmltable(self):
         html = "<table>"
-        for var in results['head']['vars']:
+        for var in self.results['head']['vars']:
             html = html + "<th>%s</th>" % var
 
-        for result in results['results']['bindings']:
+        for result in self.results['results']['bindings']:
             html = html + "<tr>"
-            for var in results['head']['vars']:
+            for var in self.results['head']['vars']:
                 html = html + "<td>%s</td>" % result[var]['value']
             html = html + "</tr>"
 
@@ -53,13 +66,12 @@ class SPARQLQueryProcessor():
     def execute_sanitized_query(self, query):
         self._init_endpoint()
         print query
-        results = self._query_endpoint(query)
-        return self._result_as_html(results)
+        self.results = self._query_endpoint(query)
 
     def execute_query(self, query):
         query = self._clean_query(query)
         # TODO: Try to parse query rdflib.Parse
-        return self.execute_sanitized_query(query)
+        self.execute_sanitized_query(query)
 
 class SPARQLQueryBuilder():
     def __init__(self, params):
@@ -78,28 +90,39 @@ class SPARQLQueryBuilder():
         return self.helper.__str__()
 
     def _add_base_elements(self):
-        triple = Triple(Variable("source"), RDF.type, DEB.Source)
-        self.helper.add_triple_variables(triple)
+        self.helper.push_triple_variables(\
+            Variable("source"), RDF.type, DEB.Source)
+        self.helper.push_triple(\
+            Variable("source"), DEB.maintainer, Variable("maint"))
+        self.helper.push_triple_variables(\
+            Variable("maint"), FOAF.name, Variable("maintname"))
+        self.helper.push_triple_variables(\
+            Variable("maint"), FOAF.mbox, Variable("maintmail"))
+        self.helper.push_triple_variables(\
+            Variable("source"), DEB.versionNumber, Variable("version"))
+        self.helper.push_triple_variables(\
+            Variable("version"), DEB.fullVersion, Variable("fullversion"))
+        self.helper.push_triple_variables(\
+            Variable("source"), DEB.packageName, Variable("sourcename"))
+
         if self.params['searchtype'] in ('BINARY', 'BINARYDESC'):
-            triple = Triple(Variable("binary"), RDF.type, DEB.Binary)
-            self.helper.add_triple_variables(triple)
-            triple = Triple(Variable("source"), DEB.binary, Variable("binary"))
-            self.helper.add_triple_variables(triple)
+            self.helper.push_triple_variables(\
+                Variable("binary"), RDF.type, DEB.Binary)
+            self.helper.push_triple_variables(\
+                Variable("source"), DEB.binary, Variable("binary"))
+            self.helper.push_triple_variables(\
+                Variable("binary"), DEB.packageName, Variable("binaryname"))
 
     def _consume_filter(self):
         filter = self.params['filter']
         if self.binary_search:
-            self.helper.push_triple(\
-                Variable("binary"), DEB.packageName, Variable("binaryname"))
             if self.params['searchtype'] == 'BINARYEXT':
                 self.helper.push_triple(\
                     Variable("binary"), DEB.extendedDescription, Variable("desc"))
                 self.helper.add_or_filter_regex(Variable("desc"), Variable("binaryname"), filter)
             else:   
-                self.add_filter_regex(Variable("binaryname"), filter)
+                self.helper.add_filter_regex(Variable("binaryname"), filter)
         elif self.source_search:
-            self.helper.push_triple(\
-                Variable("source"), DEB.packageName, Variable("sourcename"))
             self.helper.add_filter_regex(Variable("sourcename"), filter)
 
     def _consume_distribution(self):

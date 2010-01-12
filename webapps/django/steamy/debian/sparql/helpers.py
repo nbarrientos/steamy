@@ -1,9 +1,11 @@
 # -*- coding: utf8 -*-
+import re
 
 from rdflib import Variable
 
 from debian.sparql.miniast import * 
 from debian.sparql.visitor import QueryStringVisitor
+from debian.errors import InvalidKeywordError
 
 class SelectQueryHelper():
     def __init__(self):
@@ -59,11 +61,17 @@ class SelectQueryHelper():
         return v.visit(self.query) 
 
     def add_filter_regex(self, var, regex):
-        f = FunCall("regex", [var, '"%s"' % regex])
-        self.add_filter(f)
+        if re.match(r"[-a-zA-Z0-9+.]+", regex) is not None:
+            f = FunCall("regex", [var, '"%s"' % re.escape(regex)])
+            self.add_filter(f)
+        else:
+            raise InvalidKeywordError()
 
     def add_or_filter_regex(self, var1, var2, regex):
-        f1 = FunCall("regex", [var1, '"%s"' % regex])
-        f2 = FunCall("regex", [var2, '"%s"' % regex])
-        binexp = BinaryExpression(f1, "||", f2)
-        self.add_filter(binaryexp)
+        if re.match(r"[-a-zA-Z0-9+.]+", regex) is not None:
+            f1 = FunCall("regex", [var1, '"%s"' % re.escape(regex)])
+            f2 = FunCall("regex", [var2, '"%s"' % re.escape(regex)])
+            binexp = BinaryExpression(f1, "||", f2)
+            self.add_filter(binexp)
+        else:
+            raise InvalidKeywordError()

@@ -5,6 +5,7 @@ from django.contrib.formtools.wizard import FormWizard
 
 from debian.config import SPARQL_PREFIXES, RES_BASEURI, ONT_URI 
 from debian.services import SPARQLQueryBuilder, SPARQLQueryProcessor
+from debian.errors import InvalidKeywordError
 
 DIST_CHOICES = (
     ('any', 'any'),
@@ -40,26 +41,14 @@ class Step2Form(forms.Form):
 
 class SPARQLForm(forms.Form):
     default = SPARQL_PREFIXES + """
-SELECT ?s
+SELECT ?source ?maintainer
 WHERE {
-    ?s a deb:Source
+    ?source a deb:Source ;
+      deb:maintainer ?maintainer ;
+      deb:packageName "acl" .
 }"""
     attrs = {'rows': '25', 'cols': '150'}
     query = forms.CharField(label=None, initial=default, widget=widgets.Textarea(attrs=attrs))
-
-class SearchWizard(FormWizard):
-    def done(self, request, form_list):
-        data = {}
-        for form in form_list:
-            data.update(form.cleaned_data)
-        print data # FIXME
-        builder = SPARQLQueryBuilder(data)
-        processor = SPARQLQueryProcessor()
-        # FIXME
-        htmlresults = processor.execute_sanitized_query(builder.create_query())
-        return render_to_response('debian/results.html', {
-            'results': htmlresults,
-        })
 
 # Set custom templates
 def get_template(self, step):
