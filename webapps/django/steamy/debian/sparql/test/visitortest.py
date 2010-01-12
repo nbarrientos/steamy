@@ -3,6 +3,8 @@
 import unittest
 
 from rdflib import Namespace, URIRef, Literal, Variable
+from rdflib.sparql.bison import Parse
+from rdflib.sparql.bison.Query import Query
 
 from sparql.miniast import *
 from sparql.visitor import QueryStringVisitor
@@ -86,6 +88,16 @@ class VisitorTest(unittest.TestCase):
         st2 = Triple(Variable("d"), Variable("e"), Variable("f"))
         helper = SelectQueryHelper()
         helper.add_triple_variables(st2)
-        helper.add_filter(FunCall("f", ["arg"]))
-        expected = "SELECT?e?f?d WHERE{?d ?e ?f.FILTER(f(arg))}"
-        self.assertEqual(expected, self.v.visit(helper.query))
+        helper.add_filter(FunCall("regex", [Variable("var"), '"regex"']))
+        expected = "SELECT?e?f?d WHERE{?d ?e ?f.FILTER(regex(?var,\"regex\"))}"
+        result = self.v.visit(helper.query)
+        self.assertEqual(expected, result) 
+        self.assertEqual(Query, Parse(result).__class__)
+
+        helper.add_optional([st2, st2])
+        result = self.v.visit(helper.query)
+        self.assertEqual(Query, Parse(result).__class__)
+
+        helper.add_union([st2, st2], [st2], [st2])
+        result = self.v.visit(helper.query)
+        self.assertEqual(Query, Parse(result).__class__)
