@@ -44,6 +44,7 @@ class SPARQLQueryProcessor():
             obj.homepage = result['homepage']['value'] if 'homepage' in result else None
             obj.distribution = result['distribution']['value'] if 'distribution' in result else None
             obj.area = result['area']['value'] if 'area' in result else None
+            obj.priority = result['priority']['value'] if 'priority' in result else None
             resultlist.append(obj)
 
         return resultlist
@@ -92,6 +93,7 @@ class SPARQLQueryBuilder():
         self._consume_homepage()
         self._consume_maintainer()
         self._consume_version()
+        self._consume_priority()
         self._consume_filter()
         self.helper.set_limit(RESULTS_PER_PAGE)
         return self.helper.__str__()
@@ -111,7 +113,7 @@ class SPARQLQueryBuilder():
             Variable("version"), DEB.fullVersion, Variable("fullversion"))
         self.helper.push_triple_variables(\
             Variable("source"), DEB.packageName, Variable("sourcename"))
-
+       
         if self.params['searchtype'] in ('BINARY', 'BINARYDESC'):
             self.helper.push_triple_variables(\
                 Variable("binary"), RDF.type, DEB.Binary)
@@ -197,3 +199,12 @@ class SPARQLQueryBuilder():
             self.helper.push_triple_variables(\
                 Variable("version"), DEB.debianRevision, Variable("debianRevision"))
             self.helper.add_filter_regex(Variable("debianRevision"), ".*\\\..*", False)
+
+    def _consume_priority(self):
+        option = self.params['priority']
+        if option == 'ANY':
+            self.helper.push_triple_variables(\
+                Variable("source"), DEB.priority, Variable("priority"))
+        else:
+            self.helper.push_triple(\
+                Variable("source"), DEB.priority, URIRef(option))

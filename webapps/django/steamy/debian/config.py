@@ -1,3 +1,4 @@
+#SPARQL_ENDPOINT = "http://data.fundacionctic.org/sparql"
 SPARQL_ENDPOINT = "http://localhost:8180/openrdf-sesame/repositories/STEAMY"
 
 SPARQL_PREFIXES = """

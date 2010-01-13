@@ -17,6 +17,15 @@ DIST_CHOICES = (
     (RES_BASEURI+'/distribution/lenny', 'Lenny'),
 )
 
+PRIORITY_CHOICES = (
+    ('ANY', 'any'),
+    (ONT_URI+'required', 'required'),
+    (ONT_URI+'important', 'important'),
+    (ONT_URI+'standard', 'standard'),
+    (ONT_URI+'optional', 'optional'),
+    (ONT_URI+'extra', 'extra'),
+)
+
 AREA_CHOICES = (
     ('any', 'any'),
     (ONT_URI+'main', 'main'),
@@ -33,7 +42,7 @@ SEARCHTYPE_CHOICES = (
 MAINT_OPTS = (
     ('ALL', 'No restriction'),
     ('TEAM', 'Team-maintained packages'),
-    ('DEBIAN', 'Maintainer emails matching "*.debian.org$"'),
+    ('DEBIAN', 'Maintainer emails matching "@debian.org$"'),
 )
 
 VERSION_OPTS = (
@@ -63,6 +72,7 @@ class Step1Form(forms.Form):
     filter = forms.CharField(required=False, max_length=30)
 
 class Step2Form(forms.Form):
+    priority = forms.CharField(widget=widgets.Select(choices=PRIORITY_CHOICES))
     maintainer = forms.CharField(initial="ALL", label="Maintainer restrictions:",\
         widget=widgets.RadioSelect(choices=MAINT_OPTS))
     version = forms.CharField(initial="ALL", label="Version restrictions:",\
