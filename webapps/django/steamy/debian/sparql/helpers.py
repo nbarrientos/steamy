@@ -16,7 +16,8 @@ class SelectQueryHelper():
             self.query.variables.append(Variable(varname))
 
     def add_triple(self, triple):
-        if not triple in self.query.whereclause.stmts:
+        if not triple in filter(lambda x: isinstance(x, Triple),\
+                                self.query.whereclause.stmts):
             self.query.whereclause.stmts.append(triple)
 
     # TESTME
