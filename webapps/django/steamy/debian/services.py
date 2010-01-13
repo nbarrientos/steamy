@@ -6,10 +6,12 @@ from SPARQLWrapper.sparqlexceptions import QueryBadFormed
 
 from rdflib import Variable
 from rdflib import Namespace, URIRef, Literal, Variable
+from rdflib.sparql.bison import Parse as RdflibParse
 
 from debian.config import *
 from debian.sparql.helpers import SelectQueryHelper
 from debian.sparql.miniast import Triple
+from debian.errors import SPARQLQueryProcessorError
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
 FOAF = Namespace(u"http://xmlns.com/foaf/0.1/")
@@ -76,7 +78,7 @@ class SPARQLQueryProcessor():
 
     def execute_query(self, query):
         query = self._clean_query(query)
-        # TODO: Try to parse query rdflib.Parse
+        RdflibParse(query)
         self.execute_sanitized_query(query)
 
 class SPARQLQueryBuilder():

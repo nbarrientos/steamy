@@ -18,8 +18,8 @@ def sparql(request):
         processor = SPARQLQueryProcessor()
         try:
             processor.execute_query((f.cleaned_data['query']))
-        except SPARQLQueryProcessorError, e:
-            return render_to_response('debian/error.html', {'reason': e.reason})
+        except SyntaxError, e:
+            return render_to_response('debian/error.html', {'reason': e.msg})
 
         htmlresults = processor.format_htmltable()
         return render_to_response('debian/results.html', {'results': htmlresults})
