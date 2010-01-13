@@ -90,6 +90,7 @@ class SPARQLQueryBuilder():
         self._consume_area()
         self._consume_sort()
         self._consume_homepage()
+        self._consume_maintainer()
         self._consume_filter()
         self.helper.set_limit(RESULTS_PER_PAGE)
         return self.helper.__str__()
@@ -174,3 +175,10 @@ class SPARQLQueryBuilder():
            triple = Triple(\
                 Variable("source"), FOAF.page, Variable("homepage"))
            self.helper.add_optional(triple)
+
+    def _consume_maintainer(self):
+        option = self.params['maintainer']
+        if option == 'TEAM':
+            self.helper.push_triple(Variable("maint"), RDF.type, FOAF.Group)
+        elif option == 'DEBIAN':
+            self.helper.add_filter_regex(Variable("maintmail"), "@debian.org$", False)

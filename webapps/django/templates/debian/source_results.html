@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="subheader">
-        <h3>Search results (query: {{filter}})</h3>
+        <h3>Search results {% if filter %} (query: "{{filter}}") {% endif %}</h3>
     </div>
     {% for result in results %}
     <div class="result">
