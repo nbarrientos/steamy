@@ -69,7 +69,6 @@ class SPARQLQueryProcessor():
 
     def execute_sanitized_query(self, query):
         self._init_endpoint()
-        print query
         self.results = self._query_endpoint(query)
 
     def execute_query(self, query):
@@ -129,11 +128,12 @@ class SPARQLQueryBuilder():
                 if self.params['searchtype'] == 'BINARYEXT':
                     self.helper.push_triple(\
                         Variable("binary"), DEB.extendedDescription, Variable("desc"))
-                    self.helper.add_or_filter_regex(Variable("desc"), Variable("binaryname"), filter)
+                    restrictions = {Variable("desc"): filter, Variable("binaryname"): filter}
+                    self.helper.add_or_filter_regex(restrictions)
                 else:   
-                    self.helper.add_filter_regex(Variable("binaryname"), filter)
+                    self.helper.add_or_filter_regex({Variable("binaryname"): filter})
             elif self.source_search:
-                self.helper.add_filter_regex(Variable("sourcename"), filter)
+                self.helper.add_or_filter_regex({Variable("sourcename"): filter})
 
     def _consume_distribution(self):
         distribution = self.params['distribution']
@@ -184,7 +184,7 @@ class SPARQLQueryBuilder():
         if option == 'TEAM':
             self.helper.push_triple(Variable("maint"), RDF.type, FOAF.Group)
         elif option == 'DEBIAN':
-            self.helper.add_filter_regex(Variable("maintmail"), "@debian.org$", False)
+            self.helper.add_or_filter_regex({Variable("maintmail"): "@debian.org$"}, False)
 
     def _consume_version(self):
         option = self.params['version']
@@ -195,10 +195,16 @@ class SPARQLQueryBuilder():
             self.helper.add_filter_notbound(Variable("debianRevision"))
         elif option == 'EPOCH':
             self.helper.push_triple(Variable("version"), DEB.epoch, Variable("epoch"))
-        elif option == 'NMU': # FIXME, native nmus x.y+nmuZ
-            self.helper.push_triple_variables(\
+        elif option == 'NMU':
+            self.helper.add_variable("debianRevision")
+            triple = Triple(\
                 Variable("version"), DEB.debianRevision, Variable("debianRevision"))
-            self.helper.add_filter_regex(Variable("debianRevision"), ".*\\\..*", False)
+            self.helper.add_optional(triple)
+            self.helper.push_triple_variables(\
+                Variable("version"), DEB.upstreamVersion, Variable("upstreamVersion"))
+            restrictions = {Variable("debianRevision"): ".*\\\..*",\
+                            Variable("upstreamVersion"): ".*\\\+nmu.*"}
+            self.helper.add_or_filter_regex(restrictions, False)
 
     def _consume_priority(self):
         option = self.params['priority']

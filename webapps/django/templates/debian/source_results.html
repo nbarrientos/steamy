@@ -7,6 +7,7 @@
     {% for result in results %}
     <div class="result">
         <ul>
+        <li>{{forloop.counter}}</li>
         <li><a href="{{result.sourceurilink}}">{{result.sourcename}} ({{result.fullversion}})</a></li>
         <li>Maintainer: <a href="{{result.mainturilink}}">{{result.maintname}} ({{result.maintmail}})</a></li>
         {% if result.homepage %}
@@ -23,5 +24,7 @@
         {% endif %}
         </ul>
     </div>
+    {% empty %}
+    <p>Sorry, no matches :(</p>
     {% endfor %}
 {% endblock %}
