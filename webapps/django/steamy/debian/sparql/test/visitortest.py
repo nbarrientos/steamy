@@ -105,6 +105,15 @@ class VisitorTest(unittest.TestCase):
         expected = "{?a ?b ?c.?d ?e ?f.}UNION{?a ?b ?c.}UNION{?a ?b ?c.}"
         self.assertEqual(expected, self.v.visit(union))
 
+    def test_visit_BinaryExpression(self):
+        f1 = FunCall("regex", [Variable("v1"), "r1"])
+        f2 = FunCall("regex", [Variable("v2"), "r2"])
+        f3 = FunCall("regex", [Variable("v3"), "r3"])
+        b1 = BinaryExpression(f2, "||", f3)
+        b2 = BinaryExpression(f1, "||", b1)
+        expected = 'regex(?v1,r1)||regex(?v2,r2)||regex(?v3,r3)'
+        self.assertEqual(expected, self.v.visit(b2))
+
     def test_visit_SelectQuery(self):
         st2 = Triple(Variable("d"), Variable("e"), Variable("f"))
         helper = SelectQueryHelper()

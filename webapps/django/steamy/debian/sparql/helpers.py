@@ -45,7 +45,6 @@ class SelectQueryHelper():
             if isinstance(v, Variable):
                 self.add_variable(v)
 
-
     # TESTME
     def push_triple_variables(self, subject, property, object):
         triple = Triple(subject, property, object)
@@ -64,27 +63,27 @@ class SelectQueryHelper():
         v = QueryStringVisitor()
         return v.visit(self.query) 
 
-    def add_filter_regex(self, var, regex, userinput=True):
-        if userinput:
-            if re.match(r"[-a-zA-Z0-9+.]+", regex) is None:
-                raise InvalidKeywordError()
-            regex = re.escape(regex)
-
-        f = FunCall("regex", [var, '"%s"' % regex])
-        self.add_filter(f)
-
-    def add_or_filter_regex(self, var1, var2, regex, userinput=True):
-        if userinput:
-            if re.match(r"[-a-zA-Z0-9+.]+", regex) is None:
-                raise InvalidKeywordError()
-            regex = re.escape(regex)
-
-        f1 = FunCall("regex", [var1, '"%s"' % regex])
-        f2 = FunCall("regex", [var2, '"%s"' % regex])
-        binexp = BinaryExpression(f1, "||", f2)
-        self.add_filter(binexp)
+    def add_or_filter_regex(self, dict, userinput=True):
+        nodes = []
+        for variable,regex in dict.items():
+            if userinput:
+                if re.match(r"[-a-zA-Z0-9+.]+", regex) is None:
+                    raise InvalidKeywordError()
+                regex = re.escape(regex)
+            nodes.append(FunCall("regex", [variable, '"%s"' % regex]))
+        self.add_filter(self._build_fixed_operator_tree("||", nodes))
 
     def add_filter_notbound(self, var):
         f = FunCall("bound", [var])
         unexp = UnaryExpression(f, "!")
         self.add_filter(unexp)
+
+    def _build_fixed_operator_tree(self, operator, items):
+        if len(items) == 1:
+            return items.pop()
+        if len(items) == 2:
+            return BinaryExpression(items.pop(), operator, items.pop())
+        else:
+            item = items.pop()
+            return BinaryExpression(item, operator,\
+                       self._build_fixed_operator_tree(operator, items))

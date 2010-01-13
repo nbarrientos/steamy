@@ -35,6 +35,9 @@ class BinaryExpression():
         self.operator = operator
         self.rhs = rhs
 
+    def __str__(self):
+        return "[%s %s %s]" % (self.lhs, self.operator, self.rhs)
+
 
 class UnaryExpression():
     def __init__(self, expr, operator):
@@ -46,6 +49,9 @@ class FunCall():
     def __init__(self, function, args):
         self.function = function
         self.args = args
+
+    def __str__(self):
+        return "%s(%s)" % (self.function, self.args)
 
 
 class Triple():

@@ -82,22 +82,18 @@ class SelectQueryHelperTest(unittest.TestCase):
         expected = "SELECT WHERE{}"
         self.assertEqual(expected, str(self.s))
 
-    def test_add_filter_regex(self):
-        self.assertRaises(InvalidKeywordError, self.s.add_filter_regex, Variable("a"), "{}")
-        
-        self.s.add_filter_regex(Variable("a"), "{}", False)
-        self.assertEqual(1, len(self.s.query.whereclause.stmts))
-        self.assertEqual(Filter, self.s.query.whereclause.stmts[0].__class__)
-        self.assertEqual(FunCall, self.s.query.whereclause.stmts[0].expr.__class__)
-
     def test_add_or_filter_regex(self):
         self.assertRaises(InvalidKeywordError, self.s.add_or_filter_regex,\
-            Variable("a"), Variable("b"), "{}")
+            {"a": "{}", "b": "{}"})
         
-        self.s.add_or_filter_regex(Variable("a"), Variable("b"), "{}", False)
+        self.s.add_or_filter_regex({"a": "{}", "b": "{}", "c": "{}"}, False)
         self.assertEqual(1, len(self.s.query.whereclause.stmts))
         self.assertEqual(Filter, self.s.query.whereclause.stmts[0].__class__)
         self.assertEqual(BinaryExpression, self.s.query.whereclause.stmts[0].expr.__class__)
+
+        self.s.add_or_filter_regex({"a": "{}"}, False)
+        self.assertEqual(2, len(self.s.query.whereclause.stmts))
+        self.assertEqual(FunCall, self.s.query.whereclause.stmts[1].expr.__class__)
 
     def test_add_filter_notbound(self):
         self.s.add_filter_notbound(Variable("a")) 
