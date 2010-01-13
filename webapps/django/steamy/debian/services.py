@@ -41,6 +41,9 @@ class SPARQLQueryProcessor():
             obj.maintname = result['maintname']['value']
             obj.maintmail = result['maintmail']['value']
             obj.mainturilink = result['maint']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
+            obj.homepage = result['homepage']['value'] if 'homepage' in result else None
+            obj.distribution = result['distribution']['value'] if 'distribution' in result else None
+            obj.area = result['area']['value'] if 'area' in result else None
             resultlist.append(obj)
 
         return resultlist
@@ -85,8 +88,9 @@ class SPARQLQueryBuilder():
         self._add_base_elements()
         self._consume_distribution()
         self._consume_area()
-        self._consume_filter()
         self._consume_sort()
+        self._consume_homepage()
+        self._consume_filter()
         self.helper.set_limit(RESULTS_PER_PAGE)
         return self.helper.__str__()
 
@@ -133,7 +137,7 @@ class SPARQLQueryBuilder():
             self.helper.push_triple_variables(Variable("source"),
                 DEB.distribution, Variable("distribution"))
         else:
-            self.helper.push_triple_variables(Variable("source"),
+            self.helper.push_triple(Variable("source"),
                 DEB.distribution, URIRef(distribution))
 
     def _consume_area(self):
@@ -142,7 +146,7 @@ class SPARQLQueryBuilder():
             self.helper.push_triple_variables(Variable("source"),
                 DEB.area, Variable("area"))
         else:
-            self.helper.push_triple_variables(Variable("source"),
+            self.helper.push_triple(Variable("source"),
                 DEB.area, URIRef(area))
 
     def _consume_searchtype(self):
@@ -163,3 +167,10 @@ class SPARQLQueryBuilder():
                 self.helper.set_orderby("binaryname")
             else:
                 self.helper.set_orderby("sourcename")
+
+    def _consume_homepage(self):
+       if self.params['homepage']:
+           self.helper.add_variable("homepage")
+           triple = Triple(\
+                Variable("source"), FOAF.page, Variable("homepage"))
+           self.helper.add_optional(triple)

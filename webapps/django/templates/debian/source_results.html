@@ -9,6 +9,15 @@
         <ul>
         <li><a href="{{result.sourceurilink}}">{{result.sourcename}} ({{result.fullversion}})</a></li>
         <li>Maintainer: <a href="{{result.mainturilink}}">{{result.maintname}} ({{result.maintmail}})</a></li>
+        {% if result.homepage %}
+            <li>Homepage: <a href="{{result.homepage}}">{{result.homepage}}</a></li>
+        {% endif %}
+        {% if result.distribution %}
+            <li>Distribution: {{result.distribution}}</li>
+        {% endif %}
+        {% if result.area %}
+            <li>Area: {{result.area}}</li>
+        {% endif %}
         </ul>
     </div>
     {% endfor %}
