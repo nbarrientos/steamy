@@ -8,7 +8,7 @@ from debian.services import SPARQLQueryBuilder, SPARQLQueryProcessor
 from debian.errors import InvalidKeywordError
 
 DIST_CHOICES = (
-    ('any', 'any'),
+    ('ANY', 'any'),
     (RES_BASEURI+'/distribution/hamm', 'Hamm'),
     (RES_BASEURI+'/distribution/slink', 'Slink'),
     (RES_BASEURI+'/distribution/potato', 'Potato'),
@@ -27,7 +27,7 @@ PRIORITY_CHOICES = (
 )
 
 AREA_CHOICES = (
-    ('any', 'any'),
+    ('ANY', 'any'),
     (ONT_URI+'main', 'main'),
     (ONT_URI+'non-free', 'non-free'),
     (ONT_URI+'contrib', 'contrib'),

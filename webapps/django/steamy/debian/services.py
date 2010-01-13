@@ -137,7 +137,7 @@ class SPARQLQueryBuilder():
 
     def _consume_distribution(self):
         distribution = self.params['distribution']
-        if distribution == 'any':
+        if distribution == 'ANY':
             self.helper.push_triple_variables(Variable("source"),
                 DEB.distribution, Variable("distribution"))
         else:
@@ -146,7 +146,7 @@ class SPARQLQueryBuilder():
 
     def _consume_area(self):
         area = self.params['area']
-        if area == 'any':
+        if area == 'ANY':
             self.helper.push_triple_variables(Variable("source"),
                 DEB.area, Variable("area"))
         else:
