@@ -196,26 +196,26 @@ class SPARQLQueryBuilder():
             self.helper.push_triple(Variable("maint"), RDF.type, FOAF.Group)
         elif option == 'DEBIAN':
             self.helper.add_or_filter_regex({Variable("maintmail"): "@debian.org$"}, False)
+        elif option == 'QA':
+            uriref = URIRef(RES_BASEURI + "/team/packages%40qa.debian.org")
+            self.helper.push_triple(Variable("source"), DEB.maintainer, uriref) 
 
     def _consume_version(self):
-        option = self.params['version']
-        if option == 'NATIVE':
+        options = self.params['version']
+        if 'NATIVE' in options or 'NMU' in options:
             triple = Triple(\
                 Variable("version"), DEB.debianRevision, Variable("debianRevision"))
             self.helper.add_optional(triple)
+        if 'NATIVE' in options:
             self.helper.add_filter_notbound(Variable("debianRevision"))
-        elif option == 'EPOCH':
-            self.helper.push_triple(Variable("version"), DEB.epoch, Variable("epoch"))
-        elif option == 'NMU':
-            self.helper.add_variable("debianRevision")
-            triple = Triple(\
-                Variable("version"), DEB.debianRevision, Variable("debianRevision"))
-            self.helper.add_optional(triple)
-            self.helper.push_triple_variables(\
+        if 'NMU' in options:
+            self.helper.push_triple(\
                 Variable("version"), DEB.upstreamVersion, Variable("upstreamVersion"))
             restrictions = {Variable("debianRevision"): ".*\\\..*",\
                             Variable("upstreamVersion"): ".*\\\+nmu.*"}
             self.helper.add_or_filter_regex(restrictions, False)
+        if 'EPOCH' in options:
+            self.helper.push_triple(Variable("version"), DEB.epoch, Variable("epoch"))
 
     def _consume_priority(self):
         option = self.params['priority']
