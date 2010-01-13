@@ -5,6 +5,7 @@ class SelectQuery():
         self.variables = []
         self.distinct = distinct
         self.whereclause = WhereClause()
+        self.orderby = None
         self.modifiers = []
  
 
@@ -59,3 +60,7 @@ class Limit():
 class Offset():
     def __init__(self, value):
         self.value = value
+
+class Orderby():
+    def __init__(self, variable):
+        self.variable = variable

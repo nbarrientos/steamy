@@ -73,6 +73,10 @@ class SelectQueryHelperTest(unittest.TestCase):
         self.s.set_offset("2")
         self.assertEqual(["2", "2"], [limit.value for limit in self.s.query.modifiers])
 
+    def test_set_orderby(self):
+        self.s.set_orderby("var")
+        self.assertEqual(Variable("var"), self.s.query.orderby.variable)
+
     def test_str(self):
         expected = "SELECT WHERE{}"
         self.assertEqual(expected, str(self.s))

@@ -26,6 +26,9 @@ class QueryStringVisitor():
     def visit_Offset(self, node):
         return "OFFSET %s" % node.value
 
+    def visit_Orderby(self, node):
+        return "ORDER BY %s" % self.visit(node.variable)
+
     def visit_Triple(self, node):
         out = [self.visit(node.subject), " ", self.visit(node.property), " ",\
                 self.visit(node.object), "."]
@@ -58,7 +61,8 @@ class QueryStringVisitor():
         variables = ''.join(map(self.visit, node.variables))
         where = ''.join(map(self.visit, node.whereclause.stmts))
         modifiers = ' '.join(map(self.visit, node.modifiers))
-        query = [prefix, "SELECT", variables, " WHERE{", where, "}", modifiers] 
+        orderby = "%s " % self.visit(node.orderby) if node.orderby else ""
+        query = [prefix, "SELECT", variables, " WHERE{", where, "}", orderby, modifiers] 
         return ''.join(query)
 
     # Tools

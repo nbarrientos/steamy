@@ -53,6 +53,11 @@ class VisitorTest(unittest.TestCase):
         expected = "OFFSET 10"
         self.assertEqual(expected, self.v.visit(offset))
 
+    def test_visit_Offset(self):
+        offset = Orderby(Variable("var"))
+        expected = "ORDER BY ?var"
+        self.assertEqual(expected, self.v.visit(offset))
+
     def test_visit_Triple(self):
         expected = "?var1 <http://www.w3.org/2000/01/rdf-schema#type> \
 <http://idi.fundacionctic.org/steamy/debian.owl#Source>."
@@ -124,5 +129,14 @@ class VisitorTest(unittest.TestCase):
         self.assertEqual(Query, Parse(result).__class__)
 
         helper.add_union([st2, st2], [st2], [st2])
+        result = self.v.visit(helper.query, True)
+        self.assertEqual(Query, Parse(result).__class__)
+
+        helper.set_orderby("e")
+        result = self.v.visit(helper.query, True)
+        self.assertEqual(Query, Parse(result).__class__)
+
+        helper.set_orderby("e")
+        helper.query.modifiers = []
         result = self.v.visit(helper.query, True)
         self.assertEqual(Query, Parse(result).__class__)
