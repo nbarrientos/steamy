@@ -38,7 +38,7 @@ class SPARQLQueryProcessor():
             obj.sourcename = result['sourcename']['value']
             obj.sourceurilink = result['source']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             obj.fullversion = result['fullversion']['value']
-            obj.maintname = result['maintname']['value']
+            obj.maintname = result['maintname']['value'] if 'maintname' in result else None
             obj.maintmail = result['maintmail']['value']
             obj.mainturilink = result['maint']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             obj.homepage = result['homepage']['value'] if 'homepage' in result else None
@@ -102,8 +102,9 @@ class SPARQLQueryBuilder():
             Variable("source"), RDF.type, DEB.Source)
         self.helper.push_triple(\
             Variable("source"), DEB.maintainer, Variable("maint"))
-        self.helper.push_triple_variables(\
-            Variable("maint"), FOAF.name, Variable("maintname"))
+        self.helper.add_variable("maintname")
+        self.helper.add_optional(\
+            Triple(Variable("maint"), FOAF.name, Variable("maintname")))
         self.helper.push_triple_variables(\
             Variable("maint"), FOAF.mbox, Variable("maintmail"))
         self.helper.push_triple_variables(\

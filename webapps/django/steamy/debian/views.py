@@ -46,6 +46,7 @@ class SearchWizard(FormWizard):
         if builder.source_search:
             results = processor.format_source_results()
             replydata = {'results': results, 'filter': data['filter']}
+            replydata['query'] = query if data['showquery'] else None
             return render_to_response('debian/source_results.html', replydata)
         else:
             results = processor.format_source_results()

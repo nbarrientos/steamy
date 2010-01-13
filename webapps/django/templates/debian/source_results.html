@@ -6,10 +6,12 @@
     </div>
     {% for result in results %}
     <div class="result">
+        {{forloop.counter}}
         <ul>
-        <li>{{forloop.counter}}</li>
         <li><a href="{{result.sourceurilink}}">{{result.sourcename}} ({{result.fullversion}})</a></li>
-        <li>Maintainer: <a href="{{result.mainturilink}}">{{result.maintname}} ({{result.maintmail}})</a></li>
+        <li>Maintainer: <a href="{{result.mainturilink}}">
+            {% if result.maintname %}{{result.maintname}} {% endif %}
+            &lt;{{result.maintmail}}&gt;</a></li>
         {% if result.homepage %}
             <li>Homepage: <a href="{{result.homepage}}">{{result.homepage}}</a></li>
         {% endif %}
@@ -27,4 +29,7 @@
     {% empty %}
     <p>Sorry, no matches :(</p>
     {% endfor %}
+    <div class="query">
+        {{query}}
+    </div>
 {% endblock %}
