@@ -83,6 +83,7 @@ class Step2Form(forms.Form):
     sort = forms.CharField(initial="PACKAGE", label="Order by:",\
         widget=widgets.RadioSelect(choices=SORT_OPTS))
     showquery = forms.BooleanField(label="Print generated query", required=False)
+    section = forms.CharField(label="Section filter", required=False, max_length=30)
 
 class SPARQLForm(forms.Form):
     default = SPARQL_PREFIXES + """

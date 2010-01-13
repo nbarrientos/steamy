@@ -37,6 +37,7 @@ class SPARQLQueryProcessor():
             obj = Result()
             obj.sourcename = result['sourcename']['value']
             obj.sourceurilink = result['source']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
+            obj.usourceurilink = result['unversionedsource']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             obj.fullversion = result['fullversion']['value']
             obj.maintname = result['maintname']['value'] if 'maintname' in result else None
             obj.maintmail = result['maintmail']['value']
@@ -45,6 +46,8 @@ class SPARQLQueryProcessor():
             obj.distribution = result['distribution']['value'] if 'distribution' in result else None
             obj.area = result['area']['value'] if 'area' in result else None
             obj.priority = result['priority']['value'] if 'priority' in result else None
+            obj.sectionname = result['sectionname']['value']
+            obj.sectionurilink = result['section']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             resultlist.append(obj)
 
         return resultlist
@@ -93,6 +96,7 @@ class SPARQLQueryBuilder():
         self._consume_maintainer()
         self._consume_version()
         self._consume_priority()
+        self._consume_section()
         self._consume_filter()
         self.helper.set_limit(RESULTS_PER_PAGE)
         return self.helper.__str__()
@@ -100,6 +104,8 @@ class SPARQLQueryBuilder():
     def _add_base_elements(self):
         self.helper.push_triple_variables(\
             Variable("source"), RDF.type, DEB.Source)
+        self.helper.push_triple_variables(\
+            Variable("unversionedsource"), DEB.version, Variable("source"))
         self.helper.push_triple(\
             Variable("source"), DEB.maintainer, Variable("maint"))
         self.helper.add_variable("maintname")
@@ -113,7 +119,11 @@ class SPARQLQueryBuilder():
             Variable("version"), DEB.fullVersion, Variable("fullversion"))
         self.helper.push_triple_variables(\
             Variable("source"), DEB.packageName, Variable("sourcename"))
-       
+        self.helper.push_triple(\
+             Variable("source"), DEB.section, Variable("section"))
+        self.helper.push_triple_variables(\
+             Variable("section"), DEB.sectionName, Variable("sectionname"))
+ 
         if self.params['searchtype'] in ('BINARY', 'BINARYDESC'):
             self.helper.push_triple_variables(\
                 Variable("binary"), RDF.type, DEB.Binary)
@@ -215,3 +225,8 @@ class SPARQLQueryBuilder():
         else:
             self.helper.push_triple(\
                 Variable("source"), DEB.priority, URIRef(option))
+
+    def _consume_section(self):
+        keyword = self.params['section']
+        if keyword:
+           self.helper.add_or_filter_regex({Variable("sectionname"): keyword})

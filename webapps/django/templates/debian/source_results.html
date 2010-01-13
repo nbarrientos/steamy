@@ -8,10 +8,13 @@
     <div class="result">
         {{forloop.counter}}
         <ul>
-        <li><a href="{{result.sourceurilink}}">{{result.sourcename}} ({{result.fullversion}})</a></li>
+        <li><a href="{{result.sourceurilink}}">{{result.sourcename}}
+        ({{result.fullversion}})</a> is version of <a
+        href="{{result.usourceurilink}}">{{result.sourcename}}</a></li>
         <li>Maintainer: <a href="{{result.mainturilink}}">
             {% if result.maintname %}{{result.maintname}} {% endif %}
             &lt;{{result.maintmail}}&gt;</a></li>
+        <li>Section: <a href="{{result.sectionurilink}}">{{result.sectionname}}</a></li>
         {% if result.homepage %}
             <li>Homepage: <a href="{{result.homepage}}">{{result.homepage}}</a></li>
         {% endif %}
