@@ -91,6 +91,7 @@ class SPARQLQueryBuilder():
         self._consume_sort()
         self._consume_homepage()
         self._consume_maintainer()
+        self._consume_version()
         self._consume_filter()
         self.helper.set_limit(RESULTS_PER_PAGE)
         return self.helper.__str__()
@@ -182,3 +183,17 @@ class SPARQLQueryBuilder():
             self.helper.push_triple(Variable("maint"), RDF.type, FOAF.Group)
         elif option == 'DEBIAN':
             self.helper.add_filter_regex(Variable("maintmail"), "@debian.org$", False)
+
+    def _consume_version(self):
+        option = self.params['version']
+        if option == 'NATIVE':
+            triple = Triple(\
+                Variable("version"), DEB.debianRevision, Variable("debianRevision"))
+            self.helper.add_optional(triple)
+            self.helper.add_filter_notbound(Variable("debianRevision"))
+        elif option == 'EPOCH':
+            self.helper.push_triple(Variable("version"), DEB.epoch, Variable("epoch"))
+        elif option == 'NMU': # FIXME, native nmus x.y+nmuZ
+            self.helper.push_triple_variables(\
+                Variable("version"), DEB.debianRevision, Variable("debianRevision"))
+            self.helper.add_filter_regex(Variable("debianRevision"), ".*\\\..*", False)
