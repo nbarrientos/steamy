@@ -36,6 +36,12 @@ class BinaryExpression():
         self.rhs = rhs
 
 
+class UnaryExpression():
+    def __init__(self, expr, operator):
+        self.expr = expr
+        self.operator = operator
+
+
 class FunCall():
     def __init__(self, function, args):
         self.function = function

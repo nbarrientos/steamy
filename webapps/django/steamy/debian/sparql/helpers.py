@@ -82,3 +82,8 @@ class SelectQueryHelper():
         f2 = FunCall("regex", [var2, '"%s"' % regex])
         binexp = BinaryExpression(f1, "||", f2)
         self.add_filter(binexp)
+
+    def add_filter_notbound(self, var):
+        f = FunCall("bound", [var])
+        unexp = UnaryExpression(f, "!")
+        self.add_filter(unexp)

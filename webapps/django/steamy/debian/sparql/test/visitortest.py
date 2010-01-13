@@ -84,6 +84,12 @@ class VisitorTest(unittest.TestCase):
         expected = "FILTER(regex(arg1,arg2)||regex(arg3,arg4))"
         self.assertEqual(expected, self.v.visit(filter))
 
+        f = FunCall("bound", [Variable("var")])
+        unexp = UnaryExpression(f, "!")
+        filter = Filter(unexp)
+        expected = "FILTER(!bound(?var))"
+        self.assertEqual(expected, self.v.visit(filter))
+
     def test_visit_Union(self):
         st1 = Triple(Variable("a"), Variable("b"), Variable("c"))
         st2 = Triple(Variable("d"), Variable("e"), Variable("f"))
@@ -138,5 +144,9 @@ class VisitorTest(unittest.TestCase):
 
         helper.set_orderby("e")
         helper.query.modifiers = []
+        result = self.v.visit(helper.query, True)
+        self.assertEqual(Query, Parse(result).__class__)
+
+        helper.add_filter_notbound(Variable("e")) 
         result = self.v.visit(helper.query, True)
         self.assertEqual(Query, Parse(result).__class__)

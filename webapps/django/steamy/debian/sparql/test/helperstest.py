@@ -6,7 +6,7 @@ from rdflib import Namespace, URIRef, Literal, Variable
 
 from debian.sparql.helpers import SelectQueryHelper
 from debian.sparql.miniast import Triple, Optional, Filter
-from debian.sparql.miniast import FunCall, BinaryExpression
+from debian.sparql.miniast import FunCall, BinaryExpression, UnaryExpression
 from debian.errors import InvalidKeywordError
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
@@ -98,3 +98,9 @@ class SelectQueryHelperTest(unittest.TestCase):
         self.assertEqual(1, len(self.s.query.whereclause.stmts))
         self.assertEqual(Filter, self.s.query.whereclause.stmts[0].__class__)
         self.assertEqual(BinaryExpression, self.s.query.whereclause.stmts[0].expr.__class__)
+
+    def test_add_filter_notbound(self):
+        self.s.add_filter_notbound(Variable("a")) 
+        self.assertEqual(1, len(self.s.query.whereclause.stmts))
+        self.assertEqual(Filter, self.s.query.whereclause.stmts[0].__class__)
+        self.assertEqual(UnaryExpression, self.s.query.whereclause.stmts[0].expr.__class__)

@@ -45,6 +45,9 @@ class QueryStringVisitor():
         return "%s%s%s" % (self.visit(node.lhs), node.operator,\
                             self.visit(node.rhs))
 
+    def visit_UnaryExpression(self, node):
+        return "%s%s" % (node.operator, self.visit(node.expr))
+
     def visit_FunCall(self, node):
         args = [self.visit(arg) for arg in node.args]
         return "%s(%s)" % (node.function, ','.join(args))
