@@ -63,18 +63,22 @@ class SelectQueryHelper():
         v = QueryStringVisitor()
         return v.visit(self.query) 
 
-    def add_filter_regex(self, var, regex):
-        if re.match(r"[-a-zA-Z0-9+.]+", regex) is not None:
-            f = FunCall("regex", [var, '"%s"' % re.escape(regex)])
-            self.add_filter(f)
-        else:
-            raise InvalidKeywordError()
+    def add_filter_regex(self, var, regex, userinput=True):
+        if userinput:
+            if re.match(r"[-a-zA-Z0-9+.]+", regex) is None:
+                raise InvalidKeywordError()
+            regex = re.escape(regex)
 
-    def add_or_filter_regex(self, var1, var2, regex):
-        if re.match(r"[-a-zA-Z0-9+.]+", regex) is not None:
-            f1 = FunCall("regex", [var1, '"%s"' % re.escape(regex)])
-            f2 = FunCall("regex", [var2, '"%s"' % re.escape(regex)])
-            binexp = BinaryExpression(f1, "||", f2)
-            self.add_filter(binexp)
-        else:
-            raise InvalidKeywordError()
+        f = FunCall("regex", [var, '"%s"' % regex])
+        self.add_filter(f)
+
+    def add_or_filter_regex(self, var1, var2, regex, userinput=True):
+        if userinput:
+            if re.match(r"[-a-zA-Z0-9+.]+", regex) is None:
+                raise InvalidKeywordError()
+            regex = re.escape(regex)
+
+        f1 = FunCall("regex", [var1, '"%s"' % regex])
+        f2 = FunCall("regex", [var2, '"%s"' % regex])
+        binexp = BinaryExpression(f1, "||", f2)
+        self.add_filter(binexp)
