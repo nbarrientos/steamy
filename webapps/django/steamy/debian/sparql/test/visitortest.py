@@ -137,25 +137,25 @@ class VisitorTest(unittest.TestCase):
         expected = "SELECT?e?f?d WHERE{?d ?e ?f.FILTER(regex(?var,\"regex\"))}LIMIT 50 OFFSET 2"
         result = self.v.visit(helper.query)
         self.assertEqual(expected, result) 
-        self.assertEqual(Query, Parse(result).__class__)
+        self.assertNotEqual(None, Parse(result))
 
         helper.add_optional(st2, st2)
         result = self.v.visit(helper.query, True)
-        self.assertEqual(Query, Parse(result).__class__)
+        self.assertNotEqual(None, Parse(result))
 
         helper.add_union([st2, st2], [st2], [st2])
         result = self.v.visit(helper.query, True)
-        self.assertEqual(Query, Parse(result).__class__)
+        self.assertNotEqual(None, Parse(result))
 
         helper.set_orderby("e")
         result = self.v.visit(helper.query, True)
-        self.assertEqual(Query, Parse(result).__class__)
+        self.assertNotEqual(None, Parse(result))
 
         helper.set_orderby("e")
         helper.query.modifiers = []
         result = self.v.visit(helper.query, True)
-        self.assertEqual(Query, Parse(result).__class__)
+        self.assertNotEqual(None, Parse(result))
 
         helper.add_filter_notbound(Variable("e")) 
         result = self.v.visit(helper.query, True)
-        self.assertEqual(Query, Parse(result).__class__)
+        self.assertNotEqual(None, Parse(result))
