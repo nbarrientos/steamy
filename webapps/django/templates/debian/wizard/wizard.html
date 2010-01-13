@@ -10,7 +10,7 @@
     <div id="wizard-form">
         <form action="." method="post">
           {% block form-content %}{% endblock %}
-          <p><input type="submit" value="Next >>" /></p>
+          <p><input type="submit" value="Continue" /></p>
           <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
           {{ previous_fields|safe }}
         </form>

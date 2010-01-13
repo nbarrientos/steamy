@@ -1,10 +1,6 @@
 {% extends "debian/wizard/wizard.html" %}
 
 {% block form-content %}
- <div class="form-field">
-      {{ form.filter.errors }}
-      <label for="id_1-filter">Keyword:</label>
-      {{ form.filter }}
-      <p class="Note">Required</p>
-  </div>
+<h3>Advanced parameters</h3>
+{{ form }}
 {% endblock %}

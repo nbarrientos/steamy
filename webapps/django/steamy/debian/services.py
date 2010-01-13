@@ -81,11 +81,12 @@ class SPARQLQueryBuilder():
         self.source_search = False
 
     def create_query(self):
-        self._add_base_elements()
         self._consume_searchtype()
+        self._add_base_elements()
         self._consume_distribution()
         self._consume_area()
         self._consume_filter()
+        self._consume_sort()
         self.helper.set_limit(RESULTS_PER_PAGE)
         return self.helper.__str__()
 
@@ -115,15 +116,16 @@ class SPARQLQueryBuilder():
 
     def _consume_filter(self):
         filter = self.params['filter']
-        if self.binary_search:
-            if self.params['searchtype'] == 'BINARYEXT':
-                self.helper.push_triple(\
-                    Variable("binary"), DEB.extendedDescription, Variable("desc"))
-                self.helper.add_or_filter_regex(Variable("desc"), Variable("binaryname"), filter)
-            else:   
-                self.helper.add_filter_regex(Variable("binaryname"), filter)
-        elif self.source_search:
-            self.helper.add_filter_regex(Variable("sourcename"), filter)
+        if filter:
+            if self.binary_search:
+                if self.params['searchtype'] == 'BINARYEXT':
+                    self.helper.push_triple(\
+                        Variable("binary"), DEB.extendedDescription, Variable("desc"))
+                    self.helper.add_or_filter_regex(Variable("desc"), Variable("binaryname"), filter)
+                else:   
+                    self.helper.add_filter_regex(Variable("binaryname"), filter)
+            elif self.source_search:
+                self.helper.add_filter_regex(Variable("sourcename"), filter)
 
     def _consume_distribution(self):
         distribution = self.params['distribution']
@@ -149,3 +151,15 @@ class SPARQLQueryBuilder():
             self.binary_search = True 
         elif type in ('SOURCE'):
             self.source_search = True
+
+    def _consume_sort(self):
+        sort = self.params['sort']
+        if sort == 'MAINTNAME':
+            self.helper.set_orderby("maintname")
+        elif sort == 'MAINTMAIL':
+            self.helper.set_orderby("maintmail")
+        else:
+            if self.binary_search:
+                self.helper.set_orderby("binaryname")
+            else:
+                self.helper.set_orderby("sourcename")
