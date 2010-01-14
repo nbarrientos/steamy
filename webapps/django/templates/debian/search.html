@@ -21,11 +21,13 @@
                 <label for="id_filter" class="field-label">Keyword:</label>
                 {{ search.filter }}
                 <span class="field-comment">
-                    (blank is ok, but please consider using some filter)
+                    (blank is ok, but please consider using some filter if you
+                    want useful results)
                 </span>
                 {% for error in search.filter.errors %}
                     <div class="ui-widget">
-				        <div class="ui-state-error ui-corner-all" style="padding: 0 .7em; margin-bottom: .3em;"> 
+				        <div class="ui-state-error ui-corner-all"
+                            style="width: 40%; padding: 0 .7em; margin-bottom: .2em;"> 
 					    <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
 					    <strong>Error:</strong> {{ error }}</p>
 				        </div>
@@ -39,7 +41,7 @@
                 {{ search.area }}
             </div>
             <div class="form-field">
-                <label class="field-label">Search type:</label>
+                <label class="field-label">Search in:</label>
                 {{ search.searchtype }}
             </div>
         </div>
@@ -62,6 +64,10 @@
                 {% endfor %}
             </div>
             <div class="form-field">
+                <label class="field-label">Priority:</label>
+                {{ search.priority }}
+            </div>
+            <div class="form-field">
                 <label class="field-label">Version:</label>
                 {{ search.version }}
             </div>
@@ -77,21 +83,17 @@
                 <label class="field-label">Maintained using:</label>
                 {{ search.vcs }}
             </div>
-            <div class="form-field">
-                <label class="field-label">Priority:</label>
-                {{ search.priority }}
-            </div>
         </div>
 
         <h3><a href="#">Output options</a></h3>
         <div> <!-- Output options -->
             <div class="form-field">
-                <label for="id_homepage" class="field-label">Show package homepage (if applicable):</label>
                 {{ search.homepage }}
+                <label for="id_homepage" class="field-label">Show package homepage</label>
             </div>
             <div class="form-field">
-                <label for="id_showquery" class="field-label">Show generated query:</label>
                 {{ search.showquery }}
+                <label for="id_showquery" class="field-label">Show auto-generated SPARQL query</label>
             </div>
             <div class="form-field">
                 <label class="field-label">Order by:</label>

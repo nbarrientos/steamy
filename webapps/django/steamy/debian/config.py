@@ -1,8 +1,8 @@
-SPARQL_ENDPOINT = "http://data.fundacionctic.org/sparql"
-FROM_GRAPH = "http://data.fundacionctic.org/idi/debian"
+#SPARQL_ENDPOINT = "http://data.fundacionctic.org/sparql"
+#FROM_GRAPH = "http://data.fundacionctic.org/idi/debian"
 
-#SPARQL_ENDPOINT = "http://localhost:8180/openrdf-sesame/repositories/STEAMY"
-#FROM_GRAPH = None
+SPARQL_ENDPOINT = "http://localhost:8180/openrdf-sesame/repositories/STEAMY"
+FROM_GRAPH = None
 
 SPARQL_PREFIXES = """
 PREFIX deb:<http://idi.fundacionctic.org/steamy/debian.owl#>
@@ -17,4 +17,4 @@ ONT_URI = "http://idi.fundacionctic.org/steamy/debian.owl#"
 RES_BASEURI = "http://rdf.debian.net"
 PUBBY_BASEURI = "http://192.168.62.129:8180/pubby/resource"
 
-RESULTS_PER_PAGE = 20
+RESULTS_PER_PAGE = 50

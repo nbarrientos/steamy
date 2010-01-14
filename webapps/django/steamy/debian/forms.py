@@ -34,9 +34,9 @@ AREA_OPTS = (
 )
 
 SEARCHTYPE_OPTS = (
-    ('SOURCE', 'Source package name'),
-    ('BINARY', 'Binary package name only'),
-    ('BINARYEXT', 'Binary package name and descriptions'),
+    ('SOURCE', 'Source package names'),
+    ('BINARY', 'Binary package names'),
+    ('BINARYEXT', 'Binary package names and descriptions'),
 )
 
 MAINT_OPTS = (
@@ -98,6 +98,7 @@ class SearchForm(forms.Form):
 class SPARQLForm(forms.Form):
     default = SPARQL_PREFIXES + """
 SELECT ?source ?maintainer
+FROM <http://data.fundacionctic.org/idi/debian>
 WHERE {
     ?source a deb:Source ;
       deb:maintainer ?maintainer ;

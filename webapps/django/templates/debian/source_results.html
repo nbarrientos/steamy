@@ -1,40 +1,56 @@
 {% extends "debian/base.html" %}
 
 {% block content %}
+    <div class="result-search-again">
+    <a href="{% url debian.views.index %}" class="fg-button ui-state-default
+    ui-corner-all">Search again</a>
+    </div>
     <div class="subheader">
         <div class="ui-widget-content ui-corner-all">
 		    <h3 class="subtitle ui-widget-subheader ui-corner-all">
-                Search results {% if filter %} (query: "{{filter}}") {% endif %}
+                Search results {% if filter %} (keyword: "{{filter}}") {% endif %}
             </h3>
 	    </div>
     </div>
     {% for result in results %}
     <div class="result">
-        {{forloop.counter}}
+        <div class="result-header">
+        <span class="result-number">{{forloop.counter}}.</span>
+        <span style="font-weight:bold">
+            <a href="{{result.sourceurilink}}">{{result.sourcename}} ({{result.fullversion}})</a>
+        </span>
+        is version of <a href="{{result.usourceurilink}}">{{result.sourcename}}</a>
+        </div>
         <ul>
-        <li><a href="{{result.sourceurilink}}">{{result.sourcename}}
-        ({{result.fullversion}})</a> is version of <a
-        href="{{result.usourceurilink}}">{{result.sourcename}}</a></li>
-        <li>Maintainer: <a href="{{result.mainturilink}}">
-            {% if result.maintname %}{{result.maintname}} {% endif %}
+        <li><span class="result-label">Maintainer:</span>
+            <a href="{{result.mainturilink}}">
+            {% if result.maintname %}{{result.maintname}}{% endif %}
             &lt;{{result.maintmail}}&gt;</a></li>
-        <li>Section: <a href="{{result.sectionurilink}}">{{result.sectionname}}</a></li>
+        <li><span class="result-label">Section:</span>
+            <a href="{{result.sectionurilink}}">{{result.sectionname}}</a></li>
         {% if result.homepage %}
-            <li>Homepage: <a href="{{result.homepage}}">{{result.homepage}}</a></li>
+            <li><span class="result-label">Homepage:</span> 
+            <a href="{{result.homepage}}">{{result.homepage}}</a></li>
         {% endif %}
         {% if result.distribution %}
-            <li>Distribution: {{result.distribution}}</li>
+            <li><span class="result-label">Distribution:</span> 
+                <a href="{{result.distributionurilink}}">{{result.distribution}}</a></li>
         {% endif %}
         {% if result.area %}
-            <li>Area: {{result.area}}</li>
+            <li><span class="result-label">Area:</span> 
+                {{result.area}}</li>
         {% endif %}
         {% if result.priority %}
-            <li>Priority: {{result.priority}}</li>
+            <li><span class="result-label">Priority:</span> 
+                {{result.priority}}</li>
         {% endif %}
         </ul>
     </div>
     {% empty %}
-    <p>Sorry, no matches :(</p>
+    <div class="no-matches">
+        I'm sorry but no package matches your criteria. Why don't you 
+        <a href="{% url debian.views.index %}">try again?</a>
+    </div>
     {% endfor %}
     {% if query %}
 	    <div class="ui-widget-content ui-corner-all">

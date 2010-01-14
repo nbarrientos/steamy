@@ -21,8 +21,16 @@ NFO = Namespace(u"http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#")
 TAG = Namespace(u"http://www.holygoat.co.uk/owl/redwood/0.1/tags/")
 DOAP = Namespace(u"http://usefulinc.com/ns/doap#")
 
+
 class Result():
-    pass
+    def __init__(self):
+        self.maintname = None
+        self.homepage = None
+        self.distribution = None
+        self.distributionurilink = None
+        self.area = None
+        self.priority = None
+
 
 class SPARQLQueryProcessor():
     def _init_endpoint(self):
@@ -41,13 +49,16 @@ class SPARQLQueryProcessor():
             obj.sourceurilink = result['source']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             obj.usourceurilink = result['unversionedsource']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             obj.fullversion = result['fullversion']['value']
-            obj.maintname = result['maintname']['value'] if 'maintname' in result else None
+            if 'maintname' in result: obj.maintname = result['maintname']['value'] 
             obj.maintmail = result['maintmail']['value']
             obj.mainturilink = result['maint']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
-            obj.homepage = result['homepage']['value'] if 'homepage' in result else None
-            obj.distribution = result['distribution']['value'] if 'distribution' in result else None
-            obj.area = result['area']['value'] if 'area' in result else None
-            obj.priority = result['priority']['value'] if 'priority' in result else None
+            if 'homepage' in result: obj.homepage = result['homepage']['value'] 
+            if 'distribution' in result: 
+                obj.distribution = result['distribution']['value']
+                obj.distributionurilink = result['distribution']['value'].\
+                    replace(RES_BASEURI, PUBBY_BASEURI)
+            if 'area' in result: obj.area = result['area']['value']
+            if 'priority' in result: obj.priority = result['priority']['value']
             obj.sectionname = result['sectionname']['value']
             obj.sectionurilink = result['section']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             resultlist.append(obj)
