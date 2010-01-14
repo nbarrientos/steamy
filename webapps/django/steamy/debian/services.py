@@ -91,6 +91,7 @@ class SPARQLQueryBuilder():
     def create_query(self):
         self._consume_searchtype()
         self._add_base_elements()
+        self._add_from()
         self._consume_distribution()
         self._consume_area()
         self._consume_sort()
@@ -269,3 +270,7 @@ class SPARQLQueryBuilder():
                 self.helper.add_triple(graphpatterns[0][0])
             else:
                 self.helper.add_union(*graphpatterns)
+
+    def _add_from(self):
+        if FROM_GRAPH is not None:
+            self.helper.set_from(FROM_GRAPH)
