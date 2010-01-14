@@ -79,8 +79,6 @@ class SelectQueryHelper():
     def _build_fixed_operator_tree(self, operator, items):
         if len(items) == 1:
             return items.pop()
-        if len(items) == 2:
-            return BinaryExpression(items.pop(), operator, items.pop())
         else:
             item = items.pop()
             return BinaryExpression(item, operator,\

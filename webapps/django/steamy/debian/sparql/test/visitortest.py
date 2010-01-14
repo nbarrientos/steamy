@@ -159,3 +159,7 @@ class VisitorTest(unittest.TestCase):
         helper.add_filter_notbound(Variable("e")) 
         result = self.v.visit(helper.query, True)
         self.assertNotEqual(None, Parse(result))
+
+        helper.add_or_filter_regex({Variable("a"): "r1", Variable("b"): "r2"})
+        result = self.v.visit(helper.query, True)
+        self.assertNotEqual(None, Parse(result))
