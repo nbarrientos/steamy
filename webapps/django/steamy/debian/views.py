@@ -7,7 +7,10 @@ from debian.errors import SPARQLQueryProcessorError, InvalidKeywordError
 
 
 def index(request):
-    return render_to_response('debian/index.html', {})
+    searchform = SearchForm()
+    sparqlform = SPARQLForm()
+    dict = {'search': searchform, 'sparql': sparqlform}
+    return render_to_response('debian/search.html', dict)
 
 def sparql(request):
     if request.method == 'POST':
@@ -23,24 +26,20 @@ def sparql(request):
         htmlresults = processor.format_htmltable()
         return render_to_response('debian/results.html', {'results': htmlresults})
     else:
-        form = SPARQLForm()
-        dict = {'form': form}
-        return render_to_response('debian/sparql.html', dict)
+        return HttpResponse("405 - Method not allowed", status=405)
 
-def search(request):
+def results(request):
     if request.method == 'POST':
-        f = SearchForm(request.POST)
-        if f.is_valid():
-            data = f.cleaned_data
+        searchform = SearchForm(request.POST)
+        sparqlform = SPARQLForm()
+        if searchform.is_valid():
+            data = searchform.cleaned_data
         else:
-            print f
-            return render_to_response('debian/search.html', {'form': f})
-        builder = SPARQLQueryBuilder(f.cleaned_data)
+            dict = {'search': searchform, 'sparql': sparqlform}
+            return render_to_response('debian/search.html', dict)
+        builder = SPARQLQueryBuilder(data)
         processor = SPARQLQueryProcessor()
-        try:
-            query = builder.create_query()
-        except InvalidKeywordError, e:
-            return render_to_response("debian/error.html", {'reason': e.reason})
+        query = builder.create_query()
 
         print query # FIXME
         processor.execute_sanitized_query(query)
@@ -52,6 +51,4 @@ def search(request):
         else:
             results = processor.format_source_results()
     else:
-        form = SearchForm()
-        dict = {'form': form}
-        return render_to_response('debian/search.html', dict)
+        return HttpResponse("405 - Method not allowed", status=405)

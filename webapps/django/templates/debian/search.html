@@ -5,76 +5,109 @@
 {% endblock %}
 
 {% block content %}
-<h2 class="section-title">Search</h2>
-    <form action="." method="post">
-        <div class="options-group">
-            <p class="toggle">Basic Seach</p>
+<div id="tabs">
+	<ul>
+		<li><a href="#tab-search">Assisted Search</a></li>
+		<li><a href="#tab-sparql">SPARQL Query</a></li>
+	</ul>
+    <!-- Assisted search tab -->
+    <div id="tab-search">
+        <form action="{% url debian.views.results %}" method="post">
+        <div id="accordion"> 
+        <h3><a href="#">Basic search</a></h3>
+        <div> <!-- Basic search -->
             <div class="form-field">
-                <div class="field-error">{{ form.filter.errors }}</div>
                 <label for="id_filter" class="field-label">Keyword:</label>
-                {{ form.filter }}
+                {{ search.filter }}
+                {% for error in search.filter.errors %}
+                    <div class="ui-widget">
+				        <div class="ui-state-error ui-corner-all" style="padding: 0 .7em; margin-bottom: .3em;"> 
+					    <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+					    <strong>Error:</strong> {{ error }}</p>
+				        </div>
+			        </div>
+                {% endfor %}
             </div>
             <div class="form-field">
                 <label for="id_distribution" class="field-label">Distribution:</label>
-                {{ form.distribution }}
+                {{ search.distribution }}
             </div>
             <div class="form-field">
                 <label for="id_area" class="field-label">Area:</label>
-                {{ form.area }}
+                {{ search.area }}
             </div>
             <div class="form-field">
                 <label for="id_searchtype" class="field-label">Search type:</label>
-                {{ form.searchtype }}
+                {{ search.searchtype }}
             </div>
         </div>
 
-        <a class="toggle" id="togglefilters" href="javascript:void(0);"><img id="toggleiconURI" class="toggleicon" 
-        src="/debian/static/images/arrow-closed.png" alt="Show" /> More Options</a>
-
-        <div id="filters" class="options-group">
+        <h3><a href="#">Filters</a></h3>
+        <div> <!-- Filters -->
             <div class="form-field">
                 <label for="id_version" class="field-label">Version:</label>
-                {{ form.version }}
+                {{ search.version }}
             </div>
             <div class="form-field">
                 <label for="id_maintainer" class="field-label">Maintainer:</label>
-                {{ form.maintainer }}
+                {{ search.maintainer }}
             </div>
             <div class="form-field">
                 <label for="id_comaintainer" class="field-label">Comaintainer:</label>
-                {{ form.comaintainer }}
+                {{ search.comaintainer }}
             </div>
             <div class="form-field">
                 <label for="id_vcs" class="field-label">Maintained using:</label>
-                {{ form.vcs }}
+                {{ search.vcs }}
             </div>
             <div class="form-field">
                 <label for="id_priority" class="field-label">Priority:</label>
-                {{ form.priority }}
+                {{ search.priority }}
             </div>
             <div class="form-field">
-                <div class="field-error">{{ form.section.errors }}</div>
                 <label for="id_section" class="field-label">Section:</label>
-                {{ form.section }}
+                {{ search.section }}
+                {% for error in search.section.errors %}
+                    <div class="ui-widget">
+				        <div class="ui-state-error ui-corner-all" style="padding: 0 .7em; margin-bottom: .3em;"> 
+					    <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+					    <strong>Error:</strong> {{ error }}</p>
+				        </div>
+			        </div>
+                {% endfor %}
             </div>
         </div>
 
-        <div class="options-group">
-            <p class="toggle">Output options</p>
+        <h3><a href="#">Output options</a></h3>
+        <div> <!-- Output options -->
             <div class="form-field">
                 <label for="id_homepage" class="field-label">Show homepage (if applicable):</label>
-                {{ form.homepage }}
+                {{ search.homepage }}
             </div>
             <div class="form-field">
                 <label for="id_showquery" class="field-label">Show generated query:</label>
-                {{ form.showquery }}
+                {{ search.showquery }}
             </div>
             <div class="form-field">
                 <label for="id_sort" class="field-label">Sort method:</label>
-                {{ form.sort }}
+                {{ search.sort }}
             </div>
         </div>
 
-        <p><input type="submit" value="Search"/></p>
-</form>
+        </div> <!-- accordion -->
+        <input type="submit" class="ui-state-default ui-corner-all" value="Search"/>
+        </form>
+    </div> <!-- assisted search -->
+
+    <div id="tab-sparql">
+        <form action="{% url debian.views.sparql %}" method="post">
+            <div class="form-field">
+                {{ sparql.query }}
+            </div>
+            <input type="submit" class="ui-state-default ui-corner-all" value="Execute"/>
+        </form>
+        <div class="note"><p>LIMIT and OFFSET clauses will be ignored<p></div>
+    </div> <!-- tab SPARQL -->
+
+</div> <!-- tabs -->
 {% endblock %}

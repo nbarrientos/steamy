@@ -103,5 +103,5 @@ WHERE {
       deb:maintainer ?maintainer ;
       deb:packageName "acl" .
 }"""
-    attrs = {'rows': '25', 'cols': '150'}
+    attrs = {'rows': '25', 'cols': '100'}
     query = forms.CharField(label=None, initial=default, widget=widgets.Textarea(attrs=attrs))

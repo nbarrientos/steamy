@@ -4,7 +4,7 @@ from django.conf import settings
 urlpatterns = patterns('debian.views',
     (r'^$', 'index'),
     (r'^sparql/$', 'sparql'),
-    (r'^search/$', 'search'),
+    (r'^results/$', 'results'),
 )
 
 if settings.DEBUG:
