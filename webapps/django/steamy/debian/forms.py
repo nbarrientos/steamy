@@ -6,7 +6,6 @@ from django.shortcuts import render_to_response
 
 from debian.config import SPARQL_PREFIXES, RES_BASEURI, ONT_URI 
 from debian.services import SPARQLQueryBuilder, SPARQLQueryProcessor
-from debian.errors import InvalidKeywordError
 
 DIST_OPTS = (
     ('ANY', 'any'),
