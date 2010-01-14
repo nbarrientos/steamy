@@ -67,8 +67,6 @@ class SelectQueryHelper():
         nodes = []
         for variable,regex in dict.items():
             if userinput:
-                if re.match(r"^[-a-zA-Z0-9+.]+$", regex) is None:
-                    raise InvalidKeywordError()
                 regex = re.escape(regex).replace("\\", "\\\\")
             nodes.append(FunCall("regex", [variable, r'"%s"' % regex, '"i"']))
         self.add_filter(self._build_fixed_operator_tree("||", nodes))

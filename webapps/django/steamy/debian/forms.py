@@ -1,3 +1,5 @@
+import re
+
 from django.forms import widgets
 from django import forms
 from django.shortcuts import render_to_response
@@ -74,22 +76,24 @@ class SearchForm(forms.Form):
     area = forms.ChoiceField(widget=widgets.Select, choices=AREA_OPTS)
     searchtype = forms.ChoiceField(initial="SOURCE", label="Search in:",\
         widget=widgets.RadioSelect, choices=SEARCHTYPE_OPTS)
-    filter = forms.CharField(required=False, max_length=30)
+    filter = forms.RegexField(regex=re.compile(r"^[-a-zA-Z0-9+.]*$"),\
+        max_length=30, required=False)
     priority = forms.ChoiceField(choices=PRIORITY_OPTS)
-    maintainer = forms.ChoiceField(initial="ALL", label="Maintainer restrictions:",\
+    maintainer = forms.ChoiceField(initial="ALL",\
         widget=widgets.RadioSelect, choices=MAINT_OPTS)
-    comaintainer = forms.ChoiceField(initial="ALL", label="Comaintainer restrictions:",\
+    comaintainer = forms.ChoiceField(initial="ALL",\
         widget=widgets.RadioSelect, choices=COMAINT_OPTS)
-    version = forms.MultipleChoiceField(initial="ALL", label="Version restrictions:",\
+    version = forms.MultipleChoiceField(initial="ALL",\
         widget=widgets.CheckboxSelectMultiple, choices=VERSION_OPTS,\
         required=False)
-    vcs = forms.ChoiceField(initial="ALL", label="Vcs restrictions:",\
+    vcs = forms.ChoiceField(initial="ALL",\
         widget=widgets.RadioSelect, choices=VCS_OPTS)
-    homepage = forms.BooleanField(label="Show homepage", required=False)
-    sort = forms.ChoiceField(initial="PACKAGE", label="Order by:",\
+    homepage = forms.BooleanField(required=False)
+    sort = forms.ChoiceField(initial="PACKAGE",\
         widget=widgets.RadioSelect, choices=SORT_OPTS)
-    showquery = forms.BooleanField(label="Print generated query", required=False)
-    section = forms.CharField(label="Section filter", required=False, max_length=30)
+    showquery = forms.BooleanField(required=False)
+    section = forms.RegexField(regex=re.compile(r"^[a-zA-Z]*$"),\
+        max_length=20, required=False)
 
 class SPARQLForm(forms.Form):
     default = SPARQL_PREFIXES + """
