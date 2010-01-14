@@ -1,7 +1,6 @@
 from django.forms import widgets
 from django import forms
 from django.shortcuts import render_to_response
-from django.contrib.formtools.wizard import FormWizard
 
 from debian.config import SPARQL_PREFIXES, RES_BASEURI, ONT_URI 
 from debian.services import SPARQLQueryBuilder, SPARQLQueryProcessor
@@ -70,14 +69,12 @@ SORT_OPTS = (
     ('MAINTMAIL', 'Maintainer email'),
 )
 
-class Step1Form(forms.Form):
+class SearchForm(forms.Form):
     distribution = forms.ChoiceField(widget=widgets.Select, choices=DIST_OPTS)
     area = forms.ChoiceField(widget=widgets.Select, choices=AREA_OPTS)
     searchtype = forms.ChoiceField(initial="SOURCE", label="Search in:",\
         widget=widgets.RadioSelect, choices=SEARCHTYPE_OPTS)
     filter = forms.CharField(required=False, max_length=30)
-
-class Step2Form(forms.Form):
     priority = forms.ChoiceField(choices=PRIORITY_OPTS)
     maintainer = forms.ChoiceField(initial="ALL", label="Maintainer restrictions:",\
         widget=widgets.RadioSelect, choices=MAINT_OPTS)
@@ -104,8 +101,3 @@ WHERE {
 }"""
     attrs = {'rows': '25', 'cols': '150'}
     query = forms.CharField(label=None, initial=default, widget=widgets.Textarea(attrs=attrs))
-
-# Set custom templates
-def get_template(self, step):
-    return 'debian/wizard/step_%s.html' % step
-FormWizard.get_template = get_template

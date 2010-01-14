@@ -1,0 +1,35 @@
+.options-group {
+	border-bottom-color: #a5a5a5;
+	border-top-color: #a5a5a5;
+	border-bottom-style: groove;
+	border-top-style: groove;
+	border-left-width: 1px;
+	border-bottom-width: 1px;
+	border-right-width: 1px;
+	border-top-width: 1px;
+	font-family: sans-serif;
+	padding: 4px;
+	margin: 3px;
+}
+
+.field-label {
+	font-style: italic;
+}
+
+h2.section-title {
+	font-size: x-large;
+	font-weight: bold;
+	color: #ff0f00;
+}
+
+#filters {
+}
+
+.toggle {
+	font-size: large;
+	font-family: monospace;
+	color: #3f73ff;
+	border-style: none;
+	text-decoration: none;
+}
+

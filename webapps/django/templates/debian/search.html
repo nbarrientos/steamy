@@ -1,0 +1,80 @@
+{% extends "debian/base.html" %}
+
+{% block javascript %}
+    <script type="text/javascript" src="/debian/static/js/search.js"></script>
+{% endblock %}
+
+{% block content %}
+<h2 class="section-title">Search</h2>
+    <form action="." method="post">
+        <div class="options-group">
+            <p class="toggle">Basic Seach</p>
+            <div class="form-field">
+                <div class="field-error">{{ form.filter.errors }}</div>
+                <label for="id_filter" class="field-label">Keyword:</label>
+                {{ form.filter }}
+            </div>
+            <div class="form-field">
+                <label for="id_distribution" class="field-label">Distribution:</label>
+                {{ form.distribution }}
+            </div>
+            <div class="form-field">
+                <label for="id_area" class="field-label">Area:</label>
+                {{ form.area }}
+            </div>
+            <div class="form-field">
+                <label for="id_searchtype" class="field-label">Search type:</label>
+                {{ form.searchtype }}
+            </div>
+        </div>
+
+        <a class="toggle" id="togglefilters" href="javascript:void(0);"><img id="toggleiconURI" class="toggleicon" 
+        src="/debian/static/images/arrow-closed.png" alt="Show" /> More Options</a>
+
+        <div id="filters" class="options-group">
+            <div class="form-field">
+                <label for="id_version" class="field-label">Version:</label>
+                {{ form.version }}
+            </div>
+            <div class="form-field">
+                <label for="id_maintainer" class="field-label">Maintainer:</label>
+                {{ form.maintainer }}
+            </div>
+            <div class="form-field">
+                <label for="id_comaintainer" class="field-label">Comaintainer:</label>
+                {{ form.comaintainer }}
+            </div>
+            <div class="form-field">
+                <label for="id_vcs" class="field-label">Vcs:</label>
+                {{ form.vcs }}
+            </div>
+            <div class="form-field">
+                <label for="id_priority" class="field-label">Priority:</label>
+                {{ form.priority }}
+            </div>
+            <div class="form-field">
+                <div class="field-error">{{ form.section.errors }}</div>
+                <label for="id_section" class="field-label">Section:</label>
+                {{ form.section }}
+            </div>
+        </div>
+
+        <div class="options-group">
+            <p class="toggle">Output options</p>
+            <div class="form-field">
+                <label for="id_homepage" class="field-label">Show homapage (if applicable):</label>
+                {{ form.homepage }}
+            </div>
+            <div class="form-field">
+                <label for="id_showquery" class="field-label">Show generated query:</label>
+                {{ form.showquery }}
+            </div>
+            <div class="form-field">
+                <label for="id_sort" class="field-label">Sort method:</label>
+                {{ form.sort }}
+            </div>
+        </div>
+
+        <p><input type="submit" value="Search"/></p>
+</form>
+{% endblock %}

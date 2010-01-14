@@ -1,8 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
-from django.contrib.formtools.wizard import FormWizard
 
-from debian.forms import SPARQLForm
+from debian.forms import SPARQLForm, SearchForm
 from debian.services import SPARQLQueryProcessor, SPARQLQueryBuilder
 from debian.errors import SPARQLQueryProcessorError, InvalidKeywordError
 
@@ -28,13 +27,15 @@ def sparql(request):
         dict = {'form': form}
         return render_to_response('debian/sparql.html', dict)
 
-class SearchWizard(FormWizard):
-    def done(self, request, form_list):
-        data = {}
-        for form in form_list:
-            data.update(form.cleaned_data)
-        print data # FIXME
-        builder = SPARQLQueryBuilder(data)
+def search(request):
+    if request.method == 'POST':
+        f = SearchForm(request.POST)
+        if f.is_valid():
+            data = f.cleaned_data
+        else:
+            print f
+            return render_to_response('debian/search.html', {'form': f})
+        builder = SPARQLQueryBuilder(f.cleaned_data)
         processor = SPARQLQueryProcessor()
         try:
             query = builder.create_query()
@@ -50,4 +51,7 @@ class SearchWizard(FormWizard):
             return render_to_response('debian/source_results.html', replydata)
         else:
             results = processor.format_source_results()
-            return render_to_response('debian/binary_results.html', {'results': results})
+    else:
+        form = SearchForm()
+        dict = {'form': form}
+        return render_to_response('debian/search.html', dict)
