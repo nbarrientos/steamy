@@ -7,7 +7,6 @@ from rdflib import Namespace, URIRef, Literal, Variable
 from debian.sparql.helpers import SelectQueryHelper
 from debian.sparql.miniast import Triple, Optional, Filter
 from debian.sparql.miniast import FunCall, BinaryExpression, UnaryExpression
-from debian.errors import InvalidKeywordError
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
@@ -83,15 +82,12 @@ class SelectQueryHelperTest(unittest.TestCase):
         self.assertEqual(expected, str(self.s))
 
     def test_add_or_filter_regex(self):
-        self.assertRaises(InvalidKeywordError, self.s.add_or_filter_regex,\
-            {"a": "{}", "b": "{}"})
-        
-        self.s.add_or_filter_regex({"a": "{}", "b": "{}", "c": "{}"}, False)
+        self.s.add_or_filter_regex({"a": "a1", "b": "b1", "c": "c1"}, False)
         self.assertEqual(1, len(self.s.query.whereclause.stmts))
         self.assertEqual(Filter, self.s.query.whereclause.stmts[0].__class__)
         self.assertEqual(BinaryExpression, self.s.query.whereclause.stmts[0].expr.__class__)
 
-        self.s.add_or_filter_regex({"a": "{}"}, False)
+        self.s.add_or_filter_regex({"a": "a1"}, False)
         self.assertEqual(2, len(self.s.query.whereclause.stmts))
         self.assertEqual(FunCall, self.s.query.whereclause.stmts[1].expr.__class__)
 
