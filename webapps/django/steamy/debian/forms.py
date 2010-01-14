@@ -59,9 +59,10 @@ VERSION_OPTS = (
 )
 
 VCS_OPTS = (
-    ('ALL', 'No restriction'),
     ('SVN', 'Subversion'),
     ('GIT', 'Git'),
+    ('CVS', 'Cvs'),
+    ('HG', 'Mercurial'),
 )
 
 SORT_OPTS = (
@@ -82,11 +83,11 @@ class SearchForm(forms.Form):
         widget=widgets.RadioSelect, choices=MAINT_OPTS)
     comaintainer = forms.ChoiceField(initial="ALL",\
         widget=widgets.RadioSelect, choices=COMAINT_OPTS)
-    version = forms.MultipleChoiceField(initial="ALL",\
+    version = forms.MultipleChoiceField(\
         widget=widgets.CheckboxSelectMultiple, choices=VERSION_OPTS,\
         required=False)
-    vcs = forms.ChoiceField(initial="ALL",\
-        widget=widgets.RadioSelect, choices=VCS_OPTS)
+    vcs = forms.MultipleChoiceField(widget=widgets.CheckboxSelectMultiple,\
+        choices=VCS_OPTS, required=False)
     homepage = forms.BooleanField(required=False)
     sort = forms.ChoiceField(initial="PACKAGE",\
         widget=widgets.RadioSelect, choices=SORT_OPTS)

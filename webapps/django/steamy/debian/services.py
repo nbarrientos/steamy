@@ -99,6 +99,7 @@ class SPARQLQueryBuilder():
         self._consume_version()
         self._consume_priority()
         self._consume_comaintainer()
+        self._consume_vcs()
         self._consume_section()
         self._consume_filter()
         self.helper.set_limit(RESULTS_PER_PAGE)
@@ -244,3 +245,27 @@ class SPARQLQueryBuilder():
                 Variable("source"), DEB.uploader, Variable("uploader"))
             self.helper.add_optional(triple)
             self.helper.add_filter_notbound(Variable("uploader"))
+
+    def _consume_vcs(self):
+        options = self.params['vcs']
+        if options:
+            self.helper.push_triple(\
+                Variable("source"), DEB.repository, Variable("repobnode"))
+            graphpatterns = []
+            if 'SVN' in options:
+                graphpatterns.append(\
+                    [Triple(Variable("repobnode"), RDF.type, DOAP.SVNRepository)])
+            if 'GIT' in options:
+                graphpatterns.append(\
+                    [Triple(Variable("repobnode"), RDF.type, DOAP.GitRepository)])
+            if 'CVS' in options:
+                graphpatterns.append(\
+                    [Triple(Variable("repobnode"), RDF.type, DOAP.CVSRepository)])
+            if 'HG' in options:
+                graphpatterns.append(\
+                    [Triple(Variable("repobnode"), RDF.type, DOAP.HgRepository)])
+        
+            if len(graphpatterns) == 1:
+                self.helper.add_triple(graphpatterns[0][0])
+            else:
+                self.helper.add_union(*graphpatterns)
