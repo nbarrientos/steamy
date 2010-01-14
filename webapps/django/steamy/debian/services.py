@@ -98,6 +98,7 @@ class SPARQLQueryBuilder():
         self._consume_maintainer()
         self._consume_version()
         self._consume_priority()
+        self._consume_comaintainer()
         self._consume_section()
         self._consume_filter()
         self.helper.set_limit(RESULTS_PER_PAGE)
@@ -232,3 +233,14 @@ class SPARQLQueryBuilder():
         keyword = self.params['section']
         if keyword:
            self.helper.add_or_filter_regex({Variable("sectionname"): keyword})
+
+    def _consume_comaintainer(self):
+        option = self.params['comaintainer']
+        if option == 'WITH':
+            self.helper.push_triple(\
+                Variable("source"), DEB.uploader, Variable("uploader"))
+        elif option == 'WITHOUT':
+            triple = Triple(\
+                Variable("source"), DEB.uploader, Variable("uploader"))
+            self.helper.add_optional(triple)
+            self.helper.add_filter_notbound(Variable("uploader"))
