@@ -66,7 +66,7 @@ class QueryStringVisitor():
         where = ''.join(map(self.visit, node.whereclause.stmts))
         modifiers = ' '.join(map(self.visit, node.modifiers))
         orderby = "%s " % self.visit(node.orderby) if node.orderby else ""
-        query = [prefix, "SELECT", ffrom, variables, " WHERE{", where, "}", orderby, modifiers] 
+        query = [prefix, "SELECT", variables, ffrom, " WHERE{", where, "}", orderby, modifiers] 
         return ''.join(query)
 
     # Tools

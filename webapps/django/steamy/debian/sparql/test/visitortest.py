@@ -170,3 +170,8 @@ class VisitorTest(unittest.TestCase):
         expected = "SELECT FROM <http://example.com/graph> WHERE{}"
         result = self.v.visit(helper.query)
         self.assertEqual(expected, result) 
+
+        helper.add_variable("var")
+        expected = "SELECT?var FROM <http://example.com/graph> WHERE{}"
+        result = self.v.visit(helper.query)
+        self.assertEqual(expected, result) 
