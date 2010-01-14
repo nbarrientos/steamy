@@ -61,3 +61,5 @@ img {
 .ui-widget-subheader { padding-bottom: 10px; padding-top: 10px; padding-left: 7px; border: 1px solid #e3a1a1; background: #cc0000 url(images/ui-bg_highlight-soft_15_cc0000_1x100.png) 50% 50% repeat-x; color: #ffffff; font-weight: bold; }
 .field-comment { font-style: italic; font-size: small; color: #404040; }
 h4.help-section { font-weight: bold; color: #004276; }
+.form-field ul { list-style-type: none; }
+.form-field li { margin-left: 0px; }
