@@ -163,3 +163,10 @@ class VisitorTest(unittest.TestCase):
         helper.add_or_filter_regex({Variable("a"): "r1", Variable("b"): "r2"})
         result = self.v.visit(helper.query, True)
         self.assertNotEqual(None, Parse(result))
+
+    def test_visit_SelectQueryFrom(self):
+        helper = SelectQueryHelper()
+        helper.set_from("http://example.com/graph")
+        expected = "SELECT FROM <http://example.com/graph> WHERE{}"
+        result = self.v.visit(helper.query)
+        self.assertEqual(expected, result) 

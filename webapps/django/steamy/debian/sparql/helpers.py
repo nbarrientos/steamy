@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 import re
 
-from rdflib import Variable
+from rdflib import Variable, URIRef
 
 from debian.sparql.miniast import * 
 from debian.sparql.visitor import QueryStringVisitor
@@ -49,6 +49,9 @@ class SelectQueryHelper():
     def push_triple_variables(self, subject, property, object):
         triple = Triple(subject, property, object)
         self.add_triple_variables(triple)
+
+    def set_from(self, uri):
+        self.query.fromgraph = URIRef(uri)
 
     def set_limit(self, value):
         self.query.modifiers.append(Limit(value))

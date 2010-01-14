@@ -77,6 +77,11 @@ class SelectQueryHelperTest(unittest.TestCase):
         self.s.set_orderby("var")
         self.assertEqual(Variable("var"), self.s.query.orderby.variable)
 
+    def test_set_from(self):
+        uri = "http://some.where/graphs/graph"
+        self.s.set_from(uri)
+        self.assertEqual(URIRef(uri), self.s.query.fromgraph)
+
     def test_str(self):
         expected = "SELECT WHERE{}"
         self.assertEqual(expected, str(self.s))

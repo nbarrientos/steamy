@@ -3,6 +3,7 @@
 class SelectQuery():
     def __init__(self, distinct=False):
         self.variables = []
+        self.fromgraph = None
         self.distinct = distinct
         self.whereclause = WhereClause()
         self.orderby = None

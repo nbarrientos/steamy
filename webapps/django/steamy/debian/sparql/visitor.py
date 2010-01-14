@@ -62,10 +62,11 @@ class QueryStringVisitor():
     def visit_SelectQuery(self, node, add_prefixes=False):
         prefix = PREFIX if add_prefixes else ""
         variables = ''.join(map(self.visit, node.variables))
+        ffrom = " FROM %s" % self.visit(node.fromgraph) if node.fromgraph is not None else ""
         where = ''.join(map(self.visit, node.whereclause.stmts))
         modifiers = ' '.join(map(self.visit, node.modifiers))
         orderby = "%s " % self.visit(node.orderby) if node.orderby else ""
-        query = [prefix, "SELECT", variables, " WHERE{", where, "}", orderby, modifiers] 
+        query = [prefix, "SELECT", ffrom, variables, " WHERE{", where, "}", orderby, modifiers] 
         return ''.join(query)
 
     # Tools
