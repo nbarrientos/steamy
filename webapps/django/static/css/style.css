@@ -1,35 +1,61 @@
-.options-group {
-	border-bottom-color: #a5a5a5;
-	border-top-color: #a5a5a5;
-	border-bottom-style: groove;
-	border-top-style: groove;
-	border-left-width: 1px;
-	border-bottom-width: 1px;
-	border-right-width: 1px;
-	border-top-width: 1px;
-	font-family: sans-serif;
-	padding: 4px;
-	margin: 3px;
+.beta {
+	font-size: small;
 }
 
-.field-label {
-	font-style: italic;
-}
-
-h2.section-title {
+.title {
+	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
 	font-size: x-large;
-	font-weight: bold;
-	color: #ff0f00;
 }
 
-#filters {
-}
-
-.toggle {
+                                                                                                                
+.subtitle {
+	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
 	font-size: large;
-	font-family: monospace;
-	color: #3f73ff;
-	border-style: none;
-	text-decoration: none;
 }
 
+/* Took from: http://www.filamentgroup.com/lab/styling_buttons_and_toolbars_with_the_jquery_ui_css_framework/ */
+.fg-button { 
+   margin-left: auto; 
+   margin-bottom: 0; 
+   margin-right: auto; 
+   margin-top: 7px; 
+   outline: 0; 
+   padding: .4em 1em; 
+   text-decoration:none !important; 
+   cursor:pointer; 
+   position: relative; 
+   text-align: center; 
+   zoom: 1; 
+}
+.submit-button {
+	text-align: center;
+}
+#id_query {
+	font-size: medium;
+	font-family: monospace;
+}
+#query-textarea {
+	margin-bottom: 4px;
+	margin-top: 4px;
+}
+.field-label {
+	font-size: medium;
+}
+.footer {
+	margin-top: 3px;
+	text-align: right;
+}
+img {
+	border: none;
+}
+.form-field {
+	padding-top: 3px;
+}
+#querystring {
+	margin-top: 3px;
+	margin-right: 10%;
+	margin-left: 10%;
+	font-size: small;
+	font-family: monospace;
+}
+.ui-widget-subheader { padding-bottom: 10px; padding-top: 10px; padding-left: 7px; border: 1px solid #e3a1a1; background: #cc0000 url(images/ui-bg_highlight-soft_15_cc0000_1x100.png) 50% 50% repeat-x; color: #ffffff; font-weight: bold; }

@@ -2,7 +2,11 @@
 
 {% block content %}
     <div class="subheader">
-        <h3>Search results {% if filter %} (query: "{{filter}}") {% endif %}</h3>
+        <div class="ui-widget-content ui-corner-all">
+		    <h3 class="subtitle ui-widget-subheader ui-corner-all">
+                Search results {% if filter %} (query: "{{filter}}") {% endif %}
+            </h3>
+	    </div>
     </div>
     {% for result in results %}
     <div class="result">
@@ -32,7 +36,12 @@
     {% empty %}
     <p>Sorry, no matches :(</p>
     {% endfor %}
-    <div class="query">
-        {{query}}
-    </div>
+    {% if query %}
+	    <div class="ui-widget-content ui-corner-all">
+		    <h3 class="subtitle ui-widget-subheader ui-corner-all">Query String</h3>
+            <div id="querystring">
+                {{query}}
+            </div>
+	    </div>
+    {% endif %}
 {% endblock %}

@@ -8,7 +8,7 @@
 <div id="tabs">
 	<ul>
 		<li><a href="#tab-search">Assisted Search</a></li>
-		<li><a href="#tab-sparql">SPARQL Query</a></li>
+		<li><a href="#tab-sparql">Write my own SPARQL Query</a></li>
 	</ul>
     <!-- Assisted search tab -->
     <div id="tab-search">
@@ -37,33 +37,13 @@
                 {{ search.area }}
             </div>
             <div class="form-field">
-                <label for="id_searchtype" class="field-label">Search type:</label>
+                <label class="field-label">Search type:</label>
                 {{ search.searchtype }}
             </div>
         </div>
 
         <h3><a href="#">Filters</a></h3>
         <div> <!-- Filters -->
-            <div class="form-field">
-                <label for="id_version" class="field-label">Version:</label>
-                {{ search.version }}
-            </div>
-            <div class="form-field">
-                <label for="id_maintainer" class="field-label">Maintainer:</label>
-                {{ search.maintainer }}
-            </div>
-            <div class="form-field">
-                <label for="id_comaintainer" class="field-label">Comaintainer:</label>
-                {{ search.comaintainer }}
-            </div>
-            <div class="form-field">
-                <label for="id_vcs" class="field-label">Maintained using:</label>
-                {{ search.vcs }}
-            </div>
-            <div class="form-field">
-                <label for="id_priority" class="field-label">Priority:</label>
-                {{ search.priority }}
-            </div>
             <div class="form-field">
                 <label for="id_section" class="field-label">Section:</label>
                 {{ search.section }}
@@ -76,12 +56,32 @@
 			        </div>
                 {% endfor %}
             </div>
+            <div class="form-field">
+                <label class="field-label">Version:</label>
+                {{ search.version }}
+            </div>
+            <div class="form-field">
+                <label class="field-label">Maintainer:</label>
+                {{ search.maintainer }}
+            </div>
+            <div class="form-field">
+                <label class="field-label">Comaintainer:</label>
+                {{ search.comaintainer }}
+            </div>
+            <div class="form-field">
+                <label class="field-label">Maintained using:</label>
+                {{ search.vcs }}
+            </div>
+            <div class="form-field">
+                <label class="field-label">Priority:</label>
+                {{ search.priority }}
+            </div>
         </div>
 
         <h3><a href="#">Output options</a></h3>
         <div> <!-- Output options -->
             <div class="form-field">
-                <label for="id_homepage" class="field-label">Show homepage (if applicable):</label>
+                <label for="id_homepage" class="field-label">Show package homepage (if applicable):</label>
                 {{ search.homepage }}
             </div>
             <div class="form-field">
@@ -89,24 +89,34 @@
                 {{ search.showquery }}
             </div>
             <div class="form-field">
-                <label for="id_sort" class="field-label">Sort method:</label>
+                <label class="field-label">Sort method:</label>
                 {{ search.sort }}
             </div>
         </div>
 
         </div> <!-- accordion -->
-        <input type="submit" class="ui-state-default ui-corner-all" value="Search"/>
+        <div class="submit-button">
+            <input type="submit" class="fg-button ui-state-default ui-corner-all" value="Get my results!"/>
+        </div>
         </form>
     </div> <!-- assisted search -->
 
     <div id="tab-sparql">
+        <div class="ui-widget">
+		    <div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;"> 
+			    <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+					LIMIT and OFFSET clauses will be ignored.</p>
+			</div>
+		</div>
+    
         <form action="{% url debian.views.sparql %}" method="post">
-            <div class="form-field">
+            <div id="query-textarea">
                 {{ sparql.query }}
             </div>
-            <input type="submit" class="ui-state-default ui-corner-all" value="Execute"/>
+            <div class="submit-button">
+                <input type="submit" class="fg-button ui-state-default ui-corner-all" value="Execute Query"/>
+            </div>
         </form>
-        <div class="note"><p>LIMIT and OFFSET clauses will be ignored<p></div>
     </div> <!-- tab SPARQL -->
 
 </div> <!-- tabs -->
