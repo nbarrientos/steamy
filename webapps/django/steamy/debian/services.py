@@ -63,6 +63,8 @@ class SPARQLQueryProcessor():
             if 'section' in result and 'sectionname' in result:
                 obj.sectionname = result['sectionname']['value']
                 obj.sectionurilink = result['section']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
+                print obj.sectionname
+                print obj.sectionurilink
             
             resultlist.append(obj)
 
@@ -237,8 +239,10 @@ class SPARQLQueryBuilder():
     def _consume_priority(self):
         option = self.params['priority']
         if option == 'ANY':
-            self.helper.push_triple_variables(\
+            self.helper.add_variable("priority")
+            triple = Triple(\
                 Variable("source"), DEB.priority, Variable("priority"))
+            self.helper.add_optional(triple)
         else:
             self.helper.push_triple(\
                 Variable("source"), DEB.priority, URIRef(option))
@@ -254,12 +258,11 @@ class SPARQLQueryBuilder():
         else:
             self.helper.add_variable("section")
             self.helper.add_variable("sectionname")
-            triple = Triple(\
+            triple1 = Triple(\
                  Variable("source"), DEB.section, Variable("section"))
-            self.helper.add_optional(triple)
-            triple = Triple(\
+            triple2 = Triple(\
                  Variable("section"), DEB.sectionName, Variable("sectionname"))
-            self.helper.add_optional(triple)
+            self.helper.add_optional(triple1, triple2)
 
     def _consume_comaintainer(self):
         option = self.params['comaintainer']

@@ -29,7 +29,7 @@
             <a href="{{result.mainturilink}}"> {% if result.maintname %}{{result.maintname}}{% endif %}&lt;{{result.maintmail}}&gt;</a>
             <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
         </li>
-        {% if result.section %}
+        {% if result.sectionname and result.sectionurilink %}
         <li>
             <span class="result-label">Section:</span>
             <a href="{{result.sectionurilink}}">{{result.sectionname}}</a>
