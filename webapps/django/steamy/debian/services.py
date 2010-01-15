@@ -27,6 +27,8 @@ class Result():
         self.homepage = None
         self.distribution = None
         self.distributionurilink = None
+        self.sectionname = None
+        self.sectionurilink = None
         self.area = None
         self.priority = None
 
@@ -58,8 +60,10 @@ class SPARQLQueryProcessor():
                     replace(RES_BASEURI, PUBBY_BASEURI)
             if 'area' in result: obj.area = result['area']['value']
             if 'priority' in result: obj.priority = result['priority']['value']
-            obj.sectionname = result['sectionname']['value']
-            obj.sectionurilink = result['section']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
+            if 'section' in result and 'sectionname' in result:
+                obj.sectionname = result['sectionname']['value']
+                obj.sectionurilink = result['section']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
+            
             resultlist.append(obj)
 
         return resultlist
@@ -136,10 +140,6 @@ class SPARQLQueryBuilder():
             Variable("version"), DEB.fullVersion, Variable("fullversion"))
         self.helper.push_triple_variables(\
             Variable("source"), DEB.packageName, Variable("sourcename"))
-        self.helper.push_triple(\
-             Variable("source"), DEB.section, Variable("section"))
-        self.helper.push_triple_variables(\
-             Variable("section"), DEB.sectionName, Variable("sectionname"))
  
         if self.params['searchtype'] in ('BINARY', 'BINARYDESC'):
             self.helper.push_triple_variables(\
@@ -246,7 +246,20 @@ class SPARQLQueryBuilder():
     def _consume_section(self):
         keyword = self.params['section']
         if keyword:
-           self.helper.add_or_filter_regex({Variable("sectionname"): keyword})
+            self.helper.push_triple(\
+                Variable("source"), DEB.section, Variable("section"))
+            self.helper.push_triple_variables(\
+                 Variable("section"), DEB.sectionName, Variable("sectionname"))
+            self.helper.add_or_filter_regex({Variable("sectionname"): keyword})
+        else:
+            self.helper.add_variable("section")
+            self.helper.add_variable("sectionname")
+            triple = Triple(\
+                 Variable("source"), DEB.section, Variable("section"))
+            self.helper.add_optional(triple)
+            triple = Triple(\
+                 Variable("section"), DEB.sectionName, Variable("sectionname"))
+            self.helper.add_optional(triple)
 
     def _consume_comaintainer(self):
         option = self.params['comaintainer']
