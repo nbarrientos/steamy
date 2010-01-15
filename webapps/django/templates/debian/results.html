@@ -1,8 +1,36 @@
 {% extends "debian/base.html" %}
 
 {% block content %}
-    <div class="subheader">
-        <h3>Query results:</h3>
+    <div class="result-search-again">
+    <a href="{% url debian.views.index %}" class="fg-button ui-state-default
+    ui-corner-all">Search again</a>
     </div>
-    {{ results|safe }}
+    <div class="subheader">
+        <div class="ui-widget-content ui-corner-all">
+		    <h3 class="subtitle ui-widget-subheader ui-corner-all">SPARQL query results</h3>
+	    </div>
+    </div>
+    {% if results %}
+        <table id="sparql-table">
+        <th>#</th>
+        {% for var in variables %}
+            <th>{{ var }}</th>
+        {% endfor %}
+        {% for result in results %}
+            {% spaceless %}
+            <tr>
+            <td class="sparql-table-resno">{{ forloop.counter }}</td>
+            {% for value in result %}
+                <td>{{ value|default_if_none:""|safe }}</td>
+            {% endfor %}
+            </tr>
+            {% endspaceless %}
+        {% endfor %}
+        </table>
+    {% else %}
+        <div class="no-matches">
+            I'm sorry but no package matches your criteria. Why don't you 
+            <a href="{% url debian.views.index %}">try again?</a>
+        </div>
+    {% endif %}
 {% endblock %}

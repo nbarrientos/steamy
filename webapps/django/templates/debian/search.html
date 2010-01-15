@@ -8,7 +8,7 @@
 <div id="tabs">
 	<ul>
 		<li><a href="#tab-search">Assisted Search</a></li>
-		<li><a href="#tab-sparql">Write my own SPARQL Query</a></li>
+		<li><a href="#tab-sparql">Write your own SPARQL Query</a></li>
 		<li><a href="#tab-help">How does it work?</a></li>
 	</ul>
     <!-- Assisted search tab -->
@@ -112,12 +112,23 @@
         <div class="ui-widget">
 		    <div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;"> 
 			    <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
-					LIMIT and OFFSET clauses will be ignored.</p>
+					Looking for examples? Click help tab!</p>
 			</div>
 		</div>
     
         <form action="{% url debian.views.sparql %}" method="post">
-            <div id="query-textarea">
+            <div class="query-textarea">
+            <label for="id_ns" class="field-label">Prefixes</label>
+                <span class="field-comment">
+                    (you won't probably need to modify this)
+                </span>
+                {{ sparql.ns }}
+            </div>
+            <div class="query-textarea">
+            <label for="id_query" class="field-label">Query</label>
+                <span class="field-comment">
+                    (edit the default query as you wish)
+                </span>
                 {{ sparql.query }}
             </div>
             <div class="submit-button">
@@ -128,6 +139,8 @@
 
     <div id="tab-help">
         <h4 class="help-section">Introduction</h4>
+        <p>I don't really know how this works.</p>
+        <h4 class="help-section">SPARQL Examples</h4>
         <p>I don't really know how this works.</p>
     </div> <!-- tab help -->
 

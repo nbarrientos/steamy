@@ -5,6 +5,7 @@ from django import forms
 from django.shortcuts import render_to_response
 
 from debian.config import SPARQL_PREFIXES, RES_BASEURI, ONT_URI 
+from debian.config import DEFAULT_QUERY
 from debian.services import SPARQLQueryBuilder, SPARQLQueryProcessor
 
 DIST_OPTS = (
@@ -96,13 +97,5 @@ class SearchForm(forms.Form):
         max_length=20, required=False)
 
 class SPARQLForm(forms.Form):
-    default = SPARQL_PREFIXES + """
-SELECT ?source ?maintainer
-FROM <http://data.fundacionctic.org/idi/debian>
-WHERE {
-    ?source a deb:Source ;
-      deb:maintainer ?maintainer ;
-      deb:packageName "acl" .
-}"""
-    attrs = {'rows': '25', 'cols': '100'}
-    query = forms.CharField(label=None, initial=default, widget=widgets.Textarea(attrs=attrs))
+    ns = forms.CharField(label=None, initial=SPARQL_PREFIXES, widget=widgets.Textarea())
+    query = forms.CharField(label=None, initial=DEFAULT_QUERY, widget=widgets.Textarea())

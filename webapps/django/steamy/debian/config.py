@@ -13,8 +13,26 @@ PREFIX tag:<http://www.holygoat.co.uk/owl/redwood/0.1/tags#>
 PREFIX foaf:<http://xmlns.com/foaf/0.1/>
 PREFIX doap:<http://usefulinc.com/ns/doap#>"""
 
+#FROM <http://data.fundacionctic.org/idi/debian>
+DEFAULT_QUERY = """
+SELECT ?binaryname ?fullversion ?sourcename ?maintainername ?distribution 
+WHERE {
+    ?source a deb:Source ;
+            deb:packageName ?sourcename ;
+            deb:distribution ?distribution ;
+            deb:binary ?binary ;
+            deb:maintainer ?maintainer ;
+            deb:versionNumber ?version .
+    ?binary a deb:Binary ;
+            deb:packageName ?binaryname .
+    ?version a deb:VersionNumber ;
+            deb:fullVersion ?fullversion .
+    ?maintainer foaf:name ?maintainername .
+    FILTER regex(?binaryname, "^ab.*") .
+}"""
+
 ONT_URI = "http://idi.fundacionctic.org/steamy/debian.owl#"
 RES_BASEURI = "http://rdf.debian.net"
 PUBBY_BASEURI = "http://192.168.62.129:8180/pubby/resource"
 
-RESULTS_PER_PAGE = 50
+RESULTS_PER_PAGE = 100

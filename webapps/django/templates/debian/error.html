@@ -2,8 +2,17 @@
 
 {% block content %}
     <div class="subheader">
-        <h3>Try your own SPARQL query!</h3>
+        <div class="ui-widget-content ui-corner-all">
+		    <h3 class="subtitle ui-widget-subheader ui-corner-all">SPARQL query error</h3>
+	    </div>
     </div>
-    <p>Ooops, couldn't execute query: {{ reason }}<p>
-    <p><a href="{% url debian.views.sparql %}">Try again</a></p>
+   <div class="ui-widget">
+                    <div class="ui-state-error ui-corner-all" style="padding: 0 .7em; margin-bottom: .3em;"> 
+                    <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+                    <strong>Couldn't execute query:</strong> {{ reason }}</p>
+                    </div>
+   </div>
+    <p>
+    <a href="{% url debian.views.index %}" class="fg-button ui-state-default ui-corner-all">Try again</a>
+    </p>
 {% endblock %}

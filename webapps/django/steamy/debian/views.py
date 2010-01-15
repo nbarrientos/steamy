@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
+from django.utils.encoding import smart_str
 
 from debian.forms import SPARQLForm, SearchForm
 from debian.services import SPARQLQueryProcessor, SPARQLQueryBuilder
@@ -16,15 +17,16 @@ def sparql(request):
     if request.method == 'POST':
         f = SPARQLForm(request.POST)
         f.is_valid()
-        
+        query = f.cleaned_data['ns'] + f.cleaned_data['query']
         processor = SPARQLQueryProcessor()
         try:
-            processor.execute_query((f.cleaned_data['query']))
+            processor.execute_query(smart_str(query))
         except SyntaxError, e:
             return render_to_response('debian/error.html', {'reason': e.msg})
 
-        htmlresults = processor.format_htmltable()
-        return render_to_response('debian/results.html', {'results': htmlresults})
+        (variables, results) = processor.format_sparql_results()
+        dict = {'variables': variables, 'results': results}
+        return render_to_response('debian/results.html', dict)
     else:
         return HttpResponse("405 - Method not allowed", status=405)
 
@@ -41,7 +43,6 @@ def results(request):
         processor = SPARQLQueryProcessor()
         query = builder.create_query()
 
-        print query # FIXME
         processor.execute_sanitized_query(query)
         if builder.source_search:
             results = processor.format_source_results()

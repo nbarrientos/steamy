@@ -21,7 +21,6 @@ NFO = Namespace(u"http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#")
 TAG = Namespace(u"http://www.holygoat.co.uk/owl/redwood/0.1/tags/")
 DOAP = Namespace(u"http://usefulinc.com/ns/doap#")
 
-
 class Result():
     def __init__(self):
         self.maintname = None
@@ -65,26 +64,28 @@ class SPARQLQueryProcessor():
 
         return resultlist
 
-    def format_htmltable(self):
-        html = "<table>"
-        for var in self.results['head']['vars']:
-            html = html + "<th>%s</th>" % var
+    def format_sparql_results(self):
+        resultlist = []
+        variables = self.results['head']['vars']
 
         for result in self.results['results']['bindings']:
-            html = html + "<tr>"
-            for var in self.results['head']['vars']:
-                html = html + "<td>%s</td>" % result[var]['value']
-            html = html + "</tr>"
+            values = []
+            for var in variables:
+                if var in result:
+                    values.append(result[var]['value'])
+                else:
+                    values.append(None)
 
-        html = html + "</table>"
+            resultlist.append(values)
 
-        return html
+        return (variables, resultlist)
 
     def _clean_query(self, query):
         return re.sub("LIMIT.*|OFFSET.*", "", query) + "LIMIT " + str(RESULTS_PER_PAGE)
 
     def execute_sanitized_query(self, query):
         self._init_endpoint()
+        print query # FIXME
         self.results = self._query_endpoint(query)
 
     def execute_query(self, query):

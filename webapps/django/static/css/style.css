@@ -30,14 +30,32 @@
 .submit-button {
 	text-align: center;
 }
+#id_ns {
+	margin: 1px;
+	color: #767676;
+	border-color: #cc0000;
+	border-width: 1px;
+	border-style: solid;
+	height: 100px;
+	width: 100%;
+	font-size: small;
+	font-family: monospace;
+}
 #id_query {
+	margin: 1px;
+	border-color: #cc0000;
+	border-width: 1px;
+	border-style: solid;
+	height: 250px;
+	width: 100%;
 	font-size: medium;
 	font-family: monospace;
 }
-#query-textarea {
-	margin-bottom: 4px;
-	margin-top: 4px;
+.query-textarea {
+	margin-bottom: 7px;
+	margin-top: 7px;
 }
+#tab-sparql { width: 70%; }
 .field-label {
 	font-size: medium;
 }
@@ -64,7 +82,7 @@ img {
 h4.help-section { font-weight: bold; color: #004276; }
 .form-field ul { margin-top: -1px; list-style-type: none; }
 .form-field li { margin-left: 0px; }
-input[type="text"] { display: block; font-family: "Lucida Grande", Verdana, Arial, sans-serif; background-color: #ffeded; border-width: 1px; border-color: #cc0000; border-style: solid; }
+.form-field input[type="text"] { display: block; font-family: "Lucida Grande", Verdana, Arial, sans-serif; background-color: #ffeded; border-width: 1px; border-color: #cc0000; border-style: solid; }
 .result-header { width: 70%; border-bottom-color: #cc0000; border-bottom-width: 1px; border-bottom-style: dashed; margin-left: 2em; }
 .result-number { color: #cc0000; font-weight: bold; font-size: x-large; }
 .result { font-family: "Lucida Grande", Verdana, Arial, sans-serif; }
@@ -73,3 +91,7 @@ input[type="text"] { display: block; font-family: "Lucida Grande", Verdana, Aria
 .result-label { font-style: italic; }
 .result-search-again { margin-bottom: 10px; margin-top: 10px; text-align: right; }
 .no-matches { margin-bottom: 10px; font-weight: bold; font-size: large; font-family: "Lucida Grande", Verdana, Arial, sans-serif; padding-bottom: 3px; padding-left: 7px; padding-top: 3px; margin-top: 10px; }
+#sparql-table { font-family: "Lucida Grande", Verdana, Arial, sans-serif; font-size: x-small; }
+#sparql-table th { text-align: center; text-transform: uppercase; font-size: small; color: white; background-color: #cc0000; }
+#sparql-table tr { background-color: #ffe4e9; }
+td.sparql-table-resno { text-align: right; font-weight: bold; }
