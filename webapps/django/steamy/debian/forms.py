@@ -79,6 +79,7 @@ class SearchForm(forms.Form):
         widget=widgets.RadioSelect, choices=SEARCHTYPE_OPTS)
     filter = forms.RegexField(regex=re.compile(r"^[-a-zA-Z0-9+.]*$"),\
         max_length=30, required=False)
+    exactmatch = forms.BooleanField(required=False)
     priority = forms.ChoiceField(choices=PRIORITY_OPTS)
     maintainer = forms.ChoiceField(initial="ALL",\
         widget=widgets.RadioSelect, choices=MAINT_OPTS)

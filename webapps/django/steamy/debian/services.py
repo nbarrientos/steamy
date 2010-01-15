@@ -152,6 +152,9 @@ class SPARQLQueryBuilder():
     def _consume_filter(self):
         filter = self.params['filter']
         if filter:
+            filter = re.escape(filter).replace("\\", "\\\\")
+            if self.params['exactmatch']: 
+                filter = ''.join(['^', filter, '$'])
             if self.binary_search:
                 if self.params['searchtype'] == 'BINARYEXT':
                     self.helper.push_triple(\
@@ -212,7 +215,7 @@ class SPARQLQueryBuilder():
         if option == 'TEAM':
             self.helper.push_triple(Variable("maint"), RDF.type, FOAF.Group)
         elif option == 'DEBIAN':
-            self.helper.add_or_filter_regex({Variable("maintmail"): "@debian.org$"}, False)
+            self.helper.add_or_filter_regex({Variable("maintmail"): "@debian.org$"})
         elif option == 'QA':
             uriref = URIRef(RES_BASEURI + "/team/packages%40qa.debian.org")
             self.helper.push_triple(Variable("source"), DEB.maintainer, uriref) 
@@ -230,7 +233,7 @@ class SPARQLQueryBuilder():
                 Variable("version"), DEB.upstreamVersion, Variable("upstreamVersion"))
             restrictions = {Variable("debianRevision"): ".*\\\..*",\
                             Variable("upstreamVersion"): ".*\\\+nmu.*"}
-            self.helper.add_or_filter_regex(restrictions, False)
+            self.helper.add_or_filter_regex(restrictions)
         if 'EPOCH' in options:
             self.helper.push_triple(Variable("version"), DEB.epoch, Variable("epoch"))
 
@@ -248,6 +251,7 @@ class SPARQLQueryBuilder():
     def _consume_section(self):
         keyword = self.params['section']
         if keyword:
+            keyword = re.escape(keyword).replace("\\", "\\\\")
             self.helper.push_triple(\
                 Variable("source"), DEB.section, Variable("section"))
             self.helper.push_triple_variables(\

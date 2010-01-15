@@ -66,11 +66,9 @@ class SelectQueryHelper():
         v = QueryStringVisitor()
         return v.visit(self.query) 
 
-    def add_or_filter_regex(self, dict, userinput=True):
+    def add_or_filter_regex(self, dict):
         nodes = []
         for variable,regex in dict.items():
-            if userinput:
-                regex = re.escape(regex).replace("\\", "\\\\")
             nodes.append(FunCall("regex", [variable, '"%s"' % regex, '"i"']))
         self.add_filter(self._build_fixed_operator_tree("||", nodes))
 
