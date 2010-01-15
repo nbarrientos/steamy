@@ -145,6 +145,8 @@ class BaseParser():
     browser = None
     if 'Vcs-Browser' in raw:
       browser = raw['Vcs-Browser']
+    elif 'X-Vcs-Browser' in raw:
+      browser = raw['X-Vcs-Browser']
 
     if 'Vcs-Git' in raw:
       return GitRepository(browser, raw['Vcs-Git'])
@@ -162,6 +164,22 @@ class BaseParser():
       return ArchRepository(browser, raw['Vcs-Arch'])
     elif 'Vcs-Mtn' in raw:
       return Repository(browser, raw['Vcs-Mtn'])
+    elif 'X-Vcs-Git' in raw:
+      return GitRepository(browser, raw['X-Vcs-Git'])
+    elif 'X-Vcs-Svn' in raw:
+      return SvnRepository(browser, raw['X-Vcs-Svn'])
+    elif 'X-Vcs-Bzr' in raw:
+      return BzrRepository(browser, raw['X-Vcs-Bzr'])
+    elif 'X-Vcs-Darcs' in raw:
+      return DarcsRepository(browser, raw['X-Vcs-Darcs'])
+    elif 'X-Vcs-Hg' in raw:
+      return HgRepository(browser, raw['X-Vcs-Hg'])
+    elif 'X-Vcs-Cvs' in raw:
+      return CvsRepository(browser, raw['X-Vcs-Cvs'])
+    elif 'X-Vcs-Arch' in raw:
+      return ArchRepository(browser, raw['X-Vcs-Arch'])
+    elif 'X-Vcs-Mtn' in raw:
+      return Repository(browser, raw['X-Vcs-Mtn'])
 
     if browser is not None:
       return Repository(browser, None)

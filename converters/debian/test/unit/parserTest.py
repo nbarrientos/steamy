@@ -664,6 +664,13 @@ class BaseParserTest(unittest.TestCase):
     self.assertNotEqual(None, repo)
     self.assertEqual("http://example.com", repo.browser)
     self.assertEqual("git://git.example.com", repo.uri)
+ 
+    input = {'X-Vcs-Browser':'http://example.com', \
+    'X-Vcs-Git':'git://git.example.com'}
+    repo = self.parser.parseVcs(input)
+    self.assertNotEqual(None, repo)
+    self.assertEqual("http://example.com", repo.browser)
+    self.assertEqual("git://git.example.com", repo.uri)
   
     input = {'Vcs-Browser':'http://example.com', \
     'Vcs-Svn':'svn://svn.example.com/repos/test'}
@@ -683,7 +690,7 @@ class BaseParserTest(unittest.TestCase):
     self.assertNotEqual(None, repo)
     self.assertEqual("http://example.com", repo.browser)
     self.assertEqual(None, repo.uri)
-  
+    
     input = {}
     repo = self.parser.parseVcs(input)
     self.assertEqual(None, repo)
