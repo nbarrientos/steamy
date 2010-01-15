@@ -50,7 +50,7 @@ class SPARQLQueryProcessor():
             obj.sourceurilink = result['source']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             obj.usourceurilink = result['unversionedsource']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             obj.fullversion = result['fullversion']['value']
-            if 'maintname' in result: obj.maintname = result['maintname']['value'] 
+            if 'maintname' in result: obj.maintname = result['maintname']['value']
             obj.maintmail = result['maintmail']['value']
             obj.mainturilink = result['maint']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             if 'homepage' in result: obj.homepage = result['homepage']['value'] 
@@ -63,8 +63,6 @@ class SPARQLQueryProcessor():
             if 'section' in result and 'sectionname' in result:
                 obj.sectionname = result['sectionname']['value']
                 obj.sectionurilink = result['section']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
-                print obj.sectionname
-                print obj.sectionurilink
             
             resultlist.append(obj)
 
