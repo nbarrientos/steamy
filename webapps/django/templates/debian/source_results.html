@@ -3,7 +3,8 @@
 {% block content %}
     <div class="result-search-again">
     <a href="{% url debian.views.index %}" class="fg-button ui-state-default
-    ui-corner-all">Search again</a>
+    ui-corner-all">Start a new search
+    <span class="ui-icon ui-icon-refresh" style="display: inline-block;"></span></a>
     </div>
     <div class="subheader">
         <div class="ui-widget-content ui-corner-all">
@@ -15,34 +16,49 @@
     {% for result in results %}
     <div class="result">
         <div class="result-header">
-        <span class="result-number">{{forloop.counter}}.</span>
+        <span class="result-number">#{{forloop.counter}}</span>
         <span style="font-weight:bold">
             <a href="{{result.sourceurilink}}">{{result.sourcename}} ({{result.fullversion}})</a>
         </span>
         is version of <a href="{{result.usourceurilink}}">{{result.sourcename}}</a>
+        <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
         </div>
         <ul>
-        <li><span class="result-label">Maintainer:</span>
-            <a href="{{result.mainturilink}}">
-            {% if result.maintname %}{{result.maintname}}{% endif %}
-            &lt;{{result.maintmail}}&gt;</a></li>
-        <li><span class="result-label">Section:</span>
-            <a href="{{result.sectionurilink}}">{{result.sectionname}}</a></li>
+        <li>
+            <span class="result-label">Maintainer:</span>
+            <a href="{{result.mainturilink}}"> {% if result.maintname %}{{result.maintname}}{% endif %}&lt;{{result.maintmail}}&gt;</a>
+            <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
+        </li>
+        <li>
+            <span class="result-label">Section:</span>
+            <a href="{{result.sectionurilink}}">{{result.sectionname}}</a>
+            <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
+        </li>
         {% if result.homepage %}
-            <li><span class="result-label">Homepage:</span> 
-            <a href="{{result.homepage}}">{{result.homepage}}</a></li>
+        <li>
+            <span class="result-label">Homepage:</span> 
+            <a href="{{result.homepage}}">{{result.homepage}}</a>
+            <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
+        </li>
         {% endif %}
         {% if result.distribution %}
-            <li><span class="result-label">Distribution:</span> 
-                <a href="{{result.distributionurilink}}">{{result.distribution}}</a></li>
+        <li>
+            <span class="result-label">Distribution:</span> 
+            <a href="{{result.distributionurilink}}">{{result.distribution}}</a>
+            <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
+        </li>
         {% endif %}
         {% if result.area %}
-            <li><span class="result-label">Area:</span> 
-                {{result.area}}</li>
+        <li>
+            <span class="result-label">Area:</span> 
+            {{result.area}}
+        </li>
         {% endif %}
         {% if result.priority %}
-            <li><span class="result-label">Priority:</span> 
-                {{result.priority}}</li>
+        <li>
+            <span class="result-label">Priority:</span> 
+            {{result.priority}}
+        </li>
         {% endif %}
         </ul>
     </div>

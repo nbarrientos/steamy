@@ -1,5 +1,7 @@
 .beta {
+	margin-left: 2px;
 	font-size: small;
+	vertical-align:top;
 }
 
 .title {
@@ -8,12 +10,13 @@
 }
 
                                                                                                                 
+.title a { text-transform: none; text-decoration: none; }
 .subtitle {
 	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
 	font-size: large;
 }
 
-/* Took from: http://www.filamentgroup.com/lab/styling_buttons_and_toolbars_with_the_jquery_ui_css_framework/ */
+/* From: http://www.filamentgroup.com/lab/styling_buttons_and_toolbars_with_the_jquery_ui_css_framework/ */
 .fg-button { 
    margin-left: auto; 
    margin-bottom: 0; 
@@ -71,6 +74,10 @@ img {
 	padding-top: 3px;
 }
 #querystring {
+	padding: 4px;
+	border-width: 1px;
+	border-color: #cc0000;
+	border-style: dashed;
 	margin-top: 3px;
 	margin-right: 10%;
 	margin-left: 10%;
