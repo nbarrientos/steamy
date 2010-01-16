@@ -68,11 +68,11 @@ class VisitorTest(unittest.TestCase):
         self.assertEqual(expected, self.v.visit(self.triple2))
 
     def test_visit_Optional(self):
-        optional = Optional([self.triple3])
+        optional = Optional(self.triple3)
         expected = "OPTIONAL{?v1 ?v2 ?v3.}"
         self.assertEqual(expected, self.v.visit(optional))
 
-        optional = Optional([self.triple3, self.triple3])
+        optional = Optional(self.triple3, self.triple3)
         expected = "OPTIONAL{?v1 ?v2 ?v3.?v1 ?v2 ?v3.}"
         self.assertEqual(expected, self.v.visit(optional))
 
@@ -113,6 +113,21 @@ class VisitorTest(unittest.TestCase):
         b2 = BinaryExpression(f1, "||", b1)
         expected = 'regex(?v1,r1)||regex(?v2,r2)||regex(?v3,r3)'
         self.assertEqual(expected, self.v.visit(b2))
+
+    def test_visit_UnaryExpression(self):
+        u2 = UnaryExpression(Variable("var1"), "!")
+        u1 = UnaryExpression(u2, "!")
+        expected = "!!?var1"
+        self.assertEqual(expected, self.v.visit(u1))
+
+    def test_visit_FunCall(self):
+        fc1 = FunCall("symbol", Variable("v1"), '"string"')
+        expected = 'symbol(?v1,"string")'
+        self.assertEqual(expected, self.v.visit(fc1))
+
+        fc2 = FunCall("symbol")
+        expected = 'symbol()'
+        self.assertEqual(expected, self.v.visit(fc2))
 
     def test_visit_SelectQuery(self):
         st2 = Triple(Variable("d"), Variable("e"), Variable("f"))

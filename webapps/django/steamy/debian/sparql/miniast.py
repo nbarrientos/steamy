@@ -16,8 +16,11 @@ class WhereClause():
 
 
 class Optional():
-    def __init__(self, triples):
+    def __init__(self, *triples):
         self.stmts = triples
+
+    def __eq__(self, other):
+        return self.stmts == other.stmts
 
 
 class Union():
@@ -28,6 +31,9 @@ class Union():
 class Filter():
     def __init__(self, expr):
         self.expr = expr
+
+    def __eq__(self, other):
+        return self.expr == other.expr
 
 
 class BinaryExpression():
@@ -49,6 +55,9 @@ class UnaryExpression():
         self.expr = expr
         self.operator = operator
 
+    def __eq__(self, other):
+        return self.expr == other.expr and \
+                self.operator == other.operator
 
 class FunCall():
     def __init__(self, function, *args):

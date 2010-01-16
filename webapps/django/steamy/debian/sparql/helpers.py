@@ -20,13 +20,12 @@ class SelectQueryHelper():
                                 self.query.whereclause.stmts):
             self.query.whereclause.stmts.append(triple)
 
-    # TESTME
     def push_triple(self, subject, property, object):
         triple = Triple(subject, property, object)
         self.add_triple(triple)
 
     def add_optional(self, *args):
-        self.query.whereclause.stmts.append(Optional(list(args)))
+        self.query.whereclause.stmts.append(Optional(*args))
 
     def add_filter(self, expr):
         self.query.whereclause.stmts.append(Filter(expr))
@@ -45,7 +44,6 @@ class SelectQueryHelper():
             if isinstance(v, Variable):
                 self.add_variable(v)
 
-    # TESTME
     def push_triple_variables(self, subject, property, object):
         triple = Triple(subject, property, object)
         self.add_triple_variables(triple)
