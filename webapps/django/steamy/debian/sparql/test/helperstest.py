@@ -87,12 +87,13 @@ class SelectQueryHelperTest(unittest.TestCase):
         self.assertEqual(expected, str(self.s))
 
     def test_add_or_filter_regex(self):
-        self.s.add_or_filter_regex({"a": "a1", "b": "b1", "c": "c1"}, False)
+        self.s.add_or_filter_regex({"a": "a1", "b": "b1", "c": "c1"})
         self.assertEqual(1, len(self.s.query.whereclause.stmts))
         self.assertEqual(Filter, self.s.query.whereclause.stmts[0].__class__)
         self.assertEqual(BinaryExpression, self.s.query.whereclause.stmts[0].expr.__class__)
+        self.assertEqual(BinaryExpression, self.s.query.whereclause.stmts[0].expr.rhs.__class__)
 
-        self.s.add_or_filter_regex({"a": "a1"}, False)
+        self.s.add_or_filter_regex({"a": "a1"})
         self.assertEqual(2, len(self.s.query.whereclause.stmts))
         self.assertEqual(FunCall, self.s.query.whereclause.stmts[1].expr.__class__)
 
