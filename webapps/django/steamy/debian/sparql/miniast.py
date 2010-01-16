@@ -58,6 +58,8 @@ class FunCall():
     def __str__(self):
         return "%s(%s)" % (self.function, self.args)
 
+    def __eq__(self, other):
+        return self.function == other.function and self.args == other.args
 
 class Triple():
     def __init__(self, subject=None, property=None, object=None):
