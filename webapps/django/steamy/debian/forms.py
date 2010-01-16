@@ -68,7 +68,6 @@ VCS_OPTS = (
 
 SORT_OPTS = (
     ('PACKAGE', 'Package name'),
-    ('MAINTNAME', 'Maintainer name'),
     ('MAINTMAIL', 'Maintainer email'),
 )
 

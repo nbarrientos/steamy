@@ -23,7 +23,6 @@ DOAP = Namespace(u"http://usefulinc.com/ns/doap#")
 
 class Result():
     def __init__(self):
-        self.maintname = None
         self.homepage = None
         self.distribution = None
         self.distributionurilink = None
@@ -31,6 +30,21 @@ class Result():
         self.sectionurilink = None
         self.area = None
         self.priority = None
+
+    # Inspired by: http://www.peterbe.com/plog/uniqifiers-benchmark
+    @staticmethod
+    def remove_duplicates(seq, hashfun):
+        seen = {}
+        filtered = []
+        for element in seq:
+            hash = hashfun(element)
+            if hash in seen:
+                continue
+            else:
+                seen[hash] = True
+                filtered.append(element)
+
+        return filtered
 
 
 class SPARQLQueryProcessor():
@@ -50,7 +64,6 @@ class SPARQLQueryProcessor():
             obj.sourceurilink = result['source']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             obj.usourceurilink = result['unversionedsource']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             obj.fullversion = result['fullversion']['value']
-            if 'maintname' in result: obj.maintname = result['maintname']['value']
             obj.maintmail = result['maintmail']['value']
             obj.mainturilink = result['maint']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             if 'homepage' in result: obj.homepage = result['homepage']['value'] 
@@ -82,7 +95,6 @@ class SPARQLQueryProcessor():
             obj.binaryname = result['binaryname']['value']
             obj.binaryurilink = result['binary']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             obj.ubinaryurilink = result['unversionedbinary']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
-            if 'maintname' in result: obj.maintname = result['maintname']['value']
             obj.maintmail = result['maintmail']['value']
             obj.mainturilink = result['maint']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             if 'homepage' in result: obj.homepage = result['homepage']['value'] 
@@ -163,9 +175,6 @@ class SPARQLQueryBuilder():
             Variable("unversionedsource"), DEB.version, Variable("source"))
         self.helper.push_triple(\
             Variable("source"), DEB.maintainer, Variable("maint"))
-        self.helper.add_variable("maintname")
-        self.helper.add_optional(\
-            Triple(Variable("maint"), FOAF.name, Variable("maintname")))
         self.helper.push_triple_variables(\
             Variable("maint"), FOAF.mbox, Variable("maintmail"))
         self.helper.push_triple_variables(\
@@ -231,9 +240,7 @@ class SPARQLQueryBuilder():
 
     def _consume_sort(self):
         sort = self.params['sort']
-        if sort == 'MAINTNAME':
-            self.helper.set_orderby("maintname")
-        elif sort == 'MAINTMAIL':
+        if sort == 'MAINTMAIL':
             self.helper.set_orderby("maintmail")
         else:
             if self.binary_search:
