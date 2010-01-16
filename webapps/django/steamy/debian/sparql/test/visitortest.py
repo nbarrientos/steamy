@@ -190,3 +190,10 @@ class VisitorTest(unittest.TestCase):
         expected = "SELECT?var FROM <http://example.com/graph> WHERE{}"
         result = self.v.visit(helper.query)
         self.assertEqual(expected, result) 
+
+    def test_visit_SelectQueryDistinct(self):
+        helper = SelectQueryHelper()
+        helper.set_distinct()
+        expected = "SELECT DISTINCT WHERE{}"
+        result = self.v.visit(helper.query)
+        self.assertEqual(expected, result) 

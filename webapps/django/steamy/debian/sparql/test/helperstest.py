@@ -109,6 +109,10 @@ class SelectQueryHelperTest(unittest.TestCase):
         uri = "http://some.where/graphs/graph"
         self.s.set_from(uri)
         self.assertEqual(URIRef(uri), self.s.query.fromgraph)
+    
+    def test_set_distinct(self):
+        self.s.set_distinct()
+        self.assertEqual(True, self.s.query.distinct)
 
     def test_str(self):
         expected = "SELECT WHERE{}"

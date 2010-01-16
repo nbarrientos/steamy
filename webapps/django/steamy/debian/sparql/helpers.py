@@ -60,6 +60,9 @@ class SelectQueryHelper():
     def set_orderby(self, varname):
         self.query.orderby = Orderby(Variable(varname))
 
+    def set_distinct(self):
+        self.query.distinct = True
+
     def __str__(self):
         v = QueryStringVisitor()
         return v.visit(self.query) 

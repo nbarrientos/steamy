@@ -153,6 +153,7 @@ class SPARQLQueryBuilder():
         self._consume_section()
         self._consume_filter()
         self.helper.set_limit(RESULTS_PER_PAGE)
+        self.helper.set_distinct()
         return self.helper.__str__()
 
     def _add_base_elements(self):
