@@ -63,7 +63,40 @@ class SPARQLQueryProcessor():
             if 'section' in result and 'sectionname' in result:
                 obj.sectionname = result['sectionname']['value']
                 obj.sectionurilink = result['section']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
-            
+            if 'binary' in result and 'binaryname' in result:
+                obj.binaryurilink = result['binary']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
+                obj.binaryname = result['binaryname']['value']
+                obj.ubinaryurilink = result['unversionedbinary']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
+
+            resultlist.append(obj)
+
+        return resultlist
+
+    def format_binary_results(self):
+        resultlist = []
+        for result in self.results['results']['bindings']:
+            obj = Result()
+            obj.sourcename = result['sourcename']['value']
+            obj.sourceurilink = result['source']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
+            obj.fullversion = result['fullversion']['value']
+            obj.binaryname = result['binaryname']['value']
+            obj.binaryurilink = result['binary']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
+            obj.ubinaryurilink = result['unversionedbinary']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
+            if 'maintname' in result: obj.maintname = result['maintname']['value']
+            obj.maintmail = result['maintmail']['value']
+            obj.mainturilink = result['maint']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
+            if 'homepage' in result: obj.homepage = result['homepage']['value'] 
+            if 'distribution' in result: 
+                obj.distribution = result['distribution']['value']
+                obj.distributionurilink = result['distribution']['value'].\
+                    replace(RES_BASEURI, PUBBY_BASEURI)
+            if 'area' in result: obj.area = result['area']['value']
+            if 'priority' in result: obj.priority = result['priority']['value']
+            if 'section' in result and 'sectionname' in result:
+                obj.sectionname = result['sectionname']['value']
+                obj.sectionurilink = result['section']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
+            obj.synopsis = result['synopsis']['value']
+
             resultlist.append(obj)
 
         return resultlist
@@ -148,6 +181,10 @@ class SPARQLQueryBuilder():
                 Variable("source"), DEB.binary, Variable("binary"))
             self.helper.push_triple_variables(\
                 Variable("binary"), DEB.packageName, Variable("binaryname"))
+            self.helper.push_triple_variables(\
+                Variable("unversionedbinary"), DEB.version, Variable("binary"))
+            self.helper.push_triple_variables(\
+                Variable("binary"), DEB.synopsis, Variable("synopsis"))
 
     def _consume_filter(self):
         filter = self.params['filter']
@@ -241,27 +278,51 @@ class SPARQLQueryBuilder():
         option = self.params['priority']
         if option == 'ANY':
             self.helper.add_variable("priority")
-            triple = Triple(\
-                Variable("source"), DEB.priority, Variable("priority"))
+            if self.binary_search:
+                triple = Triple(\
+                    Variable("binary"), DEB.priority, Variable("priority"))
+            elif self.source_search:
+                triple = Triple(\
+                    Variable("source"), DEB.priority, Variable("priority"))
+            else:
+                raise Exception()  # FIXME
             self.helper.add_optional(triple)
         else:
-            self.helper.push_triple(\
-                Variable("source"), DEB.priority, URIRef(option))
+            if self.binary_search:
+                self.helper.push_triple(\
+                    Variable("binary"), DEB.priority, URIRef(option))
+            elif self.source_search:
+                self.helper.push_triple(\
+                    Variable("source"), DEB.priority, URIRef(option))
+            else:
+                raise Exception()  # FIXME
 
     def _consume_section(self):
         keyword = self.params['section']
         if keyword:
             keyword = re.escape(keyword).replace("\\", "\\\\")
-            self.helper.push_triple(\
-                Variable("source"), DEB.section, Variable("section"))
+            if self.binary_search:
+                self.helper.push_triple(\
+                    Variable("binary"), DEB.section, Variable("section"))
+            elif self.source_search:
+                self.helper.push_triple(\
+                    Variable("source"), DEB.section, Variable("section"))
+            else:
+                raise Exception()  # FIXME
             self.helper.push_triple_variables(\
                  Variable("section"), DEB.sectionName, Variable("sectionname"))
             self.helper.add_or_filter_regex({Variable("sectionname"): keyword})
         else:
             self.helper.add_variable("section")
             self.helper.add_variable("sectionname")
-            triple1 = Triple(\
-                 Variable("source"), DEB.section, Variable("section"))
+            if self.binary_search:
+                triple1 = Triple(\
+                     Variable("binary"), DEB.section, Variable("section"))
+            elif self.source_search:
+                triple1 = Triple(\
+                     Variable("source"), DEB.section, Variable("section"))
+            else:
+                raise Exception()  # FIXME
             triple2 = Triple(\
                  Variable("section"), DEB.sectionName, Variable("sectionname"))
             self.helper.add_optional(triple1, triple2)

@@ -44,12 +44,20 @@ def results(request):
         query = builder.create_query()
 
         processor.execute_sanitized_query(query)
+
         if builder.source_search:
             results = processor.format_source_results()
-            replydata = {'results': results, 'filter': data['filter']}
-            replydata['query'] = query if data['showquery'] else None
+        elif builder.binary_search:
+            results = processor.format_binary_results()
+        else:
+            raise Exception()
+
+        replydata = {'results': results, 'filter': data['filter']}
+        replydata['query'] = query if data['showquery'] else None
+
+        if builder.source_search:
             return render_to_response('debian/source_results.html', replydata)
         else:
-            results = processor.format_source_results()
+            return render_to_response('debian/binary_results.html', replydata)
     else:
         return HttpResponse("405 - Method not allowed", status=405)

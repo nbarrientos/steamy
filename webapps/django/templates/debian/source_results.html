@@ -9,7 +9,7 @@
     <div class="subheader">
         <div class="ui-widget-content ui-corner-all">
 		    <h3 class="subtitle ui-widget-subheader ui-corner-all">
-                Search results {% if filter %} (keyword: "{{filter}}") {% endif %}
+                Source search results {% if filter %} (keyword: "{{filter}}") {% endif %}
             </h3>
 	    </div>
     </div>
@@ -26,7 +26,7 @@
         <ul>
         <li>
             <span class="result-label">Maintainer:</span>
-            <a href="{{result.mainturilink}}"> {% if result.maintname %}{{result.maintname}}{% endif %}&lt;{{result.maintmail}}&gt;</a>
+            <a href="{{result.mainturilink}}"> {% if result.maintname %}{{result.maintname}} {% endif %}&lt;{{result.maintmail}}&gt;</a>
             <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
         </li>
         {% if result.sectionname and result.sectionurilink %}
@@ -62,7 +62,9 @@
             {{result.priority}}
         </li>
         {% endif %}
-        </ul>
+        <li>
+            <a class="result-label result-more" href="{{result.sourceurilink}}">More...</a>
+        </li>
     </div>
     {% empty %}
     <div class="no-matches">
