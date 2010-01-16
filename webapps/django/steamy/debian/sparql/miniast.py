@@ -39,6 +39,10 @@ class BinaryExpression():
     def __str__(self):
         return "[%s %s %s]" % (self.lhs, self.operator, self.rhs)
 
+    def __eq__(self, other):
+        return self.lhs == other.lhs and \
+                self.operator == other.operator and \
+                self.rhs == other.rhs
 
 class UnaryExpression():
     def __init__(self, expr, operator):

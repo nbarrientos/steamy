@@ -90,6 +90,10 @@ class SelectQueryHelperTest(unittest.TestCase):
         self.s.add_or_filter_regex({"a": "a1", "b": "b1", "c": "c1"})
         self.assertEqual(1, len(self.s.query.whereclause.stmts))
         self.assertEqual(Filter, self.s.query.whereclause.stmts[0].__class__)
+        b2 = BinaryExpression(FunCall("regex", "b", "b1", "\"i\""),\
+                              FunCall("regex", "c", "c1", "\"i\""))
+        b1 = BinaryExpression(FunCall("regex", "a", "a1", "\"i\""), b2)
+        self.assertEqual(b1, self.s.query.whereclause.stmts[0].expr)
         self.assertEqual(BinaryExpression, self.s.query.whereclause.stmts[0].expr.__class__)
         self.assertEqual(BinaryExpression, self.s.query.whereclause.stmts[0].expr.rhs.__class__)
 
