@@ -51,7 +51,7 @@ class UnaryExpression():
 
 
 class FunCall():
-    def __init__(self, function, args):
+    def __init__(self, function, *args):
         self.function = function
         self.args = args
 

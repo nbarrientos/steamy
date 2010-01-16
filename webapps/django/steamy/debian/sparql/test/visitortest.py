@@ -77,14 +77,14 @@ class VisitorTest(unittest.TestCase):
         self.assertEqual(expected, self.v.visit(optional))
 
     def test_visit_Filter(self):
-        f1 = FunCall("regex", ["arg1", "arg2"])
-        f2 = FunCall("regex", ["arg3", "arg4"])
+        f1 = FunCall("regex", "arg1", "arg2")
+        f2 = FunCall("regex", "arg3", "arg4")
         binexp = BinaryExpression(f1, "||", f2)
         filter = Filter(binexp)
         expected = "FILTER(regex(arg1,arg2)||regex(arg3,arg4))"
         self.assertEqual(expected, self.v.visit(filter))
 
-        f = FunCall("bound", [Variable("var")])
+        f = FunCall("bound", Variable("var"))
         unexp = UnaryExpression(f, "!")
         filter = Filter(unexp)
         expected = "FILTER(!bound(?var))"
@@ -106,9 +106,9 @@ class VisitorTest(unittest.TestCase):
         self.assertEqual(expected, self.v.visit(union))
 
     def test_visit_BinaryExpression(self):
-        f1 = FunCall("regex", [Variable("v1"), "r1"])
-        f2 = FunCall("regex", [Variable("v2"), "r2"])
-        f3 = FunCall("regex", [Variable("v3"), "r3"])
+        f1 = FunCall("regex", Variable("v1"), "r1")
+        f2 = FunCall("regex", Variable("v2"), "r2")
+        f3 = FunCall("regex", Variable("v3"), "r3")
         b1 = BinaryExpression(f2, "||", f3)
         b2 = BinaryExpression(f1, "||", b1)
         expected = 'regex(?v1,r1)||regex(?v2,r2)||regex(?v3,r3)'
@@ -127,7 +127,7 @@ class VisitorTest(unittest.TestCase):
         self.assertEqual(expected, result) 
 
         helper.add_triple_variables(st2)
-        helper.add_filter(FunCall("regex", [Variable("var"), '"regex"']))
+        helper.add_filter(FunCall("regex", Variable("var"), '"regex"'))
         expected = "SELECT?e?f?d WHERE{?d ?e ?f.FILTER(regex(?var,\"regex\"))}LIMIT 50"
         result = self.v.visit(helper.query)
         self.assertEqual(expected, result) 

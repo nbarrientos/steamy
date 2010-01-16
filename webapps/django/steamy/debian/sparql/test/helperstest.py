@@ -46,8 +46,8 @@ class SelectQueryHelperTest(unittest.TestCase):
         self.assertEqual(Optional, self.s.query.whereclause.stmts[1].__class__)
 
     def test_add_filter(self):
-        f1 = FunCall("regex", ["arg1", "arg2"])
-        f2 = FunCall("regex", ["arg3", "arg4"])
+        f1 = FunCall("regex", "arg1", "arg2")
+        f2 = FunCall("regex", "arg3", "arg4")
         binexp = BinaryExpression(f1, "||", f2)
         self.s.add_filter(binexp)
 
@@ -90,14 +90,14 @@ class SelectQueryHelperTest(unittest.TestCase):
         self.s.add_or_filter_regex({"a": "a1", "b": "b1", "c": "c1"})
         self.assertEqual(1, len(self.s.query.whereclause.stmts))
         self.assertEqual(Filter, self.s.query.whereclause.stmts[0].__class__)
-        b2 = BinaryExpression(FunCall("regex", ["c", '"c1"', "\"i\""]), "||",\
-                              FunCall("regex", ["a", '"a1"', "\"i\""]))
-        b1 = BinaryExpression(FunCall("regex", ["b", '"b1"', "\"i\""]), "||", b2)
+        b2 = BinaryExpression(FunCall("regex", "c", '"c1"', '"i"'), "||",\
+                              FunCall("regex", "a", '"a1"', '"i"'))
+        b1 = BinaryExpression(FunCall("regex", "b", '"b1"', '"i"'), "||", b2)
         self.assertEqual(b1, self.s.query.whereclause.stmts[0].expr)
 
         self.s.add_or_filter_regex({"a": "a1"})
         self.assertEqual(2, len(self.s.query.whereclause.stmts))
-        f = FunCall("regex", ["a", '"a1"', "\"i\""])
+        f = FunCall("regex", "a", '"a1"', "\"i\"")
         self.assertEqual(f, self.s.query.whereclause.stmts[1].expr)
 
     def test_add_filter_notbound(self):

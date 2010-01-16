@@ -69,11 +69,11 @@ class SelectQueryHelper():
     def add_or_filter_regex(self, dict):
         nodes = []
         for variable,regex in dict.items():
-            nodes.append(FunCall("regex", [variable, '"%s"' % regex, '"i"']))
+            nodes.append(FunCall("regex", variable, '"%s"' % regex, '"i"'))
         self.add_filter(self._build_fixed_operator_tree("||", nodes))
 
     def add_filter_notbound(self, var):
-        f = FunCall("bound", [var])
+        f = FunCall("bound", var)
         unexp = UnaryExpression(f, "!")
         self.add_filter(unexp)
 
