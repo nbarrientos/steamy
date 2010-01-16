@@ -103,3 +103,5 @@ h4.help-section { font-weight: bold; color: #004276; }
 #sparql-table th { text-align: center; text-transform: uppercase; font-size: small; color: white; background-color: #cc0000; }
 #sparql-table tr { background-color: #ffe4e9; }
 td.sparql-table-resno { text-align: right; font-weight: bold; }
+#tab-search fieldset { margin-top: 10px; width: 80%; border-width: 1px; border-color: #cc0000; border-style: groove; }
+#tab-search legend { font-family: "Lucida Grande", Verdana, Arial, sans-serif; font-size: medium; text-transform: uppercase; }

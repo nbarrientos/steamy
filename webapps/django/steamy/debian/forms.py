@@ -89,6 +89,9 @@ class SearchForm(forms.Form):
         required=False)
     vcs = forms.MultipleChoiceField(widget=widgets.CheckboxSelectMultiple,\
         choices=VCS_OPTS, required=False)
+    essential = forms.BooleanField(required=False)
+    buildessential = forms.BooleanField(required=False)
+    dmuploadallowed = forms.BooleanField(required=False)
     homepage = forms.BooleanField(required=False)
     sort = forms.ChoiceField(initial="PACKAGE",\
         widget=widgets.RadioSelect, choices=SORT_OPTS)

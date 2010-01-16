@@ -52,6 +52,8 @@
 
         <h3><a href="#">Filters</a></h3>
         <div> <!-- Filters -->
+            <fieldset>
+            <legend>Common filters</legend>
             <div class="form-field">
                 <label for="id_section" class="field-label">Section:</label>
                 {{ search.section }}
@@ -73,6 +75,9 @@
             </div>
             <div class="form-field">
                 <label class="field-label">Version:</label>
+                <span class="field-comment">
+                    (no selections will be interpreted as 'any')
+                </span>
                 {{ search.version }}
             </div>
             <div class="form-field">
@@ -85,12 +90,31 @@
             </div>
             <div class="form-field">
                 <label class="field-label">Maintained using:</label>
-                {{ search.vcs }}
                 <span class="field-comment">
                     (no selections will be interpreted as 'any')
                 </span>
+                {{ search.vcs }}
             </div>
-        </div>
+            </fieldset>
+            <fieldset>
+            <legend>Source search filters</legend>
+            <div class="form-field">
+                {{ search.dmuploadallowed }}
+                <label for="id_dmuploadallowed" class="field-label">Only packages with DM upload allowed enabled</label>
+            </div>
+            </fieldset>
+            <fieldset>
+            <legend>Binary search filters</legend>
+            <div class="form-field">
+                {{ search.essential }}
+                <label for="id_essential" class="field-label">Only essential packages</label>
+            </div>
+            <div class="form-field">
+                {{ search.buildessential }}
+                <label for="id_buildessential" class="field-label">Only build-essential packages</label>
+            </div>
+            </fieldset>
+        </div> <!-- filters -->
 
         <h3><a href="#">Output options</a></h3>
         <div> <!-- Output options -->

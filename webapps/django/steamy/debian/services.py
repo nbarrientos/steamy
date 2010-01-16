@@ -163,6 +163,9 @@ class SPARQLQueryBuilder():
         self._consume_comaintainer()
         self._consume_vcs()
         self._consume_section()
+        self._consume_buildessential()
+        self._consume_essential()
+        self._consume_dmuploadallowed()
         self._consume_filter()
         self.helper.set_limit(RESULTS_PER_PAGE)
         self.helper.set_distinct()
@@ -369,6 +372,21 @@ class SPARQLQueryBuilder():
                 self.helper.add_triple(graphpatterns[0][0])
             else:
                 self.helper.add_union(*graphpatterns)
+
+    def _consume_essential(self):
+        if self.binary_search and self.params['essential']:
+            self.helper.push_triple(\
+                Variable("binary"), RDF.type, DEB.EssentialBinary)
+
+    def _consume_buildessential(self):
+        if self.binary_search and self.params['buildessential']:
+            self.helper.push_triple(\
+                Variable("binary"), RDF.type, DEB.BuildEssentialBinary)
+
+    def _consume_dmuploadallowed(self):
+        if self.source_search and self.params['dmuploadallowed']:
+            self.helper.push_triple(\
+                Variable("source"), RDF.type, DEB.DMUploadAllowedSource)
 
     def _add_from(self):
         if FROM_GRAPH is not None:
