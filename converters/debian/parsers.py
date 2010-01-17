@@ -297,7 +297,8 @@ class PackagesParser(BaseParser):
     binaryPackage.section = self.parseSection(raw)
     binaryPackage.essential = self.parseEssential(raw)
     binaryPackage.buildEssential = self.parseBuildEssential(raw)
-    (binaryPackage.sdescription, binaryPackage.ldescription) = self.parseDescription(raw)
+    (binaryPackage.sdescription, binaryPackage.ldescription,\
+                  binaryPackage.homepage) = self.parseDescription(raw)
     binaryPackage.unversionedBinary = \
                   UnversionedBinaryPackage(binaryPackage.package)
     return binaryPackage
@@ -376,6 +377,16 @@ class PackagesParser(BaseParser):
     split = raw['Description'].split("\n",1)
     if len(split) == 1:
       split.append(None)
+      split.append(None)
+    else:
+      regex = re.compile(r"^\s+Homepage:\s(?P<homepage>.*?)$", re.M)
+      match = regex.search(raw['Description'])
+
+      if match is not None and match.group("homepage") is not None:
+          split.append(match.group("homepage"))
+      else:
+          split.append(None)
+
     return tuple(split)
 
   def parseSource(self, raw, binary):

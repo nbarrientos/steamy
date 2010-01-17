@@ -381,16 +381,43 @@ class PackagesParserTest(unittest.TestCase):
   * MIME support (including RFC1522 encoding/decoding of 8-bit message
     headers and UTF-8 support).
   * Highly configurable through easy but powerful rc file.'''
-    (short, long) = self.parser.parseDescription(self.binaryPackage)
+    (short, long, homepage) = self.parser.parseDescription(self.binaryPackage)
     self.assertEqual(expectedShort, short)
     self.assertEqual(expectedLong, long)
+    self.assertEqual(None, homepage)
 
   def testParseDescriptionEmptyExtended(self) :
     self.binaryPackage['Description'] = "text-based mailreader supporting MIME, GPG, PGP and threading"
     expectedShort = "text-based mailreader supporting MIME, GPG, PGP and threading"
-    (short, long) = self.parser.parseDescription(self.binaryPackage)
+    (short, long, homepage) = self.parser.parseDescription(self.binaryPackage)
     self.assertEqual(expectedShort, short)
     self.assertEqual(None, long)
+    self.assertEqual(None, homepage)
+
+  def testParseDescriptionHomepage(self) :
+    self.binaryPackage['Description'] = self.binaryPackage['Description'] + '''
+ .
+ Homepage: http://example.org/project'''
+    expectedShort = "text-based mailreader supporting MIME, GPG, PGP and threading"
+    expectedLong =\
+    ''' Mutt is a sophisticated text-based Mail User Agent. Some highlights:
+ .
+  * MIME support (including RFC1522 encoding/decoding of 8-bit message
+    headers and UTF-8 support).
+  * Highly configurable through easy but powerful rc file.
+ .
+ Homepage: http://example.org/project'''
+    expectedHomepage = "http://example.org/project"
+    (short, long, homepage) = self.parser.parseDescription(self.binaryPackage)
+    self.assertEqual(expectedShort, short)
+    self.assertEqual(expectedLong, long)
+    self.assertEqual(expectedHomepage, homepage)
+
+    self.binaryPackage['Description'] = self.binaryPackage['Description'] + '''
+ .
+  Homepage: http://example.org/project'''
+    (short, long, homepage) = self.parser.parseDescription(self.binaryPackage)
+    self.assertEqual(expectedHomepage, homepage)
 
   def testParseSource(self):
     binary = BinaryPackage("mutt", Version("1:2.4+svn5677-1"))
