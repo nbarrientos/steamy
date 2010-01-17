@@ -271,6 +271,12 @@ class Triplifier():
     # Extended Description
     self.g.add((ref, DEB['extendedDescription'], Literal(package.ldescription)))
 
+    # Homepage
+    if package.homepage is not None:
+      sourceRef = URIRef(package.source.asURI(self.baseURI))
+      homepageRef = self.triplifyHomepage(package.homepage)
+      self.g.add((sourceRef, FOAF['page'], homepageRef)) 
+
   def triplifyBinaryPackageBuild(self, build):
     ref = URIRef(build.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['BinaryBuild']))
