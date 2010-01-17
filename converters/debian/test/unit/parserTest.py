@@ -199,6 +199,7 @@ class PackagesParserTest(unittest.TestCase):
     self.binaryPackage['Package'] = "mutt"
     self.binaryPackage['Version'] = "1:2.4+svn5677-1"
     self.binaryPackage['Architecture'] = "all"
+    self.binaryPackage['Source'] = "muttsrc"
     self.binaryPackage['Depends'] = "exim4 (>> 0.5.4-5) | mail-transport-agent, mutt"
     self.binaryPackage['Recommends'] = "locales, mime-support, bastet"
     self.binaryPackage['Pre-Depends'] = "test"
@@ -312,6 +313,8 @@ class PackagesParserTest(unittest.TestCase):
     p = self.parser.parseBinaryPackage(self.binaryPackage)
     self.assertEqual("mutt", p.package)
     self.assertNotEqual(None, p.depends)
+    self.assertEqual("muttsrc", p.source.package)
+    self.assertEqual(p.version, p.source.version)
     self.assertEqual(2, p.depends.len())
     self.assertEqual(3, p.recommends.len())
     self.assertEqual(1, p.preDepends.len())
@@ -388,6 +391,19 @@ class PackagesParserTest(unittest.TestCase):
     (short, long) = self.parser.parseDescription(self.binaryPackage)
     self.assertEqual(expectedShort, short)
     self.assertEqual(None, long)
+
+  def testParseSource(self):
+    binary = BinaryPackage("mutt", Version("1:2.4+svn5677-1"))
+    source = self.parser.parseSource(self.binaryPackage, binary)
+    self.assertEqual("muttsrc", source.package)
+    self.assertEqual(Version("1:2.4+svn5677-1"), source.version)
+
+  def testParseSourceEmpty(self):
+    binary = BinaryPackage("mutt", Version("1:2.4+svn5677-1"))
+    self.binaryPackage.pop("Source")
+    source = self.parser.parseSource(self.binaryPackage, binary)
+    self.assertEqual("mutt", source.package)
+    self.assertEqual(Version("1:2.4+svn5677-1"), source.version)
 
 
 class BaseParserTest(unittest.TestCase):

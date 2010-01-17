@@ -279,6 +279,7 @@ class PackagesParser(BaseParser):
       if self.opts.cRegex.match(binaryPackage.package) is None:
         raise PackageDoesNotMatchRegularExpression(binaryPackage.package)
 
+    binaryPackage.source = self.parseSource(raw, binaryPackage)
     binaryPackage.depends = self.parseDepends(raw)
     binaryPackage.recommends = self.parseRecommends(raw)
     binaryPackage.preDepends = self.parsePreDepends(raw)
@@ -376,3 +377,9 @@ class PackagesParser(BaseParser):
     if len(split) == 1:
       split.append(None)
     return tuple(split)
+
+  def parseSource(self, raw, binary):
+    if "Source" in raw:
+        return SourcePackage(raw['Source'], binary.version)
+    else:
+        return SourcePackage(binary.package, binary.version)
