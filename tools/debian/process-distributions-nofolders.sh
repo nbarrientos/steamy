@@ -1,5 +1,5 @@
 #!/bin/bash
-# process-distributions-nofolders.sh
+# process-distributions.sh
 #
 # Nacho Barrientos Arias <nacho@debian.org>
 
@@ -22,8 +22,8 @@ function processPackages {
     local filename=$t
   fi
   
-  $DEAR -p $filename -P $BASEOUT/$4_$1_binary-$2_Packages.$3.rdf \
-  -a -t -b $BASEURI -r "^$3.*" \
+  $DEAR -p $filename -P $BASEOUT/$4_$1_binary-$2_Packages.$5.rdf \
+  -a -t -b $BASEURI -r $3 \
   -d $DISTRIBUTION
   
   if [ ! -z "$t" ]
@@ -41,8 +41,8 @@ function processSources {
     local filename=$t
   fi
   
-  $DEAR -s $filename -S $BASEOUT/$3_$1_sources_Sources.$2.rdf \
-  -a -t -b $BASEURI -r "^$2.*" \
+  $DEAR -s $filename -S $BASEOUT/$3_$1_sources_Sources.$4.rdf \
+  -a -t -b $BASEURI -r $2 \
   -d $DISTRIBUTION
 
   if [ ! -z "$t" ]
@@ -83,15 +83,37 @@ do
     # Packages
     for arch in $ARCHS
     do
+      processPackages $area $arch "\d.*" $dist "#"
       for initial in $ABC
       do
-        processPackages $area $arch $initial $dist
+        if [ $initial == "l" -a $area == "main" ]
+        then
+          processPackages $area $arch "l(?!ib).*" $dist "l"
+          processPackages $area $arch "lib\d.*" $dist "lib#"
+          for subinitial in $ABC
+          do
+            processPackages $area $arch "lib$subinitial.*" $dist "lib$subinitial"
+          done
+        else
+          processPackages $area $arch "$initial.*" $dist $initial
+        fi
       done
     done
     # Sources
+    processSources $area "\d.*" $dist "#"
     for initial in $ABC
     do
-      processSources $area $initial $dist
+      if [ $initial == "l" -a $area == "main" ]
+      then
+        processSources $area "l(?!ib).*" $dist "l"
+        processSources $area "lib\d.*" $dist "lib#"
+        for subinitial in $ABC
+        do
+          processSources $area "lib$subinitial.*" $dist "lib$subinitial"
+        done
+      else
+        processSources $area "$initial.*" $dist $initial
+      fi
     done
   done
 done
