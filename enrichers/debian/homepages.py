@@ -6,6 +6,7 @@
 # License: MIT
 
 import sys
+import time
 import logging
 import httplib
 import urllib2
@@ -23,6 +24,7 @@ from tools.pool import GraphPool
 from homepages.io import LinkRetrieval
 from homepages.io import homepages, w3c_validator
 from homepages.errors import W3CValidatorError
+from homepages.models import Stats
 
 VERSION = "beta"
 
@@ -41,6 +43,7 @@ class HomepageEnricher():
     def initData(self):
         self.pool = GraphPool(self.opts.pool, self.opts.prefix, self.opts.basedir)
         self.htmlparser = LinkRetrieval()
+        self.stats = Stats()
 
     def parseArgs(self):
         parser = OptionParser(usage="%prog [options]", version="%prog " + VERSION)
@@ -53,12 +56,15 @@ class HomepageEnricher():
                       default=".",\
                       metavar="DIR", help="use DIR as base directory to store output files [default: %default]")
         parser.add_option("-p", "--pool-size", dest="pool",\
-                      default="1",\
+                      default="1", type="int",\
                       metavar="NUM", help="set graph pool size to NUM [default: %default]")
         parser.add_option("-w", "--w3c", action="store_true", dest="w3c",\
                       default=False, help="validates homeapages against validator.w3.org")
         parser.add_option("-d", "--discover", action="store_true", dest="discover",\
                       default=False, help="navigates link tags and retrieves metadata")
+        parser.add_option("-s", "--sleep-time", dest="sleep",\
+                      default="5", type="int",\
+                      metavar="SECS", help="sleep SECS after querying validator.w3.org [default: %default]")
         parser.add_option("-v", "--verbose", action="store_true", dest="verbose",\
                       default=False, help="increases debug level")
         parser.add_option("-q", "--quiet", action="store_true", dest="quiet",\
@@ -96,28 +102,31 @@ class HomepageEnricher():
             self.process_homepage(homepage)
        
         if self.pool.count_triples() > 0:
-            logging.info("Serializing graphs...")
+            logging.info("\nSerializing graphs...")
             self.pool.serialize()
+
+        logging.info(self.stats)
 
     ## Logic ##
 
     def process_homepage(self, uri):
+        self.stats.count_homepage()
         logging.info("\nProcessing '%s'" % uri)
         # Is it usable?
         try:
             stream = urllib2.urlopen(uri)
         except urllib2.URLError, e: # Includes 404
+            self.stats.count_brokenhomepage()
             logging.error("'%s' is unreachable (reason: %s), skipping..." % (uri, e))
             return
 
-        logging.debug("Host seems active and web server is not returning 404")
         # Metainformation retrieval
         if self.opts.discover:
-            logging.info("Extracting metadata from '%s'" % uri)
+            logging.info("Extracting metadata...")
             self.discover(uri, stream)
         # Validation
         if self.opts.w3c:
-            logging.info("Validating '%s' markup" % uri)
+            logging.info("Validating markup...")
             self.validate_markup(uri)
  
     def validate_markup(self, uri):
@@ -129,9 +138,12 @@ class HomepageEnricher():
         if result is True:
             logging.debug("Validation passed")
             self._push_validation_success(uri)
+            self.stats.count_validmarkup()
         else:
             logging.debug("Validation failed")
             self._push_validation_failure(uri)
+
+        time.sleep(self.opts.sleep)
 
     def discover(self, homepage, stream):
         try:
@@ -145,11 +157,11 @@ class HomepageEnricher():
 
         self.htmlparser.close()
         
-        logging.info("Discovering data from RSS feeds...")
+        logging.info("\tDiscovering data from RSS feeds...")
         for candidate in self.htmlparser.get_rss_hrefs():
             self.discover_rss(homepage, urljoin(homepage, candidate))
         
-        logging.info("Discovering data from meta headers...")
+        logging.info("\tDiscovering data from meta headers...")
         for candidate in self.htmlparser.get_rdf_meta_hrefs():
             self.discover_meta(homepage, urljoin(homepage, candidate))
 
@@ -158,6 +170,7 @@ class HomepageEnricher():
     def discover_rss(self, homepage, feed):
         self.pool.add_triple((URIRef(homepage), XHV.alternate, URIRef(feed)))
         self.pool.add_triple((URIRef(feed), RDFS.type, FOAF.Document))
+        self.stats.count_feed()
         logging.debug("Trying to determine RSS feed format for uri '%s'" % feed)
         
         # TODO: Determine RSS format:
@@ -177,6 +190,7 @@ class HomepageEnricher():
     def discover_meta(self, homepage, candidate):
         self.pool.add_triple((URIRef(homepage), XHV.meta, URIRef(candidate)))
         self.pool.add_triple((URIRef(candidate), RDFS.type, FOAF.Document))
+        self.stats.count_rdf()
         logging.debug("Analyzing '%s'" % candidate)
         # FIXME
 
