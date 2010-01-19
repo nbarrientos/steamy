@@ -16,31 +16,12 @@ from debian_bundle.changelog import Version
 from rdflib import Namespace, URIRef
 from rdflib.Graph import ConjunctiveGraph
 
+from tools.pool import GraphPool
+
 VERSION = "0.1alpha"
 
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
 
-class GraphPool():
-  def __init__(self, size, prefix, base):
-    self.prefix = "%s/%s" % (base, prefix)
-    self.pool = [ConjunctiveGraph() for i in range(int(size))]
-    for graph in self.pool:
-      graph.bind("deb", DEB)
-
-  def addTriple(self, triple):
-    self.pool[int(random.uniform(0, len(self.pool)))].add(triple)
-
-  def countTriples(self):
-    return sum([len(i) for i in self.pool])
-
-  def serialize(self):
-    for i in range(len(self.pool)): # I'm sorry :(    
-      try:
-        f = open("%s-%d.rdf" % (self.prefix, i), "w")
-        f.write(self.pool[i].serialize())
-        f.close()
-      except IOError, e:
-        logging.error("Serialization failed: %s (does base dir exist?)", e)
 
 class ConstraintResolver():
   def __init__(self):
