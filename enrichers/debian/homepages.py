@@ -7,8 +7,8 @@
 
 import sys
 import logging
-import random
-import urllib
+import httplib
+import urllib2
 import re
 
 from optparse import OptionParser
@@ -102,15 +102,24 @@ class HomepageEnricher():
     ## Logic ##
 
     def process_homepage(self, uri):
+        logging.info("Processing '%s'" % uri)
+        # Is it usable?
+        try:
+            stream = urllib2.urlopen(uri)
+        except urllib2.URLError, e: # Includes 404
+            logging.error("'%s' is unreachable (reason: %s), skipping..." % (uri, e))
+            return
+
+        logging.debug("Host seems active and web server is not returning 404")
+        # Metainformation retrieval
+        if self.opts.discover:
+            logging.info("Extracting metadata from '%s'" % uri)
+            self.discover(uri, stream)
         # Validation
         if self.opts.w3c:
             logging.info("Validating '%s' markup" % uri)
             self.validate_markup(uri)
-        # Metainformation retrieval
-        if self.opts.discover:
-            logging.info("Extracting metadata from '%s'" % uri)
-            self.discover(uri)
-
+ 
     def validate_markup(self, uri):
         try:
             result = w3c_validator(uri)
@@ -124,38 +133,44 @@ class HomepageEnricher():
             logging.debug("Validation failed")
             self._push_validation_failure(uri)
 
-    def discover(self, uri):
-        stream = urllib.urlopen(uri)
+    def discover(self, homepage, stream):
         parser = LinkRetrieval()
         parser.feed(stream.read())
         stream.close()
         parser.close()
-        # RSS processing
+        
         logging.info("Discovering data from RSS feeds...")
-        self.discover_rss(uri, map(lambda x: urljoin(uri, x), parser.get_rss_hrefs()))
-        # META processing
+        for candidate in parser.get_rss_hrefs():
+            self.discover_rss(homepage, urljoin(homepage, candidate))
+        
         logging.info("Discovering data from meta headers...")
-        self.discover_meta(uri, map(lambda x: urljoin(uri, x), parser.get_rdf_meta_hrefs()))
+        for candidate in parser.get_rdf_meta_hrefs():
+            self.discover_meta(homepage, urljoin(homepage, candidate))
 
-    def discover_rss(self, homepage, candidates):
-        for uri in candidates:
-            self.pool.add_triple((URIRef(homepage), XHV.alternate, URIRef(uri)))
-            self.pool.add_triple((URIRef(uri), RDFS.type, FOAF.Document))
-            logging.debug("Trying to determine RSS feed format for uri '%s'" % uri)
-            graph = ConjunctiveGraph()
-            try:
-                graph.parse(uri, format="xml")
-                #self.pool.merge_graph(graph)
-            except SAXParseException:
-                logging.debug("'%s' does not look like RDF" % uri)
-            logging.debug("Looks like it is RDF (RSS 1.x)")
-            logging.debug("Got %s triples from '%s'" % (len(graph), uri))
+    def discover_rss(self, homepage, feed):
+        self.pool.add_triple((URIRef(homepage), XHV.alternate, URIRef(feed)))
+        self.pool.add_triple((URIRef(feed), RDFS.type, FOAF.Document))
+        logging.debug("Trying to determine RSS feed format for uri '%s'" % feed)
+        
+        # TODO: Determine RSS format:
+        # 1.0: RDF - get, parse and merge graph
+        # 2.0: XML - get, transform and merge graph
 
-    def discover_meta(self, homepage, candidates):
-        for uri in candidates:
-            self.pool.add_triple((URIRef(homepage), XHV.meta, URIRef(uri)))
-            self.pool.add_triple((URIRef(uri), RDFS.type, FOAF.Document))
-            logging.debug("Analyzing '%s'" % uri)
+        #graph = ConjunctiveGraph()
+        #try:
+        #    graph.parse(feed, format="xml")
+        #    #self.pool.merge_graph(graph)
+        #except SAXParseException:
+        #    logging.debug("'%s' does not look like RDF" % feed)
+
+        #logging.debug("Looks like it is RDF (RSS 1.x)")
+        #logging.debug("Got %s triples from '%s'" % (len(graph), feed))
+
+    def discover_meta(self, homepage, candidate):
+        self.pool.add_triple((URIRef(homepage), XHV.meta, URIRef(candidate)))
+        self.pool.add_triple((URIRef(candidate), RDFS.type, FOAF.Document))
+        logging.debug("Analyzing '%s'" % candidate)
+        # FIXME
 
     # Validation results helpers
 

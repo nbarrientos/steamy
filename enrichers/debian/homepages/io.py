@@ -18,8 +18,10 @@ from errors import W3CValidatorUnexpectedStatusCodeError
 
 # FIXME
 def homepages():
-    #l = ["http://www.wikier.org", "http://www.kde.org"]
-    l = ["http://www.wikier.org"]
+    l = ["http://www.wikier.org", "http://www.kde.org"]
+    #l = ["http://www.wikier.org"]
+    #l = ["http://192.168.2.46"]
+    #l = ["http://wikier.org/dfs"]
 
     for homepage in l:
         yield homepage
@@ -63,15 +65,13 @@ class LinkRetrieval(SGMLParser):
                          (types, hrefs))
 
     def get_rss_hrefs(self):
-        hrefs = []
         for x in self.results: 
             if x.is_rss():
-                hrefs.extend(x.hrefs)
-        return hrefs
+                for href in x.hrefs:
+                    yield href
 
     def get_rdf_meta_hrefs(self):
-        hrefs = []
         for x in self.results:
             if x.is_meta_rdf():
-                hrefs.extend(x.hrefs)
-        return hrefs
+                for href in x.hrefs:
+                    yield href
