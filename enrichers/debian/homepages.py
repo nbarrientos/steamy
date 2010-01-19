@@ -22,6 +22,7 @@ from SPARQLWrapper import SPARQLWrapper2
 from tools.pool import GraphPool
 from homepages.io import LinkRetrieval
 from homepages.io import homepages, w3c_validator
+from homepages.errors import W3CValidatorError
 
 VERSION = "beta"
 
@@ -111,7 +112,12 @@ class HomepageEnricher():
             self.discover(uri)
 
     def validate_markup(self, uri):
-        if w3c_validator(uri):
+        try:
+            result = w3c_validator(uri)
+        except W3CValidatorError, e:
+            logging.error(str(e))
+
+        if result is True:
             logging.debug("Validation passed")
             self._push_validation_success(uri)
         else:

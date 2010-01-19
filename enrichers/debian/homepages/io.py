@@ -6,10 +6,15 @@
 # License: MIT
 
 import logging
+import httplib
+import urllib
 
 from sgmllib import SGMLParser
 
 from models import AlternateLink, MetaLink
+from errors import W3CValidatorUnableToConnectError 
+from errors import W3CValidatorUnexpectedValidationResultError
+from errors import W3CValidatorUnexpectedStatusCodeError
 
 # FIXME
 def homepages():
@@ -20,7 +25,24 @@ def homepages():
         yield homepage
 
 def w3c_validator(uri):
-    return True  # FIXME
+    conn = httplib.HTTPConnection("validator.w3.org")
+    try:
+        conn.request("GET", "/check?uri=%s" % urllib.quote(uri, ""))
+    except: # Socket.error
+        raise W3CValidatorUnableToConnectError()
+
+    response = conn.getresponse()
+
+    if response.status == httplib.OK:
+        if response.getheader("X-W3C-Validator-Status") == "Valid":
+            return True
+        elif response.getheader("X-W3C-Validator-Status") == "Invalid":
+            return False
+        else:
+            raise W3CValidatorUnexpectedValidationResultError()
+    else:
+       raise W3CValidatorUnexpectedStatusCodeError(response.status) 
+
 
 class LinkRetrieval(SGMLParser):
     def reset(self):
