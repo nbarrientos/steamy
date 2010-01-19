@@ -17,7 +17,6 @@ from xml.sax import SAXParseException
 
 from rdflib.Graph import ConjunctiveGraph
 from rdflib import Namespace, URIRef, Literal, BNode
-from SPARQLWrapper import SPARQLWrapper2
 
 from tools.pool import GraphPool
 from homepages.io import LinkRetrieval
@@ -67,9 +66,9 @@ class HomepageEnricher():
 
         (self.opts, args) = parser.parse_args()
 
-    #if not self.opts.endpoint:
-    #  raise Exception("Cannot continue, Endpoint URI (-e) is not set.")
-        if self.opts.verbose and self.opts.quiet:
+        if not self.opts.endpoint:
+            raise Exception("Cannot continue, Endpoint URI (-e) is not set.")
+        elif self.opts.verbose and self.opts.quiet:
             raise Exception("Verbose (-v) and Quiet (-q) are mutually exclusive")
 
     def configLogger(self):
@@ -92,7 +91,7 @@ class HomepageEnricher():
         self.configLogger() 
         self.initData()
 
-        for homepage in homepages():
+        for homepage in homepages(self.opts.endpoint):
             self.process_homepage(homepage)
        
         if self.pool.count_triples() > 0:

@@ -8,8 +8,12 @@
 import logging
 import httplib
 import urllib
+import re
 
 from sgmllib import SGMLParser
+
+from SPARQLWrapper import SPARQLWrapper2
+from SPARQLWrapper.sparqlexceptions import EndPointNotFound
 
 from models import AlternateLink, MetaLink
 from errors import W3CValidatorUnableToConnectError 
@@ -17,14 +21,28 @@ from errors import W3CValidatorUnexpectedValidationResultError
 from errors import W3CValidatorUnexpectedStatusCodeError
 
 # FIXME
-def homepages():
-    l = ["http://www.wikier.org", "http://www.kde.org"]
-    #l = ["http://www.wikier.org"]
-    #l = ["http://192.168.2.46"]
-    #l = ["http://wikier.org/dfs"]
+def homepages(endpoint):
+    endpoint = SPARQLWrapper2(endpoint)
+    q = """
+        PREFIX deb: <http://idi.fundacionctic.org/steamy/debian.owl#>
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        SELECT DISTINCT ?homepage
+        WHERE { 
+          ?source a deb:Source ;
+                  foaf:page ?homepage .
+        }
+        LIMIT 5
+    """
+    endpoint.setQuery(q)
+    try:
+        results = endpoint.query()
+    except EndPointNotFound, e:
+        logging.error("Wrong or inactive endpoint, aborting.")
+        return
 
-    for homepage in l:
-        yield homepage
+    for result in results["homepage"]:
+        yield re.sub("<|>", "", result["homepage"].value).strip()
+
 
 def w3c_validator(uri):
     conn = httplib.HTTPConnection("validator.w3.org")
