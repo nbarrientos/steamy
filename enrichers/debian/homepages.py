@@ -192,7 +192,18 @@ class HomepageEnricher():
         self.pool.add_triple((URIRef(candidate), RDFS.type, FOAF.Document))
         self.stats.count_rdf()
         logging.debug("Analyzing '%s'" % candidate)
-        # FIXME
+        if re.match(r".*\.rdf$", candidate) is not None:
+            graph = ConjunctiveGraph()
+            try:
+                graph.parse(candidate)
+            except SAXParseException, e:
+                # TODO: Count failure
+                logging.error("Unable to parse '%s'" % candidate)
+                return
+            
+            self.pool.merge_graph(graph)
+
+            logging.debug("%s triples extracted and merged" % len(graph))
 
     # Validation results helpers
 

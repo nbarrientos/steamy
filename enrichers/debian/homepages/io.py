@@ -90,6 +90,6 @@ class LinkRetrieval(SGMLParser):
 
     def get_rdf_meta_hrefs(self):
         for x in self.results:
-            if x.is_meta_rdf():
+            if x.is_meta_rdf(): # FIXME: What if N3?
                 for href in x.hrefs:
                     yield href
