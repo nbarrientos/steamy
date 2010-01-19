@@ -11,6 +11,7 @@ import httplib
 import urllib2
 import re
 
+from sgmllib import SGMLParseError
 from optparse import OptionParser
 from urlparse import urljoin
 from xml.sax import SAXParseException
@@ -39,7 +40,7 @@ class HomepageEnricher():
 
     def initData(self):
         self.pool = GraphPool(self.opts.pool, self.opts.prefix, self.opts.basedir)
-        #self.endpoint = SPARQLWrapper2(self.opts.endpoint)
+        self.htmlparser = LinkRetrieval()
 
     def parseArgs(self):
         parser = OptionParser(usage="%prog [options]", version="%prog " + VERSION)
@@ -101,7 +102,7 @@ class HomepageEnricher():
     ## Logic ##
 
     def process_homepage(self, uri):
-        logging.info("Processing '%s'" % uri)
+        logging.info("\nProcessing '%s'" % uri)
         # Is it usable?
         try:
             stream = urllib2.urlopen(uri)
@@ -133,18 +134,26 @@ class HomepageEnricher():
             self._push_validation_failure(uri)
 
     def discover(self, homepage, stream):
-        parser = LinkRetrieval()
-        parser.feed(stream.read())
-        stream.close()
-        parser.close()
+        try:
+            self.htmlparser.feed(stream.read())
+        except SGMLParseError, e:
+            logging.error("Parser error (%s). Skipping '%s'..." % (e, homepage))
+            self.htmlparser.reset()
+            return
+        finally:
+            stream.close()
+
+        self.htmlparser.close()
         
         logging.info("Discovering data from RSS feeds...")
-        for candidate in parser.get_rss_hrefs():
+        for candidate in self.htmlparser.get_rss_hrefs():
             self.discover_rss(homepage, urljoin(homepage, candidate))
         
         logging.info("Discovering data from meta headers...")
-        for candidate in parser.get_rdf_meta_hrefs():
+        for candidate in self.htmlparser.get_rdf_meta_hrefs():
             self.discover_meta(homepage, urljoin(homepage, candidate))
+
+        self.htmlparser.reset()
 
     def discover_rss(self, homepage, feed):
         self.pool.add_triple((URIRef(homepage), XHV.alternate, URIRef(feed)))
