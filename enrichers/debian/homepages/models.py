@@ -23,10 +23,12 @@ class Link():
         return "Types: %s Hrefs:%s" % (self.types, self.hrefs)
 
 class AlternateLink(Link):
+    # RSS auto-discovery: http://www.rssboard.org/rss-autodiscovery
     def is_rss(self):
         return "application/rss+xml" in self.types
 
 class MetaLink(Link):
+    # http://www.w3.org/TR/REC-rdf-syntax/ (Chapter 9)
     def is_meta_rdf(self):
         return "application/rdf+xml" in self.types or \
             reduce(lambda x, y: x or y, [re.match(r".*\.rdf$", x) is not None for x in self.hrefs])
@@ -38,6 +40,7 @@ class Stats():
         self.w3cok = 0
         self.feeds = 0
         self.rdf = 0
+        self.invalidrdf = 0
 
     def count_homepage(self):
         self.homepages += 1
@@ -48,6 +51,9 @@ class Stats():
     def count_rdf(self):
         self.rdf += 1
 
+    def count_invalidrdf(self):
+        self.invalidrdf += 1
+
     def count_feed(self):
         self.feeds += 1
 
@@ -56,9 +62,9 @@ class Stats():
     
     def __str__(self):
         return """\n\nStats:
-\t* Total websites count: %s
-\t* Non-respoding websites: %s
+\t* Total websites count: %s (%s not responding)
 \t* Valid markups: %s
 \t* RSS feeds processed: %s
-\t* RDF files fetched: %s""" % \
-        (self.homepages, self.broken_homepages, self.w3cok, self.feeds, self.rdf)
+\t* RDF files fetched: %s (%s invalid)""" % \
+        (self.homepages, self.broken_homepages, self.w3cok, \
+        self.feeds, self.rdf, self.invalidrdf)

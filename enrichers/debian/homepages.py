@@ -18,7 +18,6 @@ from urlparse import urljoin
 from xml.sax import SAXParseException
 
 from rdflib.Graph import ConjunctiveGraph
-from rdflib import Namespace, URIRef, Literal, BNode
 
 from tools.pool import GraphPool
 from homepages.io import LinkRetrieval, TripleProcessor
@@ -113,7 +112,7 @@ class HomepageEnricher():
 
         # Metainformation retrieval
         if self.opts.discover:
-            logging.info("Extracting metadata...")
+            logging.info("Discovering metadata...")
             self.discover(uri, stream)
         # Validation
         if self.opts.w3c:
@@ -127,11 +126,11 @@ class HomepageEnricher():
             logging.error(str(e))
 
         if result is True:
-            logging.debug("Validation passed")
+            logging.debug("\tValidation passed")
             self.triples.push_validation_success(uri)
             self.stats.count_validmarkup()
         else:
-            logging.debug("Validation failed")
+            logging.debug("\tValidation failed")
             self.triples.push_validation_failure(uri)
 
         time.sleep(self.opts.sleep)
@@ -148,11 +147,11 @@ class HomepageEnricher():
 
         self.htmlparser.close()
         
-        logging.info("\tDiscovering data from RSS feeds...")
+        logging.info("\tDiscovering RSS feeds...")
         for candidate in self.htmlparser.get_rss_hrefs():
             self.discover_rss(homepage, urljoin(homepage, candidate))
         
-        logging.info("\tDiscovering data from meta headers...")
+        logging.info("\tDiscovering RDF...")
         for candidate in self.htmlparser.get_rdf_meta_hrefs():
             self.discover_meta(homepage, urljoin(homepage, candidate))
 
@@ -186,7 +185,7 @@ class HomepageEnricher():
             try:
                 graph.parse(candidate)
             except SAXParseException, e:
-                # TODO: Count failure
+                self.stats.count_invalidrdf()
                 logging.error("Unable to parse '%s'" % candidate)
                 return
             
