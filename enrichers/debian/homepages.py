@@ -32,15 +32,21 @@ from homepages.errors import W3CValidatorError, RSSParsingError
 from homepages.errors import RSSParsingFeedUnavailableError
 from homepages.errors import RSSParsingFeedMalformedError
 from homepages.errors import RSSParsingUnparseableVersionError
+from homepages.errors import RDFDiscoveringError
+from homepages.errors import RDFDiscoveringBrokenLinkError
+from homepages.errors import RDFDiscoveringMalformedError
 from homepages.models import Stats
 
-socket.setdefaulttimeout(10)
 VERSION = "beta"
-#RSS2RDFXSL = "/home/nacho/steamy/git/enrichers/debian/rss2rdf.xsl"
+
+# From: http://w3future.com/weblog/2002/09/
+# Supports: rss094, rss20
+RSS_2_RDF_XSL = "/home/nacho/steamy/git/enrichers/debian/rss2rdf.xsl"
+
 # Grabbed from http://djpowell.net/blog/entries/Atom-RDF.html
 # Supports: atom10, rss091, rss20, atom30
-RSS_ATOM_2_ATOM_RDF_XSL = \
-        "/home/nacho/steamy/git/enrichers/debian/tools/atom2rdf-16/atom2rdf-16.xsl"
+#RSS_ATOM_2_ATOM_RDF_XSL = \
+#        "/home/nacho/steamy/git/enrichers/debian/tools/atom2rdf-16/atom2rdf-16.xsl"
 
 class HomepageEnricher():
     def __init__(self):
@@ -174,7 +180,10 @@ class HomepageEnricher():
         
         logging.info("\tDiscovering RDF...")
         for candidate in self.htmlparser.get_rdf_meta_hrefs():
-            self.discover_meta(homepage, urljoin(homepage, candidate))
+            try:
+                self.discover_meta(homepage, urljoin(homepage, candidate))
+            except RDFDiscoveringError, e:
+                logging.error("\t%s" % e)
 
         self.htmlparser.reset()
 
@@ -194,37 +203,44 @@ class HomepageEnricher():
         else:
             graph = ConjunctiveGraph()
             if parse.version in ("rss10"):
-                logging.debug("\tLooks like RDF (RSS 1.0)")
+                logging.debug("\tLooks like RDF (%s)" % parse.version)
                 graph.parse(feed, format="xml")
-            elif parse.version in ("atom10", "atom30", "rss20"):
+            elif parse.version in ("rss20", "rss094"): #, ("atom10", "atom30", "rss20"):
                 logging.debug("\tLooks like XML (%s)" % parse.version)
                 graph.parse(StringIO(self._transform_feed(feed)), format="xml")
             else:
                 self.stats.count_invalidfeed()
                 raise RSSParsingUnparseableVersionError(parse.version)
 
-            self.triples.push_graph(graph)
-            logging.debug("\t%s triples extracted and merged" % len(graph))
+            if 'link' in parse.channel:
+                logging.debug("\tLinking '%s' to '%s'" % (feed, parse.channel.link))
+                self.triples.push_rss_channel(feed, parse.channel.link)
+                self.triples.push_graph(graph)
+                logging.debug("\t%s triples extracted and merged" % len(graph))
+            else:
+                logging.error("\tUnable to link feed '%s' to any channel. Not merging." % feed)
         
     def discover_meta(self, homepage, candidate):
         self.triples.push_meta(homepage, candidate)
         self.stats.count_rdf()
-        logging.debug("Analyzing '%s'" % candidate)
+        logging.debug("\tAnalyzing '%s'" % candidate)
         if re.match(r".*\.rdf$", candidate) is not None:
             graph = ConjunctiveGraph()
             try:
                 graph.parse(candidate)
-            except SAXParseException, e:
+            except SAXParseException:
                 self.stats.count_invalidrdf()
-                logging.error("Unable to parse '%s'" % candidate)
-                return
+                raise RDFDiscoveringMalformedError()
+            except urllib2.URLError:
+                self.stats.count_invalidrdf()
+                raise RDFDiscoveringBrokenLinkError()
             
             self.triples.push_graph(graph)
-            logging.debug("%s triples extracted and merged" % len(graph))
+            logging.debug("\t%s triples extracted and merged" % len(graph))
 
     def _transform_feed(self, feeduri):
         document = InputSource.DefaultFactory.fromUri(feeduri)  
-        stylesheet = InputSource.DefaultFactory.fromUri(RSS_ATOM_2_ATOM_RDF_XSL)
+        stylesheet = InputSource.DefaultFactory.fromUri(RSS_2_RDF_XSL)
         processor = Processor.Processor()
         processor.appendStylesheet(stylesheet)
         logging.debug("\tApplying XSL transformation...")

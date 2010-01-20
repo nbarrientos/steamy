@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
 # Nacho Barrientos Arias <nacho@debian.org>
@@ -35,6 +34,7 @@ def homepages(endpoint, graph):
           ?source a deb:Source ;
                   foaf:page ?homepage .
         }
+        LIMIT 10 # FIXME
     """ % ("FROM <%s>" % graph if graph is not None else "")
     endpoint.setQuery(q)
     try:
@@ -121,6 +121,9 @@ class TripleProcessor():
 
     def push_graph(self, graph):
         self.pool.merge_graph(graph)
+
+    def push_rss_channel(self, feeduri, channeluri):
+        self.pool.add_triple((URIRef(feeduri), DEB.channel, URIRef(channeluri)))
 
     def push_validation_success(self, uri):
         assertion = self._push_generic_validation(uri)

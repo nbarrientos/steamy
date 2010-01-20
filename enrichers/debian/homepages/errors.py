@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+#
+# Nacho Barrientos Arias <nacho@debian.org>
+#
+#
+
 class W3CValidatorError(Exception):
     pass
 
@@ -33,3 +39,14 @@ class RSSParsingUnparseableVersionError(RSSParsingError):
 
     def __str__(self):
         return "Unparseable feed format '%s'" % self.format
+
+class RDFDiscoveringError(Exception):
+    pass
+
+class RDFDiscoveringBrokenLinkError(RDFDiscoveringError):
+    def __str__(self):
+        return "File is not available"
+
+class RDFDiscoveringMalformedError(RDFDiscoveringError):
+    def __str__(self):
+        return "Parser error"
