@@ -35,6 +35,8 @@ class ConstraintResolver():
     parser = OptionParser(usage="%prog [options]", version="%prog " + VERSION)
     parser.add_option("-e", "--endpoint", dest="endpoint",\
                       metavar="URI", help="use URI as SPARQL endpoint")
+    parser.add_option("-g", "--graph", dest="graph",\
+                      metavar="URI", help="use URI as FROM graph")
     parser.add_option("-o", "--output-prefix", dest="prefix",\
                       default="Safisfies",\
                       metavar="PREFIX", help="dump output to PREFIX-{index}.rdf [default: %default]")
@@ -88,6 +90,7 @@ class ConstraintResolver():
     q = """
         PREFIX deb: <http://idi.fundacionctic.org/steamy/debian.owl#>
         SELECT ?b ?c ?bvn ?cvn ?op
+        %s
         WHERE { 
           { ?ub deb:version ?b . } # Straight
           UNION 
@@ -99,7 +102,7 @@ class ConstraintResolver():
           OPTIONAL { ?c deb:versionNumber ?cvn . } .
           OPTIONAL { ?c deb:constraintOperator ?op . } .
         }
-    """
+    """ % ("FROM <%s>" % self.opts.graph if self.opts.graph is not None else "")
     
     r = self.queryEndpoint(q)
     return r["b", "c", "bvn"]
@@ -131,7 +134,7 @@ class ConstraintResolver():
             self.satisfyConstraint(binaryPackage, constraint)
 
     logging.info("Satisfied %s dependencies out of %s possible matches" % \
-    (self.pool.countTriples(), counter))
+    (self.pool.count_triples(), counter))
 
     self.pool.serialize()
     
@@ -139,10 +142,11 @@ class ConstraintResolver():
     q = """
         PREFIX deb: <http://idi.fundacionctic.org/steamy/debian.owl#>
         SELECT ?v
+        %s
         WHERE { 
           <%s> deb:fullVersion ?v .
         }
-    """ % versionURI
+    """ % ("FROM <%s>" % self.opts.graph if self.opts.graph is not None else "", versionURI)
     r = self.queryEndpoint(q)
 
     v = r["v"][0]["v"].value
@@ -159,7 +163,7 @@ class ConstraintResolver():
   def satisfyConstraint(self, binaryPackage, constraint):
     logging.debug("True! Adding <%s> deb:satisfies <%s>" % \
     (binaryPackage, constraint))
-    self.pool.addTriple((URIRef(binaryPackage), DEB['satisfies'], URIRef(constraint)))
+    self.pool.add_triple((URIRef(binaryPackage), DEB['satisfies'], URIRef(constraint)))
 
 if __name__ == "__main__":
   ConstraintResolver().run()
