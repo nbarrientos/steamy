@@ -12,6 +12,11 @@ import httplib
 import urllib2
 import re
 
+import feedparser
+from Ft.Xml import InputSource
+from Ft.Xml.Xslt import Processor
+
+from StringIO import StringIO
 from sgmllib import SGMLParseError
 from optparse import OptionParser
 from urlparse import urljoin
@@ -22,10 +27,18 @@ from rdflib.Graph import ConjunctiveGraph
 from tools.pool import GraphPool
 from homepages.io import LinkRetrieval, TripleProcessor
 from homepages.io import homepages, w3c_validator
-from homepages.errors import W3CValidatorError
+from homepages.errors import W3CValidatorError, RSSParsingError
+from homepages.errors import RSSParsingFeedUnavailableError
+from homepages.errors import RSSParsingFeedMalformedError
+from homepages.errors import RSSParsingUnparseableVersionError
 from homepages.models import Stats
 
 VERSION = "beta"
+#RSS2RDFXSL = "/home/nacho/steamy/git/enrichers/debian/rss2rdf.xsl"
+# Grabbed from http://djpowell.net/blog/entries/Atom-RDF.html
+# Supports: atom10, rss091, rss20, atom30
+RSS_ATOM_2_ATOM_RDF_XSL = \
+        "/home/nacho/steamy/git/enrichers/debian/tools/atom2rdf-16/atom2rdf-16.xsl"
 
 class HomepageEnricher():
     def __init__(self):
@@ -92,6 +105,9 @@ class HomepageEnricher():
 
         for homepage in homepages(self.opts.endpoint):
             self.process_homepage(homepage)
+
+        #self.process_homepage("http://www.wikier.org")
+        #self.process_homepage("http://www.w3c.es/")
        
         self.triples.request_serialization()
 
@@ -149,7 +165,10 @@ class HomepageEnricher():
         
         logging.info("\tDiscovering RSS feeds...")
         for candidate in self.htmlparser.get_rss_hrefs():
-            self.discover_rss(homepage, urljoin(homepage, candidate))
+            try:
+                self.discover_rss(homepage, urljoin(homepage, candidate))
+            except RSSParsingError, e:
+                logging.error("\t%s" % e)
         
         logging.info("\tDiscovering RDF...")
         for candidate in self.htmlparser.get_rdf_meta_hrefs():
@@ -160,22 +179,31 @@ class HomepageEnricher():
     def discover_rss(self, homepage, feed):
         self.triples.push_alternate(homepage, feed)
         self.stats.count_feed()
-        logging.debug("Trying to determine RSS feed format for uri '%s'" % feed)
+        logging.debug("\tTrying to determine RSS feed version for URI '%s'" % feed)
+
+        parse = feedparser.parse(feed)
+
+        if parse.status in (httplib.NOT_FOUND, httplib.GONE):
+            self.stats.count_invalidfeed()
+            raise RSSParsingFeedUnavailableError()
+        elif parse.bozo:
+            self.stats.count_invalidfeed()
+            raise RSSParsingFeedMalformedError()
+        else:
+            graph = ConjunctiveGraph()
+            if parse.version in ("rss10"):
+                logging.debug("\tLooks like RDF (RSS 1.0)")
+                graph.parse(feed, format="xml")
+            elif parse.version in ("atom10", "atom30", "rss091n", "rss20"):
+                logging.debug("\tLooks like XML (%s)" % parse.version)
+                graph.parse(StringIO(self._transform_feed(feed)), format="xml")
+            else:
+                self.stats.count_invalidfeed()
+                raise RSSParsingUnparseableVersionError(parse.version)
+
+            self.triples.push_graph(graph)
+            logging.debug("\t%s triples extracted and merged" % len(graph))
         
-        # TODO: Determine RSS format:
-        # 1.0: RDF - get, parse and merge graph
-        # 2.0: XML - get, transform and merge graph
-
-        #graph = ConjunctiveGraph()
-        #try:
-        #    graph.parse(feed, format="xml")
-        #    #self.pool.merge_graph(graph)
-        #except SAXParseException:
-        #    logging.debug("'%s' does not look like RDF" % feed)
-
-        #logging.debug("Looks like it is RDF (RSS 1.x)")
-        #logging.debug("Got %s triples from '%s'" % (len(graph), feed))
-
     def discover_meta(self, homepage, candidate):
         self.triples.push_meta(homepage, candidate)
         self.stats.count_rdf()
@@ -190,8 +218,16 @@ class HomepageEnricher():
                 return
             
             self.triples.push_graph(graph)
-
             logging.debug("%s triples extracted and merged" % len(graph))
+
+    def _transform_feed(self, feeduri):
+        document = InputSource.DefaultFactory.fromUri(feeduri)  
+        stylesheet = InputSource.DefaultFactory.fromUri(RSS_ATOM_2_ATOM_RDF_XSL)
+        processor = Processor.Processor()
+        processor.appendStylesheet(stylesheet)
+        logging.debug("\tApplying XSL transformation...")
+        rdfstring = processor.run(document)
+        return rdfstring
 
 
 if __name__ == "__main__":

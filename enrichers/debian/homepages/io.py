@@ -11,9 +11,10 @@ import urllib
 import re
 
 from sgmllib import SGMLParser
+from datetime import datetime
 
 from rdflib.Graph import ConjunctiveGraph
-from rdflib import Namespace, URIRef, Literal, BNode
+from rdflib import URIRef, Literal, BNode
 from SPARQLWrapper import SPARQLWrapper2
 from SPARQLWrapper.sparqlexceptions import EndPointNotFound
 
@@ -21,6 +22,7 @@ from models import AlternateLink, MetaLink
 from errors import W3CValidatorUnableToConnectError 
 from errors import W3CValidatorUnexpectedValidationResultError
 from errors import W3CValidatorUnexpectedStatusCodeError
+from namespaces import *
 
 def homepages(endpoint):
     endpoint = SPARQLWrapper2(endpoint)
@@ -32,7 +34,7 @@ def homepages(endpoint):
           ?source a deb:Source ;
                   foaf:page ?homepage .
         }
-        LIMIT 5
+        LIMIT 100
     """
     endpoint.setQuery(q)
     try:
@@ -74,6 +76,8 @@ class LinkRetrieval(SGMLParser):
         rels = [value.lower() for key, value in attrs if key=='rel']
         types = [value.lower() for key, value in attrs if key=='type']
         hrefs = [value for key, value in attrs if key=='href']
+        # SGMLParser does not ignore newlines and could lead to broken URIs
+        hrefs = map(lambda x: re.sub("\s", "", x), hrefs)
         if 'alternate' in rels:
             self.results.append(AlternateLink(types, hrefs))
             logging.debug("Appended alternate: types=%s hrefs=%s" % \
@@ -95,14 +99,6 @@ class LinkRetrieval(SGMLParser):
                 for href in x.hrefs:
                     yield href
 
-
-RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
-FOAF = Namespace(u"http://xmlns.com/foaf/0.1/")
-RDF = Namespace(u"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
-DOAP = Namespace(u"http://usefulinc.com/ns/doap#")
-XHV = Namespace(u"http://www.w3.org/1999/xhtml/vocab#")
-EARL = Namespace(u"http://www.w3.org/ns/earl#")
 
 class TripleProcessor():
     def __init__(self, graphpool):
@@ -145,4 +141,5 @@ class TripleProcessor():
         self.pool.add_triple((assertion, EARL.testCase, DEB.W3CValidationTest))
         self.pool.add_triple((assertion, EARL.subject, subject))
         self.pool.add_triple((assertion, EARL.mode, EARL.automatic))
+        self.pool.add_triple((assertion, DC.date, Literal(datetime.now())))
         return assertion

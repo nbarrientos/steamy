@@ -8,11 +8,8 @@
 import random
 
 from rdflib.Graph import ConjunctiveGraph
-from rdflib import Namespace
 
-DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
-XHV = Namespace(u"http://www.w3.org/1999/xhtml/vocab#")
-EARL = Namespace(u"http://www.w3.org/ns/earl#")
+from homepages.namespaces import *
 
 
 class GraphPool():
@@ -23,6 +20,10 @@ class GraphPool():
       graph.bind("deb", DEB)
       graph.bind("xhv", XHV)
       graph.bind("earl", EARL)
+      graph.bind("dc", DC)
+      graph.bind("content", CONTENT)
+      graph.bind("r", R)
+      graph.bind("rss", RSS)
 
   def add_triple(self, triple):
     self.pool[self._random_graphno()].add(triple)

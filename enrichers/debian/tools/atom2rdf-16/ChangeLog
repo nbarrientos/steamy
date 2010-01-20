@@ -1,0 +1,135 @@
+2006-05-08  David Powell  <djpowell@djpowell.net>
+
+	* atom2rdf-16.xsl: changed contentBase to a rdf:resource
+
+2006-05-01  David Powell  <djpowell@djpowell.net>
+
+	* atom2rdf-15.xsl: got rid of strict ref parsing stuff.
+
+	* atom2rdf-13-atom.xsl: Moved to modular stylesheet structure,
+	using xsl:apply-templates rather than xsl:for-each.  Many changes.
+
+	* atom2rdf-12.xsl: converted to version 0.3 of Atom/RDF schema.
+	Uses rdf:type to differentiate different content models rather
+	than a property.
+
+	* rssdates.xsl: fixed bug with timezones
+
+	support for stripping nested comments, and comments that contain
+	escaped parenthesis.
+
+2006-04-25  David Powell  <djpowell@djpowell.net>
+
+	* atom2rdf-13-rss2.xsl: changed containingFeed and sourceFeed to
+	point to Feed instead of FeedInstance	
+
+	changed icon and logo so that we can add extra properties about
+	the link (eg RSS2's description)
+	
+	rewrote all XSLT to be modular and support multiple feed formats.
+
+2006-03-15    <Dave@DXP>
+
+	* atom2rdf-11.xsl: Changed the handling of extensions.  Now simple
+	and structured extensions are treated more uniformly, and have a
+	balance of round-trippability, and ease of use.
+
+2005-08-03    <Dave@DXP>
+
+	* atom2rdf-10.xsl: fixed it so that mixed content in Structured
+	Extensions works.
+
+2005-08-03    <Dave@DXP>
+
+	* atom2rdf-10.xsl: added atomrdf:propertyURI hint to Structured
+	Extensions.  added atomrdf:localName and atom:rdf:namespaceURI to
+	preserve the mapping from XML elements to URIs.
+
+2005-07-26    <Dave@DXP>
+
+	* atom2rdf-10.xsl: lots of updates for draft-10.  rev'd namespace version.
+
+2005-04-19    <Dave@DXP>
+
+	* atom2rdf-07.xsl: corrected atomrdf:Image/Icon to use rdf:about
+
+2005-04-17    <Dave@DXP>
+
+	* atomrdf-rdfs.xml: icon and image had wrong domain
+
+	added vochelp:suggestedProperty properties
+
+	added missing domain  for linkHref
+
+	changed rdfs:Property to rdf:Property
+
+2005-04-08    <Dave@DXP>
+
+	* uritest.xsl: fixed link in uritest.xsl
+
+2005-04-06    <Dave@DXP>
+
+	* atom2rdf-07.xsl: changed source-feed to source
+
+	* atom2rdf-06.xsl: fixed empty contentBase problem
+
+	* atom2rdf-07.xsl: added new version for draft-07
+
+	* atom2rdf-06.xsl: was missing an atomrdf:image / atomrdf:Image /
+	atomrdf:icon / atomrdf:Icon
+
+2005-03-21    <Dave@DXP>
+
+	* atom2rdf-06.xsl: fixed lang bug
+
+	* atom2rdf.xsl: added STRICT_REF_PARSING variable
+
+	updated comments
+	
+
+2005-03-20    <Dave@DXP>
+
+	* atom2rdf.xsl (xml): only declare xml:base on atom:feed if one is in scope
+
+	fixed strict='true'
+
+	(xml): removed xml:lang check from feed/Head call
+
+	(xml): removed xml:base attribute from rdf:RDF
+
+2005-03-19    <Dave@DXP>
+
+	* atom2rdf.xsl: renamed tagline to subtitle
+
+	bugfix - xml:base is stripped from structured extension root
+
+	changed entry/head into entry/source-feed
+
+	replaced feed/head with feed
+
+	removed info and host
+
+	added picture constructs
+
+	removed introspection, post and edit
+
+2005-03-16    <Dave@DXP>
+
+	* atom2rdf.xsl (Notes): changed namespace to -06
+
+	removed atom:feed/@version
+
+	lowercased TEXT, HTML, and XHTML
+
+	take xhtml content from div, ensuring that the div is not part of
+	the content.
+
+2005-02-08    <Dave@DXP>
+
+	* atom2rdf.xsl: added support for PaceLangSpecific
+
+2005-02-02    <Dave@DXP>
+
+	* atom2rdf.xsl (TODO): fixed feedVersion attribute
+	
+

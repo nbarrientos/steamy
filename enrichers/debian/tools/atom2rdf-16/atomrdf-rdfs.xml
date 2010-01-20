@@ -1,0 +1,886 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Atom/RDF Dual RDFS/OWL vocabulary -->
+<!-- $Id: index.rdf,v 1.5 2006/06/26 18:48:35 Dave Exp $ -->
+
+<!DOCTYPE rdf:RDF [
+<!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#">
+<!ENTITY voc "http://sw.nokia.com/VOC-1/">
+<!ENTITY owl "http://www.w3.org/2002/07/owl#">
+<!ENTITY dc "http://purl.org/dc/elements/1.1/">
+<!ENTITY dct "http://purl.org/dc/terms/">
+<!ENTITY voch "http://djpowell.net/schemas/vochelp/0.1/">
+<!ENTITY xsd "http://www.w3.org/2001/XMLSchema#">
+]>
+
+<rdf:RDF xmlns:rdf="&rdf;"
+	 xmlns:rdfs="&rdfs;"
+	 xmlns:voc="&voc;"
+	 xmlns:owl="&owl;"
+	 xmlns:dc="&dc;"
+         xmlns:dct="&dct;"
+	 xmlns:voch="&voch;"
+	 xml:base="http://djpowell.net/schemas/atomrdf/0.3/"
+	 >
+
+  <!-- TODO
+     
+Should PlainText have an xml:base context?  It should have an
+xml:lang, but probably not base?
+  
+Are containingFeed and sourceFeed mandatory in entry documents?  NO -
+update UML.
+
+Can an EntryInstance have more than one sourceFeed? - NO.
+
+Can an EntryInstance have more than one containingFeed?.
+
+  -->
+  
+  <voc:Vocabulary rdf:about="">
+    <rdfs:label>Atom/RDF 0.3</rdfs:label>
+    <dct:created>2004-01-29T23:47:00Z</dct:created>
+    <dct:modified>2006-05-07T20:18:00Z</dct:modified>
+    <dc:creator>David Powell (http://djpowell.net/)</dc:creator>
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Ontology" />
+  </voc:Vocabulary>
+
+  <!-- a bit of OWL to help out the voc and vochelp schemas -->
+  <owl:AnnotationProperty rdf:about="&voch;suggestedProperty" />
+  <owl:AnnotationProperty rdf:about="&voc;partOf" />
+
+  <!-- ========== Classes ========== -->
+
+  <rdfs:Class rdf:about="Feed">
+    <rdfs:label>Feed</rdfs:label>
+    <rdfs:comment>Feed (which may be identified by a
+    URI)</rdfs:comment>
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" />    
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="FeedInstance">
+    <rdfs:label>FeedInstance</rdfs:label>
+    <rdfs:comment>An instance of Feed metadata appearing in an
+    Atom document.  By seperating the concepts of Feeds and
+    FeedInstances, it is possible to store multiple feeds in a model,
+    and keep temporally varying instances seperate.  It is possible to
+    attach additional properties to the FeedInstance to describe its
+    origin, such as the date that the feed was
+    polled.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="FeedOrEntryInstance" />
+    <voch:suggestedProperty rdf:resource="author" />
+    <voch:suggestedProperty rdf:resource="category" />
+    <voch:suggestedProperty rdf:resource="contributor" />
+    <voch:suggestedProperty rdf:resource="link" />
+    <voch:suggestedProperty rdf:resource="title" />
+    <voch:suggestedProperty rdf:resource="rights" />
+    <voch:suggestedProperty rdf:resource="updated" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" />    
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="Entry">
+    <rdfs:label>Entry</rdfs:label>
+    <rdfs:comment>Entry (identified by a URI)</rdfs:comment>
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" />    
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="EntryInstance">
+    <rdfs:label>EntryInstance</rdfs:label>
+    <rdfs:comment>An instance of an Entry appearing in an Atom
+    document.  By seperating the concepts of Entries and
+    EntryInstances, it is possible to store multiple entries in a
+    model, and keep temporally varying instances seperate.  It is
+    possible to attach additional properties to the EntryInstance to
+    describe its origin, such as the date that the feed was
+    polled.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="FeedOrEntryInstance" />
+    <voch:suggestedProperty rdf:resource="author" />
+    <voch:suggestedProperty rdf:resource="title" />
+    <voch:suggestedProperty rdf:resource="category" />
+    <voch:suggestedProperty rdf:resource="link" />
+    <voch:suggestedProperty rdf:resource="contributor" />
+    <voch:suggestedProperty rdf:resource="updated" />
+    <voch:suggestedProperty rdf:resource="rights" />
+    <voch:suggestedProperty rdf:resource="extension" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" />
+    <!--
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="author" />
+        <owl:minCardinality>1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    -->
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="Person">
+    <rdfs:label>Person</rdfs:label>
+    <rdfs:comment>Person Construct.  Person constructs don't
+    require PersonInstances, as Person's are not identified by
+    URIs</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="ExtensibleInstance" />
+    <voch:suggestedProperty rdf:resource="extension" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" />    
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="Generator">
+    <rdfs:label>Generator</rdfs:label>
+    <rdfs:comment>Describes software used to create a
+    feed.</rdfs:comment>
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" />    
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="Link">
+    <rdfs:label>Link</rdfs:label>
+    <rdfs:comment>Link Construct.</rdfs:comment>
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" />    
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="Category">
+    <rdfs:label>Category</rdfs:label>
+    <rdfs:comment>Represents the properties of a
+    category</rdfs:comment>
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" />    
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="Extension">
+    <rdfs:label>Extension</rdfs:label>
+    <rdfs:comment>Structured Extension
+    Construct.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="ContextSensitive" />
+    <voch:suggestedProperty rdf:resource="contentBase" />
+    <voch:suggestedProperty rdf:resource="contentLang" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" />    
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="Image">
+    <rdfs:label>Image</rdfs:label>
+    <rdfs:comment>A link to a logo or icon.</rdfs:comment>
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" />    
+  </rdfs:Class>
+
+  <!-- Text types -->
+
+  <rdfs:Class rdf:about="PlainText">
+    <rdfs:label>PlainText</rdfs:label>
+    <rdfs:comment>A subclass of Text for representing plain text content</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="Text" />
+    <rdfs:subClassOf rdf:resource="TextContainer" />
+    <voch:suggestedProperty rdf:resource="textValue" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" /> 
+  </rdfs:Class>
+
+  <!-- TODO fix stylesheet to handle multiple subClassOf's -->
+
+  <rdfs:Class rdf:about="HtmlText">
+    <rdfs:label>HtmlText</rdfs:label>
+    <rdfs:comment>A subclass of Text for representing HTML content</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="Text" />
+    <rdfs:subClassOf rdf:resource="TextContainer" />
+    <voch:suggestedProperty rdf:resource="textValue" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" /> 
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="XhtmlText">
+    <rdfs:label>XhtmlText</rdfs:label>
+    <rdfs:comment>A subclass of Text for representing XHTML content</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="Text" />
+    <rdfs:subClassOf rdf:resource="XmlContainer" />
+    <voch:suggestedProperty rdf:resource="xmlValue" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" /> 
+  </rdfs:Class>
+
+  <!-- Content types -->
+
+  <rdfs:Class rdf:about="ExternalContent">
+    <rdfs:label>ExternalContent</rdfs:label>
+    <rdfs:comment>A subclass of Content for representing external content</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="Content" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" /> 
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="BinaryContent">
+    <rdfs:label>BinaryContent</rdfs:label>
+    <rdfs:comment>A subclass of MimeContent for representing base64 encoded binary content with a MIME type</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="MimeContent" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" /> 
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="XmlContent">
+    <rdfs:label>XmlContent</rdfs:label>
+    <rdfs:comment>A subclass of MimeContent for representing XML content with a MIME type</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="MimeContent" />
+    <rdfs:subClassOf rdf:resource="XmlContainer" />
+    <voch:suggestedProperty rdf:resource="xmlValue" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" /> 
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="TextContent">
+    <rdfs:label>TextContent</rdfs:label>
+    <rdfs:comment>A subclass of MimeContent for representing text content with a MIME type</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="MimeContent" />
+    <rdfs:subClassOf rdf:resource="TextContainer" />
+    <voch:suggestedProperty rdf:resource="textValue" />    
+    <voch:suggestedProperty rdf:resource="mimeType" />    
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" /> 
+  </rdfs:Class>
+
+
+  <!-- Structural classes -->
+  <!-- TODO add a property to structural classes -->
+
+  <rdfs:Class rdf:about="ExtensibleInstance">
+    <rdfs:label>ExtensibleInstance</rdfs:label>
+    <rdfs:comment>An object that can have extension elements: Person,
+    and FeedOrEntryInstance</rdfs:comment>
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" /> 
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="FeedOrEntryInstance">
+    <rdfs:label>FeedOrEntryInstance</rdfs:label>
+    <rdfs:comment>Parent class of FeedInstance and
+    EntryInstance</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="ExtensibleInstance" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" /> 
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="ContextSensitive">
+    <rdfs:label>ContextSensitive</rdfs:label>
+    <rdfs:comment>An object that requires the preservation of xml:base
+    and xml:lang context: Extension and TextOrContent</rdfs:comment>
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" /> 
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="Text">
+    <rdfs:label>Text</rdfs:label>
+    <rdfs:comment>Text Construct</rdfs:comment>
+    <voch:suggestedProperty rdf:resource="contentBase" />
+    <voch:suggestedProperty rdf:resource="contentLang" />
+    <rdfs:subClassOf rdf:resource="Content" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" />    
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="Content">
+    <rdfs:label>Content</rdfs:label>
+    <rdfs:comment>Text Construct or atom:content</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="ContextSensitive" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" /> 
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="MimeContent">
+    <rdfs:label>MimeContent</rdfs:label>
+    <rdfs:comment>A subclass of Text for representing atom:content</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="Content" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" /> 
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="TextContainer">
+    <rdfs:label>TextContainer</rdfs:label>
+    <rdfs:comment>An interface of PlainText, HtmlText, and TextContent.</rdfs:comment>
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" />
+  </rdfs:Class>
+
+  <rdfs:Class rdf:about="XmlContainer">
+    <rdfs:label>XmlContainer</rdfs:label>
+    <rdfs:comment>An interface of XhtmlText and
+    XmlContent.</rdfs:comment>
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;Class" />
+  </rdfs:Class>
+
+  <!-- ========== Properties ========== -->
+
+  <rdf:Property rdf:about="linkRel">
+    <rdfs:label>linkRel</rdfs:label>
+    <rdfs:comment>Link relation type.</rdfs:comment>
+    <rdfs:domain rdf:resource="Link" />
+<!--    <rdfs:range rdf:resource="&rdfs;Resource" /> -->
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="linkType">
+    <rdfs:label>linkType</rdfs:label>
+    <rdfs:comment>Link MIME media type.</rdfs:comment>
+    <rdfs:domain rdf:resource="Link" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;string" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="linkHref">
+    <rdfs:label>linkHref</rdfs:label>
+    <rdfs:comment>Link target URI.</rdfs:comment>
+    <rdfs:domain rdf:resource="Link" />
+<!--    <rdfs:range rdf:resource="&rdfs;Resource" /> -->
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="linkHrefLang">
+    <rdfs:label>linkHrefLang</rdfs:label>
+    <rdfs:comment>Link resource language.</rdfs:comment>
+    <rdfs:domain rdf:resource="Link" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;language" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="linkTitle">
+    <rdfs:label>linkTitle</rdfs:label>
+    <rdfs:comment>Link title.</rdfs:comment>
+    <rdfs:domain rdf:resource="Link" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;string" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="linkLength">
+    <rdfs:label>linkLength</rdfs:label>
+    <rdfs:comment>Link resource size (in
+    bytes).</rdfs:comment>
+    <rdfs:domain rdf:resource="Link" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;nonNegativeInteger" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="category">
+    <rdfs:label>category</rdfs:label>
+    <rdfs:comment>Category of feed or entry.</rdfs:comment>
+    <rdfs:domain rdf:resource="FeedOrEntryInstance" />
+    <rdfs:range rdf:resource="Category" />
+    <voc:partOf rdf:resource="" />    
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="contentBase">
+    <rdfs:label>contentBase</rdfs:label>
+    <rdfs:comment>Base URI of XML Literal in rdf:value sibling.
+    Used by Text constructs, content, and structured
+    extensions.</rdfs:comment>
+    <rdfs:domain rdf:resource="ContextSensitive" />
+<!--    <rdfs:range rdf:resource="&rdfs;Resource" /> -->
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="contentLang">
+    <rdfs:label>contentLang</rdfs:label>
+    <rdfs:comment>Base xml:lang for XML Literal in rdf:value sibling.
+    Used by Text constructs, content, and structured
+    extensions.</rdfs:comment>
+    <rdfs:domain rdf:resource="ContextSensitive" />
+<!--    <rdfs:range rdf:resource="&rdfs;Resource" /> -->
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;language" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="contentSource">
+    <rdfs:label>contentSource</rdfs:label>
+    <rdfs:comment>URI of external content.</rdfs:comment>
+    <rdfs:domain rdf:resource="ExternalContent" />
+<!--    <rdfs:range rdf:resource="&rdfs;Resource" /> -->
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="mimeType">
+    <rdfs:label>mimeType</rdfs:label>
+    <rdfs:comment>MIME content type of a content element.</rdfs:comment>
+    <rdfs:domain rdf:resource="MimeContent" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;string" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="extension">
+    <rdfs:label>extension</rdfs:label>
+    <rdfs:comment>An embedded Structured Extension construct.
+    This property can be used to preserve unknown Structured
+    Extensions so that they can be round-tripped between Atom Syntax
+    and Atom/RDF.  When the semantics of a Structured Extension
+    construct are known, it may be appropriate to use an Extension
+    specific mapping instead.</rdfs:comment>
+    <rdfs:domain rdf:resource="ExtensibleInstance" />
+    <rdfs:range rdf:resource="Extension" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="link">
+    <rdfs:label>link</rdfs:label>
+    <rdfs:comment>A reference from a feed or entry to a web
+    resource</rdfs:comment>
+    <rdfs:domain rdf:resource="FeedOrEntryInstance" />
+    <rdfs:range rdf:resource="Link" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="personUri">
+    <rdfs:label>personUri</rdfs:label>
+    <rdfs:comment>A URI associated with a Person
+    construct.</rdfs:comment>
+    <rdfs:domain rdf:resource="Person" />
+<!--    <rdfs:range rdf:resource="&rdfs;Resource" /> -->
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="personName">
+    <rdfs:label>personName</rdfs:label>
+    <rdfs:comment>The name of a Person.</rdfs:comment>
+    <rdfs:domain rdf:resource="Person" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;string" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="personEmail">
+    <rdfs:label>personEmail</rdfs:label>
+    <rdfs:comment>The email address of a
+    Person.</rdfs:comment>
+    <rdfs:domain rdf:resource="Person" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;string" />
+  </rdf:Property>
+
+  <!-- TODO maybe just have an instance property instead of these two? -->
+  <rdf:Property rdf:about="feed">
+    <rdfs:label>feed</rdfs:label>
+    <rdfs:comment>A relation from a concrete FeedInstance to a
+    conceptual Feed.</rdfs:comment>
+    <rdfs:domain rdf:resource="FeedInstance" />
+    <rdfs:range rdf:resource="Feed" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="entry">
+    <rdfs:label>entryInstance</rdfs:label>
+    <rdfs:comment>A relation from a concrete EntryInstance to a
+    conceptual Entry.</rdfs:comment>
+    <rdfs:domain rdf:resource="EntryInstance" />
+    <rdfs:range rdf:resource="Entry" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="containingFeed">
+    <rdfs:label>containingFeed</rdfs:label>
+    <rdfs:comment>A relation from an EntryInstance to the Feed that it
+    was packaged in.</rdfs:comment>
+    <rdfs:domain rdf:resource="EntryInstance" />
+    <rdfs:range rdf:resource="Feed" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="sourceFeed">
+    <rdfs:label>sourceFeed</rdfs:label>
+    <rdfs:comment>A relation from an EntryInstance to its source feed
+    defined by its entry/source-feed element.  If an entry has no
+    entry/source-feed, then its origin feed is the same as its
+    containingFeed.</rdfs:comment>
+    <rdfs:domain rdf:resource="EntryInstance" />
+    <rdfs:range rdf:resource="Feed" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="title">
+    <rdfs:label>title</rdfs:label>
+    <rdfs:comment>The title of a feed or entry.</rdfs:comment>
+    <rdfs:domain rdf:resource="FeedOrEntryInstance" />
+    <rdfs:range rdf:resource="Text" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <!-- TODO EntryInstance's always contain at least one author, so we need a property restriction -->
+
+  <rdf:Property rdf:about="author">
+    <rdfs:label>author</rdfs:label>
+    <rdfs:comment>The author of the entry or feed.</rdfs:comment>
+    <rdfs:domain rdf:resource="FeedOrEntryInstance" />
+    <rdfs:range rdf:resource="Person" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="contributor">
+    <rdfs:label>contributor</rdfs:label>
+    <rdfs:comment>A contributor to the feed or
+    entry.</rdfs:comment>
+    <rdfs:domain rdf:resource="FeedOrEntryInstance" />
+    <rdfs:range rdf:resource="Person" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="updated">
+    <rdfs:label>updated</rdfs:label>
+    <rdfs:comment>The time of the last significant update to the
+    entry or feed.</rdfs:comment>
+    <rdfs:domain rdf:resource="FeedOrEntryInstance" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;dateTime" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="published">
+    <rdfs:label>published</rdfs:label>
+    <rdfs:comment>The time of creation or publication of the
+    entry.</rdfs:comment>
+    <rdfs:domain rdf:resource="EntryInstance" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;dateTime" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="summary">
+    <rdfs:label>summary</rdfs:label>
+    <rdfs:comment>A summary or abstract of the entry.</rdfs:comment>
+    <rdfs:domain rdf:resource="EntryInstance" />
+    <rdfs:range rdf:resource="Text" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="rights">
+    <rdfs:label>rights</rdfs:label>
+    <rdfs:comment>A human readable intellectual property rights
+    statement for the feed or entry.</rdfs:comment>
+    <rdfs:domain rdf:resource="FeedOrEntryInstance" />
+    <rdfs:range rdf:resource="Text" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="subtitle">
+    <rdfs:label>subtitle</rdfs:label>
+    <rdfs:comment>A human readable description or subtitle of the
+    feed.</rdfs:comment>
+    <rdfs:domain rdf:resource="FeedInstance" />
+    <rdfs:range rdf:resource="Text" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="generator">
+    <rdfs:label>generator</rdfs:label>
+    <rdfs:comment>Identifies the software used to create the
+    feed.</rdfs:comment>
+    <rdfs:domain rdf:resource="FeedInstance" />
+    <rdfs:range rdf:resource="Generator" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="generatorName">
+    <rdfs:label>generatorName</rdfs:label>
+    <rdfs:comment>Identifies the name of the software used to
+    create the feed.</rdfs:comment>
+    <rdfs:domain rdf:resource="Generator" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;string" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="generatorUri">
+    <rdfs:label>generatorUri</rdfs:label>
+    <rdfs:comment>Identifies a URI associated with the software
+    used to create the feed.</rdfs:comment>
+    <rdfs:domain rdf:resource="Generator" />
+<!--    <rdfs:range rdf:resource="&rdfs;Resource" /> -->
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="generatorVersion">
+    <rdfs:label>generatorVersion</rdfs:label>
+    <rdfs:comment>Identifies a version number of the software used
+    to create the feed.</rdfs:comment>
+    <rdfs:domain rdf:resource="Generator" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;string" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="content">
+    <rdfs:label>content</rdfs:label>
+    <rdfs:comment>The content of the entry.</rdfs:comment>
+    <rdfs:domain rdf:resource="EntryInstance" />
+    <rdfs:range rdf:resource="Content" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="icon">
+    <rdfs:label>icon</rdfs:label>
+    <rdfs:comment>An icon for the feed.</rdfs:comment>
+    <rdfs:domain rdf:resource="FeedInstance" />
+    <rdfs:range rdf:resource="Image" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="logo">
+    <rdfs:label>logo</rdfs:label>
+    <rdfs:comment>A logo for the feed.</rdfs:comment>
+    <rdfs:domain rdf:resource="FeedInstance" />
+    <rdfs:range rdf:resource="Image" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="imageUri">
+    <rdfs:label>imageUri</rdfs:label>
+    <rdfs:comment>The URI for the image - as a Resource</rdfs:comment>
+    <rdfs:domain rdf:resource="Image" />
+    <!--    <rdfs:range rdf:resource="&rdfs;Resource" /> -->
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="categoryTerm">
+    <rdfs:label>categoryTerm</rdfs:label>
+    <rdfs:comment>The category term.</rdfs:comment>
+    <rdfs:domain rdf:resource="Category" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;string" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="categoryScheme">
+    <rdfs:label>categoryScheme</rdfs:label>
+    <rdfs:comment>A URI identifying the category
+    scheme.</rdfs:comment>
+    <rdfs:domain rdf:resource="Category" />
+<!--    <rdfs:range rdf:resource="&rdfs;Resource" /> -->
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;ObjectProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="categoryLabel">
+    <rdfs:label>categoryLabel</rdfs:label>
+    <rdfs:comment>A human readable label for the category
+    term.</rdfs:comment>
+    <rdfs:domain rdf:resource="Category" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;string" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="extensionXML">
+    <rdfs:label>extensionXML</rdfs:label>
+    <rdfs:comment>An XML Literal containing the extension including
+    the element wrapper itself.</rdfs:comment>
+    <rdfs:domain rdf:resource="Extension" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&rdf;XMLLiteral" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="extensionText">
+    <rdfs:label>extensionText</rdfs:label>
+    <rdfs:comment>The plain text value of an extension.  If the
+    extension contains mixed content, then this property will not be
+    available.  Provided for easier access to property values without
+    requiring to parse the XML in triples.  The atomrdf:extensionXML
+    element should always be available, even when
+    atomrdf:extensionText isn't.</rdfs:comment>
+    <rdfs:domain rdf:resource="Extension" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;string" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="propertyNS">
+    <rdfs:label>propertyNS</rdfs:label>
+    <rdfs:comment>The namespace URI of the root element of an
+    extension.  Provided for easier identification of the property
+    type from the RDF model.  The value is a literal to allow for
+    support of the blank namespace.</rdfs:comment>
+    <rdfs:domain rdf:resource="Extension" />
+    <rdfs:range rdf:resource="&xsd;string" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="propertyName">
+    <rdfs:label>propertyName</rdfs:label>
+    <rdfs:comment>The localName of the root element of an extension.
+    Provided for easier identification of the property type from the
+    RDF model.</rdfs:comment>
+    <rdfs:domain rdf:resource="Extension" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;NCName" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="base64Value">
+    <rdfs:label>base64Value</rdfs:label>
+    <rdfs:comment>The value of binary content as a base64 string.</rdfs:comment>
+    <rdfs:domain rdf:resource="BinaryContent" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&xsd;base64Binary" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="textValue">
+    <rdfs:label>textValue</rdfs:label>
+    <rdfs:comment>The value of text or html text constructs, or text MimeContent.</rdfs:comment>
+    <rdfs:domain rdf:resource="TextContainer" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdfs:range rdf:resource="&xsd;string" />
+  </rdf:Property>
+
+  <rdf:Property rdf:about="xmlValue">
+    <rdfs:label>xmlValue</rdfs:label>
+    <rdfs:comment>The value of xhtml text constructs, or xml MimeContent.</rdfs:comment>
+    <rdfs:domain rdf:resource="XmlContainer" />
+    <voc:partOf rdf:resource="" />
+    <!-- OWL -->
+    <rdf:type rdf:resource="&owl;DatatypeProperty" />
+    <rdf:type rdf:resource="&owl;FunctionalProperty" />
+    <rdfs:range rdf:resource="&rdf;XMLLiteral" />
+  </rdf:Property>
+
+</rdf:RDF>

@@ -1,0 +1,64 @@
+<?xml-stylesheet type="text/xsl" href="rssdates-tester.xsl" ?>
+<dates>
+  <test>
+    <date>Sat, 07 Sep 2002 09:42:31 GMT</date>
+    <expect>2002-09-07T09:42:31-00:00</expect>
+  </test>
+  <test>
+    <date>Fri, 21 Nov 1997 09:55:06 -0600</date>
+    <expect>1997-11-21T09:55:06-06:00</expect>
+  </test>
+  <test>
+    <date>Fri, 21 Nov 1997 09:55:06 -0600</date>
+    <expect>1997-11-21T09:55:06-06:00</expect>
+  </test>
+  <test>
+    <date>Tue, 1 Jul 2003 10:52:37 +0200</date>
+    <expect>2003-07-01T10:52:37+02:00</expect>
+  </test>
+  <test>
+    <date>Thu, 13 Feb 1969 23:32:54 -0330</date>
+    <expect>1969-02-13T23:32:54-03:30</expect>
+  </test>
+  <test>
+    <date>Fri, 21 Nov 1997 09:55:06 -0600</date>
+    <expect>1997-11-21T09:55:06-06:00</expect>
+  </test>
+  <test>
+    <date>Fri, 21 Nov 1997 10:01:10 -0600</date>
+    <expect>1997-11-21T10:01:10-06:00</expect>
+  </test>
+  <test>
+    <date>Fri, 21 Nov 1997 11:00:00 -0600</date>
+    <expect>1997-11-21T11:00:00-06:00</expect>
+  </test>
+  <test>
+    <date>Fri, 21 Nov 1997 09:55:06 -0600</date>
+    <expect>1997-11-21T09:55:06-06:00</expect>
+  </test>
+  <test>
+    <date>Fri, 21 Nov 1997 09:55:06 -0600</date>
+    <expect>1997-11-21T09:55:06-06:00</expect>
+  </test>
+  <test>
+    <date>Fri, 21 Nov 1997 09:55:06 -0600</date>
+    <expect>1997-11-21T09:55:06-06:00</expect>
+  </test>
+  <test>
+    <date>Thu,13
+    Feb
+    1969
+    23:32
+    -0330 (Newfoundland Time)
+    </date>
+    <expect>1969-02-13T23:32:00-03:30</expect>
+  </test>
+  <test>
+    <date>Tue, 1 Jul 2003 10:52:37 +0200</date>
+    <expect>2003-07-01T10:52:37+02:00</expect>
+  </test>
+  <test>
+    <date>21 Nov 97 09:55:06 GMT</date>
+    <expect>1997-11-21T09:55:06-00:00</expect>
+  </test>
+</dates>
