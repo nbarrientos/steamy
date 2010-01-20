@@ -21,27 +21,20 @@ from rdflib.Graph import ConjunctiveGraph
 from rdflib import Namespace, URIRef, Literal, BNode
 
 from tools.pool import GraphPool
-from homepages.io import LinkRetrieval
+from homepages.io import LinkRetrieval, TripleProcessor
 from homepages.io import homepages, w3c_validator
 from homepages.errors import W3CValidatorError
 from homepages.models import Stats
 
 VERSION = "beta"
 
-RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
-FOAF = Namespace(u"http://xmlns.com/foaf/0.1/")
-RDF = Namespace(u"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
-DOAP = Namespace(u"http://usefulinc.com/ns/doap#")
-XHV = Namespace(u"http://www.w3.org/1999/xhtml/vocab#")
-EARL = Namespace(u"http://www.w3.org/ns/earl#")
-
 class HomepageEnricher():
     def __init__(self):
         self.opts = None
 
     def initData(self):
-        self.pool = GraphPool(self.opts.pool, self.opts.prefix, self.opts.basedir)
+        pool = GraphPool(self.opts.pool, self.opts.prefix, self.opts.basedir)
+        self.triples = TripleProcessor(pool)
         self.htmlparser = LinkRetrieval()
         self.stats = Stats()
 
@@ -101,9 +94,7 @@ class HomepageEnricher():
         for homepage in homepages(self.opts.endpoint):
             self.process_homepage(homepage)
        
-        if self.pool.count_triples() > 0:
-            logging.info("\nSerializing graphs...")
-            self.pool.serialize()
+        self.triples.request_serialization()
 
         logging.info(self.stats)
 
@@ -137,11 +128,11 @@ class HomepageEnricher():
 
         if result is True:
             logging.debug("Validation passed")
-            self._push_validation_success(uri)
+            self.triples.push_validation_success(uri)
             self.stats.count_validmarkup()
         else:
             logging.debug("Validation failed")
-            self._push_validation_failure(uri)
+            self.triples.push_validation_failure(uri)
 
         time.sleep(self.opts.sleep)
 
@@ -168,8 +159,7 @@ class HomepageEnricher():
         self.htmlparser.reset()
 
     def discover_rss(self, homepage, feed):
-        self.pool.add_triple((URIRef(homepage), XHV.alternate, URIRef(feed)))
-        self.pool.add_triple((URIRef(feed), RDFS.type, FOAF.Document))
+        self.triples.push_alternate(homepage, feed)
         self.stats.count_feed()
         logging.debug("Trying to determine RSS feed format for uri '%s'" % feed)
         
@@ -188,8 +178,7 @@ class HomepageEnricher():
         #logging.debug("Got %s triples from '%s'" % (len(graph), feed))
 
     def discover_meta(self, homepage, candidate):
-        self.pool.add_triple((URIRef(homepage), XHV.meta, URIRef(candidate)))
-        self.pool.add_triple((URIRef(candidate), RDFS.type, FOAF.Document))
+        self.triples.push_meta(homepage, candidate)
         self.stats.count_rdf()
         logging.debug("Analyzing '%s'" % candidate)
         if re.match(r".*\.rdf$", candidate) is not None:
@@ -201,35 +190,10 @@ class HomepageEnricher():
                 logging.error("Unable to parse '%s'" % candidate)
                 return
             
-            self.pool.merge_graph(graph)
+            self.triples.push_graph(graph)
 
             logging.debug("%s triples extracted and merged" % len(graph))
 
-    # Validation results helpers
-
-    def _push_validation_success(self, uri):
-        assertion = self._push_generic_validation(uri)
-        result = BNode()
-        self.pool.add_triple((result, EARL.outcome, EARL.passed))
-        self.pool.add_triple((assertion, EARL.result, result))
-
-    def _push_validation_failure(self, uri):
-        assertion = self._push_generic_validation(uri)
-        result = BNode()
-        self.pool.add_triple((result, RDF.type, EARL.TestResult))
-        self.pool.add_triple((result, EARL.outcome, EARL.failed))
-        self.pool.add_triple((assertion, EARL.result, result))
-
-    def _push_generic_validation(self, uri):
-        assertion = BNode()
-        subject = URIRef(uri)
-        self.pool.add_triple((assertion, RDF.type, EARL.Assertion))
-        self.pool.add_triple((subject, RDF.type, EARL.TestSubject))
-        self.pool.add_triple((assertion, EARL.testCase, DEB.W3CValidationTest))
-        self.pool.add_triple((assertion, EARL.subject, subject))
-        self.pool.add_triple((assertion, EARL.mode, EARL.automatic))
-        return assertion
-        
 
 if __name__ == "__main__":
   HomepageEnricher().run()

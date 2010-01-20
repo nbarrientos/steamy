@@ -58,7 +58,7 @@ class Stats():
         return """\n\nStats:
 \t* Total websites count: %s
 \t* Non-respoding websites: %s
-\t* XHTML valid websites: %s
+\t* Valid markups: %s
 \t* RSS feeds processed: %s
-\t* RDF meta fetched: %s""" % \
+\t* RDF files fetched: %s""" % \
         (self.homepages, self.broken_homepages, self.w3cok, self.feeds, self.rdf)

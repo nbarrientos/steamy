@@ -12,6 +12,8 @@ import re
 
 from sgmllib import SGMLParser
 
+from rdflib.Graph import ConjunctiveGraph
+from rdflib import Namespace, URIRef, Literal, BNode
 from SPARQLWrapper import SPARQLWrapper2
 from SPARQLWrapper.sparqlexceptions import EndPointNotFound
 
@@ -20,7 +22,6 @@ from errors import W3CValidatorUnableToConnectError
 from errors import W3CValidatorUnexpectedValidationResultError
 from errors import W3CValidatorUnexpectedStatusCodeError
 
-# FIXME
 def homepages(endpoint):
     endpoint = SPARQLWrapper2(endpoint)
     q = """
@@ -93,3 +94,55 @@ class LinkRetrieval(SGMLParser):
             if x.is_meta_rdf(): # FIXME: What if N3?
                 for href in x.hrefs:
                     yield href
+
+
+RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
+FOAF = Namespace(u"http://xmlns.com/foaf/0.1/")
+RDF = Namespace(u"http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
+DOAP = Namespace(u"http://usefulinc.com/ns/doap#")
+XHV = Namespace(u"http://www.w3.org/1999/xhtml/vocab#")
+EARL = Namespace(u"http://www.w3.org/ns/earl#")
+
+class TripleProcessor():
+    def __init__(self, graphpool):
+        self.pool = graphpool
+
+    def request_serialization(self):
+        if self.pool.count_triples() > 0:
+            logging.info("\nSerializing graphs...")
+            self.pool.serialize()
+
+    def push_alternate(self, homepage, feed):
+        self.pool.add_triple((URIRef(homepage), XHV.alternate, URIRef(feed)))
+        self.pool.add_triple((URIRef(feed), RDFS.type, FOAF.Document))
+
+    def push_meta(self, homepage, href):
+        self.pool.add_triple((URIRef(homepage), XHV.meta, URIRef(href)))
+        self.pool.add_triple((URIRef(href), RDFS.type, FOAF.Document))
+
+    def push_graph(self, graph):
+        self.pool.merge_graph(graph)
+
+    def push_validation_success(self, uri):
+        assertion = self._push_generic_validation(uri)
+        result = BNode()
+        self.pool.add_triple((result, EARL.outcome, EARL.passed))
+        self.pool.add_triple((assertion, EARL.result, result))
+
+    def push_validation_failure(self, uri):
+        assertion = self._push_generic_validation(uri)
+        result = BNode()
+        self.pool.add_triple((result, RDF.type, EARL.TestResult))
+        self.pool.add_triple((result, EARL.outcome, EARL.failed))
+        self.pool.add_triple((assertion, EARL.result, result))
+
+    def _push_generic_validation(self, uri):
+        assertion = BNode()
+        subject = URIRef(uri)
+        self.pool.add_triple((assertion, RDF.type, EARL.Assertion))
+        self.pool.add_triple((subject, RDF.type, EARL.TestSubject))
+        self.pool.add_triple((assertion, EARL.testCase, DEB.W3CValidationTest))
+        self.pool.add_triple((assertion, EARL.subject, subject))
+        self.pool.add_triple((assertion, EARL.mode, EARL.automatic))
+        return assertion
