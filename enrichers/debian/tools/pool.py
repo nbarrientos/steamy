@@ -34,6 +34,9 @@ class GraphPool():
   def count_triples(self):
     return sum([len(i) for i in self.pool])
 
+  def __len__(self):
+    return len(self.pool)
+
   def serialize(self):
     for i in range(len(self.pool)): # I'm sorry :(    
       try:

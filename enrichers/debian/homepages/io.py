@@ -24,18 +24,18 @@ from errors import W3CValidatorUnexpectedValidationResultError
 from errors import W3CValidatorUnexpectedStatusCodeError
 from namespaces import *
 
-def homepages(endpoint):
+def homepages(endpoint, graph):
     endpoint = SPARQLWrapper2(endpoint)
     q = """
         PREFIX deb: <http://idi.fundacionctic.org/steamy/debian.owl#>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         SELECT DISTINCT ?homepage
+        %s
         WHERE { 
           ?source a deb:Source ;
                   foaf:page ?homepage .
         }
-        LIMIT 100
-    """
+    """ % ("FROM <%s>" % graph if graph is not None else "")
     endpoint.setQuery(q)
     try:
         results = endpoint.query()
@@ -106,7 +106,9 @@ class TripleProcessor():
 
     def request_serialization(self):
         if self.pool.count_triples() > 0:
-            logging.info("\nSerializing graphs...")
+            logging.info("\nSerializing %s triples contained in %s graphs..." % \
+                (self.pool.count_triples(), len(self.pool)))
+            
             self.pool.serialize()
 
     def push_alternate(self, homepage, feed):

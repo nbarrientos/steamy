@@ -10,6 +10,7 @@ import time
 import logging
 import httplib
 import urllib2
+import socket
 import re
 
 import feedparser
@@ -33,6 +34,7 @@ from homepages.errors import RSSParsingFeedMalformedError
 from homepages.errors import RSSParsingUnparseableVersionError
 from homepages.models import Stats
 
+socket.setdefaulttimeout(10)
 VERSION = "beta"
 #RSS2RDFXSL = "/home/nacho/steamy/git/enrichers/debian/rss2rdf.xsl"
 # Grabbed from http://djpowell.net/blog/entries/Atom-RDF.html
@@ -49,11 +51,14 @@ class HomepageEnricher():
         self.triples = TripleProcessor(pool)
         self.htmlparser = LinkRetrieval()
         self.stats = Stats()
+        socket.setdefaulttimeout(10)
 
     def parseArgs(self):
         parser = OptionParser(usage="%prog [options]", version="%prog " + VERSION)
         parser.add_option("-e", "--endpoint", dest="endpoint",\
                           metavar="URI", help="use URI as SPARQL endpoint")
+        parser.add_option("-g", "--graph", dest="graph",\
+                          metavar="URI", help="use URI as FROM graph")
         parser.add_option("-o", "--output-prefix", dest="prefix",\
                       default="Meta",\
                       metavar="PREFIX", help="dump output to PREFIX-{index}.rdf [default: %default]")
@@ -103,12 +108,9 @@ class HomepageEnricher():
         self.configLogger() 
         self.initData()
 
-        for homepage in homepages(self.opts.endpoint):
+        for homepage in homepages(self.opts.endpoint, self.opts.graph):
             self.process_homepage(homepage)
 
-        #self.process_homepage("http://www.wikier.org")
-        #self.process_homepage("http://www.w3c.es/")
-       
         self.triples.request_serialization()
 
         logging.info(self.stats)
@@ -194,7 +196,7 @@ class HomepageEnricher():
             if parse.version in ("rss10"):
                 logging.debug("\tLooks like RDF (RSS 1.0)")
                 graph.parse(feed, format="xml")
-            elif parse.version in ("atom10", "atom30", "rss091n", "rss20"):
+            elif parse.version in ("atom10", "atom30", "rss20"):
                 logging.debug("\tLooks like XML (%s)" % parse.version)
                 graph.parse(StringIO(self._transform_feed(feed)), format="xml")
             else:
