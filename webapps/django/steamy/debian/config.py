@@ -1,5 +1,8 @@
-SPARQL_ENDPOINT = "http://data.fundacionctic.org/sparql"
-FROM_GRAPH = "http://data.fundacionctic.org/idi/debian"
+#SPARQL_ENDPOINT = "http://data.fundacionctic.org/sparql"
+#FROM_GRAPH = "http://data.fundacionctic.org/idi/debian"
+
+SPARQL_ENDPOINT = "http://wopr:8890/sparql"
+FROM_GRAPH = "http://wopr/debian"
 
 #SPARQL_ENDPOINT = "http://localhost:8180/openrdf-sesame/repositories/STEAMY"
 #FROM_GRAPH = None
@@ -14,9 +17,10 @@ PREFIX foaf:<http://xmlns.com/foaf/0.1/>
 PREFIX doap:<http://usefulinc.com/ns/doap#>"""
 
 #FROM <http://data.fundacionctic.org/idi/debian>
+#FROM <http://wopr/debian>
 DEFAULT_QUERY = """
 SELECT ?binaryname ?fullversion ?sourcename ?maintainername ?distribution 
-FROM <http://data.fundacionctic.org/idi/debian>
+FROM <http://wopr/debian>
 WHERE {
     ?source a deb:Source ;
             deb:packageName ?sourcename ;
