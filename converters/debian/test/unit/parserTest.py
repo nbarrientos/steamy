@@ -413,9 +413,11 @@ class PackagesParserTest(unittest.TestCase):
     self.assertEqual(expectedLong, long)
     self.assertEqual(expectedHomepage, homepage)
 
+  def testParseDescriptionHomepageWithoutScheme(self):
     self.binaryPackage['Description'] = self.binaryPackage['Description'] + '''
  .
-  Homepage: http://example.org/project'''
+  Homepage: alice.example.com'''
+    expectedHomepage = "http://alice.example.com"
     (short, long, homepage) = self.parser.parseDescription(self.binaryPackage)
     self.assertEqual(expectedHomepage, homepage)
 
@@ -737,3 +739,13 @@ class BaseParserTest(unittest.TestCase):
     input = {}
     repo = self.parser.parseVcs(input)
     self.assertEqual(None, repo)
+
+  def testParseURI(self):
+    uri1 = "http://example.com"
+    self.assertEqual(uri1, self.parser.parseURI(uri1))
+
+    uri2 = "ftp://example.com"
+    self.assertEqual(uri2, self.parser.parseURI(uri2))
+
+    uri3 = "example.com"
+    self.assertEqual(uri1, self.parser.parseURI(uri3))

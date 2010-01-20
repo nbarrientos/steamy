@@ -35,9 +35,14 @@ class BaseParser():
 
   @optional('Homepage')
   def parseHomepage(self, raw):
-    return raw['Homepage']
+    return self.parseURI(raw['Homepage'])
 
   # Tools
+
+  def parseURI(self, raw):
+    if re.match(".*?://.*", raw) is None:
+        raw = "http://%s" % raw
+    return raw
 
   def parseVersionNumber(self, raw):
     try:
@@ -383,7 +388,7 @@ class PackagesParser(BaseParser):
       match = regex.search(raw['Description'])
 
       if match is not None and match.group("homepage") is not None:
-          split.append(match.group("homepage"))
+          split.append(self.parseURI(match.group("homepage")))
       else:
           split.append(None)
 
