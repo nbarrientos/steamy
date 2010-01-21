@@ -38,7 +38,7 @@ class ConstraintResolver():
     parser.add_option("-g", "--graph", dest="graph",\
                       metavar="URI", help="use URI as FROM graph")
     parser.add_option("-o", "--output-prefix", dest="prefix",\
-                      default="Safisfies",\
+                      default="Satisfies",\
                       metavar="PREFIX", help="dump output to PREFIX-{index}.rdf [default: %default]")
     parser.add_option("-b", "--base-dir", dest="basedir",\
                       default=".",\
