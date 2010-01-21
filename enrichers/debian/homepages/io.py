@@ -34,7 +34,7 @@ def homepages(endpoint, graph):
           ?source a deb:Source ;
                   foaf:page ?homepage .
         }
-        LIMIT 10 # FIXME
+        LIMIT 20 # FIXME
     """ % ("FROM <%s>" % graph if graph is not None else "")
     endpoint.setQuery(q)
     try:
@@ -44,8 +44,21 @@ def homepages(endpoint, graph):
         return
 
     for result in results["homepage"]:
-        yield re.sub("<|>", "", result["homepage"].value).strip()
+        homepage = re.sub("<|>", "", result["homepage"].value).strip()
+        for alternative in _alternatives(homepage):
+            yield alternative
 
+def _alternatives(uri):
+    alternatives = [uri]
+    sourceforge = re.compile(r"https?://(?P<project>.+?)\.(sourceforge|sf)\.net")
+
+    match1 = sourceforge.match(uri)
+    if match1 is not None:
+        alternative = "http://sourceforge.net/projects/%s" % match1.group('project')
+        logging.debug("Adding '%s' as an alternative of '%s'" % (alternative, uri))
+        alternatives.append(alternative)
+
+    return alternatives
 
 def w3c_validator(uri):
     conn = httplib.HTTPConnection("validator.w3.org")
