@@ -96,6 +96,7 @@ class SearchForm(forms.Form):
     sort = forms.ChoiceField(initial="PACKAGE",\
         widget=widgets.RadioSelect, choices=SORT_OPTS)
     showquery = forms.BooleanField(required=False)
+    popcon = forms.BooleanField(required=False)
     section = forms.RegexField(regex=re.compile(r"^[a-zA-Z]*$"),\
         max_length=20, required=False)
 

@@ -30,6 +30,10 @@ class Result():
         self.sectionurilink = None
         self.area = None
         self.priority = None
+        self.popcon_installed = None
+        self.popcon_used = None
+        self.popcon_notinuse = None
+        self.popcon_upgraded = None
 
     # Inspired by: http://www.peterbe.com/plog/uniqifiers-benchmark
     @staticmethod
@@ -108,6 +112,14 @@ class SPARQLQueryProcessor():
                 obj.sectionname = result['sectionname']['value']
                 obj.sectionurilink = result['section']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             obj.synopsis = result['synopsis']['value']
+            if 'popconinstalled' in result:
+                obj.popcon_installed = result['popconinstalled']['value']
+            if 'popconused' in result:
+                obj.popcon_used = result['popconused']['value']
+            if 'popconnotinuse' in result:
+                obj.popcon_notinuse = result['popconnotinuse']['value']
+            if 'popconupgraded' in result:
+                obj.popcon_upgraded = result['popconupgraded']['value']
 
             resultlist.append(obj)
 
@@ -166,6 +178,7 @@ class SPARQLQueryBuilder():
         self._consume_buildessential()
         self._consume_essential()
         self._consume_dmuploadallowed()
+        self._consume_popcon()
         self._consume_filter()
         self.helper.set_limit(RESULTS_PER_PAGE)
         self.helper.set_distinct()
@@ -387,6 +400,28 @@ class SPARQLQueryBuilder():
         if self.source_search and self.params['dmuploadallowed']:
             self.helper.push_triple(\
                 Variable("source"), RDF.type, DEB.DMUploadAllowedSource)
+
+    def _consume_popcon(self):
+        if self.binary_search and self.params['popcon']:
+            triple = Triple(Variable("unversionedbinary"), \
+                            DEB.popconInstalled, Variable("?popconinstalled"))
+            self.helper.add_variable("popconinstalled")
+            self.helper.add_optional(triple)
+   
+            triple = Triple(Variable("unversionedbinary"), \
+                            DEB.popconUsedRegularly, Variable("?popconused"))
+            self.helper.add_variable("popconused")
+            self.helper.add_optional(triple)
+            
+            triple = Triple(Variable("unversionedbinary"), \
+                            DEB.popconInstalledButNotInUse, Variable("?popconnotinuse"))
+            self.helper.add_variable("popconnotinuse")
+            self.helper.add_optional(triple)
+            
+            triple = Triple(Variable("unversionedbinary"), \
+                            DEB.popconUpgradedRecently, Variable("?popconupgraded"))
+            self.helper.add_variable("popconupgraded")
+            self.helper.add_optional(triple)
 
     def _add_from(self):
         if FROM_GRAPH is not None:

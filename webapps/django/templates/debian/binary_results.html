@@ -71,6 +71,33 @@
             {{result.priority}}
         </li>
         {% endif %}
+        {% if show_popcon %}
+        <li>
+          <span class="result-label">{{result.binaryname}} popcon statistics:</span>
+            <ul>
+                {% if result.popcon_installed %}
+                <li>
+                    {{result.popcon_installed}} people installed this package.
+                </li>
+                {% endif %}
+                {% if result.popcon_used %}
+                <li>
+                    {{result.popcon_used}} people use this package regularly.
+                </li>
+                {% endif %}
+                {% if result.popcon_notinuse %}
+                <li>
+                   {{result.popcon_notinuse}} people installed, but don't use this package regularly.
+                </li>
+                {% endif %}
+                {% if result.popcon_upgraded %}
+                <li>
+                   {{result.popcon_upgraded}} people upgraded this package recently.
+                </li>
+                {% endif %}
+            </ul>
+        </li>
+        {% endif %}
         <li>
             <a class="result-label result-more" href="{{result.binaryurilink}}">More...</a>
         </li>

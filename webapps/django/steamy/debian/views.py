@@ -54,6 +54,7 @@ def results(request):
 
         replydata = {'results': results, 'filter': data['filter']}
         replydata['query'] = query if data['showquery'] else None
+        replydata['show_popcon'] = True if data['popcon'] else False
 
         if builder.source_search:
             return render_to_response('debian/source_results.html', replydata)
