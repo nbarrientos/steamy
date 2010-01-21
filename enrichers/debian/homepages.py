@@ -150,11 +150,11 @@ class HomepageEnricher():
             logging.error(str(e))
 
         if result is True:
-            logging.debug("\tValidation passed")
+            logging.debug("Validation passed")
             self.triples.push_validation_success(uri)
             self.stats.count_validmarkup()
         else:
-            logging.debug("\tValidation failed")
+            logging.debug("Validation failed")
             self.triples.push_validation_failure(uri)
 
         time.sleep(self.opts.sleep)
@@ -163,7 +163,7 @@ class HomepageEnricher():
         try:
             self.htmlparser.feed(stream.read())
         except SGMLParseError, e:
-            logging.error("Parser error (%s). Skipping '%s'..." % (e, homepage))
+            logging.error("'%s' is unparseable (%s), skipping..." % (homepage, e))
             self.htmlparser.reset()
             return
         finally:
@@ -171,85 +171,85 @@ class HomepageEnricher():
 
         self.htmlparser.close()
         
-        logging.info("\tDiscovering RSS feeds...")
+        logging.info("Discovering RSS feeds...")
         for candidate in self.htmlparser.get_rss_hrefs():
             try:
                 self._discover_rss(homepage, urljoin(homepage, candidate))
             except RSSParsingError, e:
-                logging.error("\t%s" % e)
+                logging.error("%s" % e)
         
-        logging.info("\tDiscovering RDF...")
+        logging.info("Discovering RDF...")
         for candidate in self.htmlparser.get_rdf_meta_hrefs():
             try:
                 self._discover_meta(homepage, urljoin(homepage, candidate))
             except RDFDiscoveringError, e:
-                logging.error("\t%s" % e)
+                logging.error("%s" % e)
 
         self.htmlparser.reset()
 
     def _discover_rss(self, homepage, feed):
         self.triples.push_alternate(homepage, feed)
         self.stats.count_feed()
-        logging.debug("\tTrying to determine RSS feed version for URI '%s'" % feed)
+        logging.debug("Trying to determine RSS feed version for URI '%s'" % feed)
 
         parse = feedparser.parse(feed)
 
         if parse.status in (httplib.NOT_FOUND, httplib.GONE):
             self.stats.count_invalidfeed()
-            raise RSSParsingFeedUnavailableError()
+            raise RSSParsingFeedUnavailableError(feed)
         elif parse.bozo:
             self.stats.count_invalidfeed()
-            raise RSSParsingFeedMalformedError()
+            raise RSSParsingFeedMalformedError(feed)
         else:
             if parse.version:
                 graph = ConjunctiveGraph()
                 if parse.version in ("rss10"):
-                    logging.debug("\tLooks like RDF (%s)" % parse.version)
+                    logging.debug("Looks like RDF (%s)" % parse.version)
                     graph.parse(feed, format="xml")
                 elif parse.version in ("rss20", "rss094"): #, ("atom10", "atom30", "rss20"):
-                    logging.debug("\tLooks like XML (%s)" % parse.version)
+                    logging.debug("Looks like XML (%s)" % parse.version)
                     graph.parse(StringIO(self._transform_feed(feed)), format="xml")
                 else:
                     self.stats.count_invalidfeed()
-                    raise RSSParsingUnparseableVersionError(parse.version)
+                    raise RSSParsingUnparseableVersionError(parse.version, feed)
             else:
-                raise RSSParsingError()
+                raise RSSParsingError(feed)
 
             channeluri = None
             for channeluri in channel_uri_from_graph(graph):
-                logging.debug("\tLinking feedhref:'%s' to channeluri:'%s'" % (feed, channeluri))
+                logging.debug("Linking feedhref:'%s' to channeluri:'%s'" % (feed, channeluri))
                 self.triples.push_rss_channel(feed, channeluri)
            
             if channeluri is not None:
                 self.triples.push_graph(graph)
-                logging.debug("\t%s triples extracted and merged" % len(graph))
+                logging.debug("%s triples extracted and merged" % len(graph))
             else:
-                logging.error("\tUnable to link feed '%s' to any channel. Not merging." % feed)
+                logging.error("Unable to link feed '%s' to any channel. Not merging." % feed)
         
     def _discover_meta(self, homepage, candidate):
         self.triples.push_meta(homepage, candidate)
         self.stats.count_rdf()
-        logging.debug("\tAnalyzing '%s'" % candidate)
+        logging.debug("Analyzing '%s'" % candidate)
         if re.match(r".*\.rdf$", candidate) is not None:
             graph = ConjunctiveGraph()
             try:
                 graph.parse(candidate)
             except SAXParseException:
                 self.stats.count_invalidrdf()
-                raise RDFDiscoveringMalformedError()
+                raise RDFDiscoveringMalformedError(candidate)
             except urllib2.URLError:
                 self.stats.count_invalidrdf()
-                raise RDFDiscoveringBrokenLinkError()
+                raise RDFDiscoveringBrokenLinkError(candidate)
             
             self.triples.push_graph(graph)
-            logging.debug("\t%s triples extracted and merged" % len(graph))
+            logging.debug("%s triples extracted and merged" % len(graph))
 
     def _transform_feed(self, feeduri):
         document = InputSource.DefaultFactory.fromUri(feeduri)  
         stylesheet = InputSource.DefaultFactory.fromUri(RSS_2_RDF_XSL)
         processor = Processor.Processor()
         processor.appendStylesheet(stylesheet)
-        logging.debug("\tApplying XSL transformation...")
+        logging.debug("Applying XSL transformation...")
         rdfstring = processor.run(document)
         return rdfstring
 

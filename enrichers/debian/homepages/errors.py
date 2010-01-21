@@ -23,30 +23,39 @@ class W3CValidatorUnexpectedStatusCodeError(W3CValidatorError):
         return "W3C validation service returned an unexpected status code"
 
 class RSSParsingError(Exception):
-    pass
+    def __init__(self, uri):
+        self.uri = uri
+
+    def __str__(self):
+        return "'%s' won't be processed due to an undefined reason" % self.uri
 
 class RSSParsingFeedUnavailableError(RSSParsingError):
     def __str__(self):
-        return "Feed not available (Either NOT_FOUND or GONE returned)"
+        return "'%s' not available (Either NOT_FOUND or GONE returned), skipping..." % self.uri
 
 class RSSParsingFeedMalformedError(RSSParsingError):
     def __str__(self):
-        return "Feed is not well-formed XML"
+        return "'%s' is not well-formed XML, skipping..." % self.uri
 
 class RSSParsingUnparseableVersionError(RSSParsingError):
-    def __init__(self, format):
-        self.format = format
+    def __init__(self, version, *args, **kwargs):
+        self.version = version
+        RSSParsingError.__init__(self, *args, **kwargs)
 
     def __str__(self):
-        return "Unparseable feed format '%s'" % self.format
+        return "'%s': untransformable feed version '%s'" % (self.uri, self.version)
 
 class RDFDiscoveringError(Exception):
-    pass
+    def __init__(self, uri):
+        self.uri = uri
+
+    def __str__(self):
+        return "'%s' won't be processed due to an undefined reason" % self.uri
 
 class RDFDiscoveringBrokenLinkError(RDFDiscoveringError):
     def __str__(self):
-        return "File is not available"
+        return "'%s' is not available, skipping..." % self.uri
 
 class RDFDiscoveringMalformedError(RDFDiscoveringError):
     def __str__(self):
-        return "Parser error"
+        return "'%s' malformed (SAX parser error), skipping..." % self.uri
