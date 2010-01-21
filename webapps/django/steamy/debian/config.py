@@ -38,6 +38,6 @@ WHERE {
 
 ONT_URI = "http://idi.fundacionctic.org/steamy/debian.owl#"
 RES_BASEURI = "http://rdf.debian.net"
-PUBBY_BASEURI = "http://192.168.62.129:8180/pubby/resource"
+PUBBY_BASEURI = "http://villablino.sytes.net:8180/pubby/resource"
 
 RESULTS_PER_PAGE = 100
