@@ -421,8 +421,15 @@ class PackagesParserTest(unittest.TestCase):
     (short, long, homepage) = self.parser.parseDescription(self.binaryPackage)
     self.assertEqual(expectedHomepage, homepage)
 
-  def testParseSource(self):
+  def testParseSourcePkg(self):
     binary = BinaryPackage("mutt", Version("1:2.4+svn5677-1"))
+    source = self.parser.parseSource(self.binaryPackage, binary)
+    self.assertEqual("muttsrc", source.package)
+    self.assertEqual(Version("1:2.4+svn5677-1"), source.version)
+
+  def testParseSourcePkgVersion(self):
+    self.binaryPackage['Source'] = "muttsrc (1:2.4+svn5677-1)"
+    binary = BinaryPackage("mutt", Version("1:2.4+svn5677-1+b1"))
     source = self.parser.parseSource(self.binaryPackage, binary)
     self.assertEqual("muttsrc", source.package)
     self.assertEqual(Version("1:2.4+svn5677-1"), source.version)
@@ -433,6 +440,12 @@ class PackagesParserTest(unittest.TestCase):
     source = self.parser.parseSource(self.binaryPackage, binary)
     self.assertEqual("mutt", source.package)
     self.assertEqual(Version("1:2.4+svn5677-1"), source.version)
+
+  def testParseSourceError(self):
+    self.binaryPackage['Source'] = "(1:2.4+svn5677-1)"
+    binary = BinaryPackage("mutt", Version("1:2.4+svn5677-1"))
+    self.assertRaises(ParserError, \
+                      self.parser.parseSource, self.binaryPackage, binary)
 
 
 class BaseParserTest(unittest.TestCase):

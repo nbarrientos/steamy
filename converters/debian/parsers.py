@@ -396,6 +396,15 @@ class PackagesParser(BaseParser):
 
   def parseSource(self, raw, binary):
     if "Source" in raw:
-        return SourcePackage(raw['Source'], binary.version)
+        regex = re.compile(r"(?P<srcname>[-a-zA-Z0-9+.]+)(\s*\((?P<version>\S+?)\))?")
+        match = regex.match(raw['Source'])
+        if match is not None:
+            if match.group("version") is not None:
+                srcversion = self.parseVersionNumber(match.group("version"))
+                return SourcePackage(match.group("srcname"), srcversion) 
+            else:
+                return SourcePackage(match.group("srcname"), binary.version)
+        else:
+            raise ParserError("parseSource", raw['Source'])
     else:
         return SourcePackage(binary.package, binary.version)
