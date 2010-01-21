@@ -55,12 +55,6 @@ class Triplifier():
     versionRef = self.triplifyVersionNumber(package.version)
     self.g.add((ref, DEB['versionNumber'], versionRef))
 
-    # Binary
-    if package.binary is not None:
-      for binary in package.binary:
-        binaryRef = self.triplifyBinaryPackageLite(binary)
-        self.g.add((ref, DEB['binary'], binaryRef))
-
     # Build-Depends
     if package.buildDepends is not None:
       for ord in package.buildDepends:
@@ -152,7 +146,7 @@ class Triplifier():
     if package.standardsVersion is not None:
       self.g.add((ref, DEB['standardsVersion'], Literal(str(package.standardsVersion))))
 
-  def triplifyBinaryPackageLite(self, package):
+  def triplifyBinaryPackage(self, package):
     ref = URIRef(package.asURI(self.baseURI))
     self.g.add((ref, RDF.type, DEB['Binary']))
     self._addLabelToGraph(ref, package)
@@ -164,20 +158,17 @@ class Triplifier():
     versionRef = self.triplifyVersionNumber(package.version)
     self.g.add((ref, DEB['versionNumber'], versionRef))
 
-    return ref
-
-  ### Packages ###
-
-  def triplifyBinaryPackage(self, package):
-    ref = self.triplifyBinaryPackageLite(package)
-
-    # Unversioned Source
+    # Unversioned Binary
     unversionedRef = self.triplifyUnversionedBinaryPackage(package.unversionedBinary)
     self.g.add((unversionedRef, DEB['version'], ref))
 
     # Build
     buildRef = self.triplifyBinaryPackageBuild(package.build)
     self.g.add((ref, DEB['build'], buildRef))
+
+    # Source
+    sourceRef = URIRef(package.source.asURI(self.baseURI))
+    self.g.add((sourceRef, DEB['binary'], ref))
 
     # Depends
     if package.depends is not None:
@@ -273,7 +264,6 @@ class Triplifier():
 
     # Homepage
     if package.homepage is not None:
-      sourceRef = URIRef(package.source.asURI(self.baseURI))
       homepageRef = self.triplifyHomepage(package.homepage)
       self.g.add((sourceRef, FOAF['page'], homepageRef)) 
 

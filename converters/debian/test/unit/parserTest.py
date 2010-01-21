@@ -17,7 +17,6 @@ class SourcesParserTest(unittest.TestCase):
     self.parser = SourcesParser(self.values)
     self.sourcePackage = {}
     self.sourcePackage['Package'] = "srcpkg"
-    self.sourcePackage['Binary'] = "binpkg1, binpkg2"
     self.sourcePackage['Version'] = "0.5-2"
     self.sourcePackage['Build-Depends'] = "dep1 (>= 5.0.37), dep2 [!powerpc]"
     self.sourcePackage['Build-Depends-Indep'] = "dep3"
@@ -42,26 +41,10 @@ class SourcesParserTest(unittest.TestCase):
 
   # Fields
 
-  def testParseBinary(self):
-    bins = self.parser.parseBinary(self.sourcePackage)
-    self.assertEqual(2, len(bins))
-    self.assertEqual("binpkg1", bins[0].package)
-    self.assertEqual("0.5-2", str(bins[0].version))
-    self.assertEqual("binpkg2", bins[1].package)
-    self.assertEqual("0.5-2", str(bins[1].version))
-
-  def testParseBinarySingle(self):
-    self.sourcePackage['Binary'] = "binpkg"
-    bin = self.parser.parseBinary(self.sourcePackage)
-    self.assertEqual(1, len(bin))
-    self.assertEqual("binpkg", bin[0].package)
-    self.assertEqual("0.5-2", str(bin[0].version))
-
   def testParseSourcePackage(self):
     s = self.parser.parseSourcePackage(self.sourcePackage)
     self.assertEqual("srcpkg", s.package)
     self.assertEqual("0.5-2", str(s.version))
-    self.assertEqual(2, len(s.binary))
     self.assertNotEqual(None, s.buildDepends)
     self.assertNotEqual(None, s.buildDependsIndep)
     self.assertNotEqual(None, s.buildConflicts)

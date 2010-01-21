@@ -201,7 +201,6 @@ class SourcesParser(BaseParser):
       if self.opts.cRegex.match(sourcePackage.package) is None:
         raise PackageDoesNotMatchRegularExpression(sourcePackage.package)
     
-    sourcePackage.binary = self.parseBinary(raw)
     sourcePackage.buildDepends = self.parseBuildDepends(raw)
     sourcePackage.buildDependsIndep = self.parseBuildDependsIndep(raw)
     sourcePackage.buildConflicts = self.parseBuildConflicts(raw)
@@ -221,10 +220,6 @@ class SourcesParser(BaseParser):
     sourcePackage.unversionedSource = \
                   UnversionedSourcePackage(sourcePackage.package)
     return sourcePackage
-
-  def parseBinary(self, raw):
-    return [BinaryPackage(bin, self.parseVersionNumber(raw['Version'])) \
-                for bin in re.split(",\s*", raw['Binary'])] # FIXME
 
   @required('Architecture')
   def parseArchitecture(self, raw):
