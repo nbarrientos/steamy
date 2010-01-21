@@ -93,10 +93,13 @@ class PopconEnricher():
 
         for line in raw:
             if re.match(r"#.*", line) is None:
-                counter += 1
-                data = re.split("\s+", line)
-                self._register_record(*tuple(data[1:7]))
-                if counter % 500 == 0: logging.info("%s packages processed" % counter)
+                if re.match(r"---.*", line) is not None:
+                    return
+                else:
+                    counter += 1
+                    data = re.split("\s+", line)
+                    self._register_record(*tuple(data[1:7]))
+                    if counter % 500 == 0: logging.info("%s packages processed" % counter)
 
     def _register_record(self, srcpkg, inst, vote, old, recent, nofiles):
         logging.debug("Processing package '%s'" % srcpkg)
