@@ -66,6 +66,11 @@ def w3c_validator(uri):
     else:
        raise W3CValidatorUnexpectedStatusCodeError(response.status) 
 
+def channel_uri_from_graph(graph):
+    for row in graph.query('SELECT ?c { ?c a rss:channel . }',\
+        initNs=dict(rss=RSS)):
+        yield "%s" % row
+        
 
 class LinkRetrieval(SGMLParser):
     def reset(self):
@@ -123,7 +128,7 @@ class TripleProcessor():
         self.pool.merge_graph(graph)
 
     def push_rss_channel(self, feeduri, channeluri):
-        self.pool.add_triple((URIRef(feeduri), DEB.channel, URIRef(channeluri)))
+        self.pool.add_triple((URIRef(channeluri), RDFS.seeAlso, URIRef(feeduri)))
 
     def push_validation_success(self, uri):
         assertion = self._push_generic_validation(uri)

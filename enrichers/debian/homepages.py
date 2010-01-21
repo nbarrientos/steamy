@@ -27,7 +27,7 @@ from rdflib.Graph import ConjunctiveGraph
 
 from tools.pool import GraphPool
 from homepages.io import LinkRetrieval, TripleProcessor
-from homepages.io import homepages, w3c_validator
+from homepages.io import homepages, w3c_validator, channel_uri_from_graph
 from homepages.errors import W3CValidatorError, RSSParsingError
 from homepages.errors import RSSParsingFeedUnavailableError
 from homepages.errors import RSSParsingFeedMalformedError
@@ -201,20 +201,26 @@ class HomepageEnricher():
             self.stats.count_invalidfeed()
             raise RSSParsingFeedMalformedError()
         else:
-            graph = ConjunctiveGraph()
-            if parse.version in ("rss10"):
-                logging.debug("\tLooks like RDF (%s)" % parse.version)
-                graph.parse(feed, format="xml")
-            elif parse.version in ("rss20", "rss094"): #, ("atom10", "atom30", "rss20"):
-                logging.debug("\tLooks like XML (%s)" % parse.version)
-                graph.parse(StringIO(self._transform_feed(feed)), format="xml")
+            if parse.version:
+                graph = ConjunctiveGraph()
+                if parse.version in ("rss10"):
+                    logging.debug("\tLooks like RDF (%s)" % parse.version)
+                    graph.parse(feed, format="xml")
+                elif parse.version in ("rss20", "rss094"): #, ("atom10", "atom30", "rss20"):
+                    logging.debug("\tLooks like XML (%s)" % parse.version)
+                    graph.parse(StringIO(self._transform_feed(feed)), format="xml")
+                else:
+                    self.stats.count_invalidfeed()
+                    raise RSSParsingUnparseableVersionError(parse.version)
             else:
-                self.stats.count_invalidfeed()
-                raise RSSParsingUnparseableVersionError(parse.version)
+                raise RSSParsingError()
 
-            if 'link' in parse.channel:
-                logging.debug("\tLinking '%s' to '%s'" % (feed, parse.channel.link))
-                self.triples.push_rss_channel(feed, parse.channel.link)
+            channeluri = None
+            for channeluri in channel_uri_from_graph(graph):
+                logging.debug("\tLinking feedhref:'%s' to channeluri:'%s'" % (feed, channeluri))
+                self.triples.push_rss_channel(feed, channeluri)
+           
+            if channeluri is not None:
                 self.triples.push_graph(graph)
                 logging.debug("\t%s triples extracted and merged" % len(graph))
             else:
@@ -246,6 +252,8 @@ class HomepageEnricher():
         logging.debug("\tApplying XSL transformation...")
         rdfstring = processor.run(document)
         return rdfstring
+
+        
 
 
 if __name__ == "__main__":
