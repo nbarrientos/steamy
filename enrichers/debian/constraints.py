@@ -40,7 +40,7 @@ class ConstraintResolver():
       parser.add_option("-o", "--output-prefix", dest="prefix",\
                         default="Satisfies",\
                         metavar="PREFIX", help="dump output to PREFIX-{index}.rdf [default: %default]")
-      parser.add_option("-b", "--base-dir", dest="basedir",\
+      parser.add_option("-d", "--base-dir", dest="basedir",\
                         default=".",\
                         metavar="DIR", help="use DIR as base directory to store output files [default: %default]")
       parser.add_option("-p", "--pool-size", dest="pool",\
