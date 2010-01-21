@@ -41,7 +41,7 @@ VERSION = "beta"
 
 # From: http://w3future.com/weblog/2002/09/
 # Supports: rss094, rss20
-RSS_2_RDF_XSL = "/home/nacho/steamy/git/enrichers/debian/rss2rdf.xsl"
+RSS_2_RDF_XSL = "/home/nacho/steamy/git/enrichers/debian/xslt/rss2rdf.xsl"
 
 # Grabbed from http://djpowell.net/blog/entries/Atom-RDF.html
 # Supports: atom10, rss091, rss20, atom30
