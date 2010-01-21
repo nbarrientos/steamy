@@ -101,10 +101,10 @@ class PopconEnricher():
                     self._register_record(*tuple(data[1:7]))
                     if counter % 500 == 0: logging.info("%s packages processed" % counter)
 
-    def _register_record(self, srcpkg, inst, vote, old, recent, nofiles):
-        logging.debug("Processing package '%s'" % srcpkg)
+    def _register_record(self, binpkg, inst, vote, old, recent, nofiles):
+        logging.debug("Processing package '%s'" % binpkg)
 
-        srcref = URIRef("%s/source/%s" % (self.opts.baseURI, srcpkg))
+        srcref = URIRef("%s/binary/%s" % (self.opts.baseURI, binpkg))
         
         self.pool.add_triple((srcref, DEB.popconInstalled, Literal(int(inst))))
         self.pool.add_triple((srcref, DEB.popconUsedRegularly, Literal(int(vote))))
