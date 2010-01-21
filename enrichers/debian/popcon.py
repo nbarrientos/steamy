@@ -12,7 +12,7 @@ import re
 
 from optparse import OptionParser
 
-from rdflib import Namespace, URIRef
+from rdflib import Namespace, URIRef, Literal
 
 from tools.pool import GraphPool
 
