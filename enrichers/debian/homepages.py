@@ -76,7 +76,7 @@ class HomepageEnricher():
                       metavar="NUM", help="set graph pool size to NUM [default: %default]")
         parser.add_option("-w", "--w3c", action="store_true", dest="w3c",\
                       default=False, help="validates homeapages against validator.w3.org")
-        parser.add_option("-d", "--discover", action="store_true", dest="discover",\
+        parser.add_option("-D", "--discover", action="store_true", dest="discover",\
                       default=False, help="navigates link tags and retrieves metadata")
         parser.add_option("-s", "--sleep-time", dest="sleep",\
                       default="5", type="int",\
