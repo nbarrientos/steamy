@@ -52,14 +52,14 @@ class HomepageEnricher():
     def __init__(self):
         self.opts = None
 
-    def initData(self):
+    def _init_data(self):
         pool = GraphPool(self.opts.pool, self.opts.prefix, self.opts.basedir)
         self.triples = TripleProcessor(pool)
         self.htmlparser = LinkRetrieval()
         self.stats = Stats()
         socket.setdefaulttimeout(10)
 
-    def parseArgs(self):
+    def _parse_args(self):
         parser = OptionParser(usage="%prog [options]", version="%prog " + VERSION)
         parser.add_option("-e", "--endpoint", dest="endpoint",\
                           metavar="URI", help="use URI as SPARQL endpoint")
@@ -94,7 +94,7 @@ class HomepageEnricher():
         elif self.opts.verbose and self.opts.quiet:
             raise Exception("Verbose (-v) and Quiet (-q) are mutually exclusive")
 
-    def configLogger(self):
+    def _config_logger(self):
         if self.opts.verbose:
             lvl = logging.DEBUG
         elif self.opts.quiet:
@@ -106,16 +106,16 @@ class HomepageEnricher():
 
     def run(self):
         try:
-            self.parseArgs()
+            self._parse_args()
         except Exception, e:
             print >> sys.stderr, str(e)
             sys.exit(2)
 
-        self.configLogger() 
-        self.initData()
+        self._config_logger() 
+        self._init_data()
 
         for homepage in homepages(self.opts.endpoint, self.opts.graph):
-            self.process_homepage(homepage)
+            self._process_homepage(homepage)
 
         self.triples.request_serialization()
 
@@ -123,7 +123,7 @@ class HomepageEnricher():
 
     ## Logic ##
 
-    def process_homepage(self, uri):
+    def _process_homepage(self, uri):
         self.stats.count_homepage()
         logging.info("\nProcessing '%s'" % uri)
         # Is it usable?
@@ -137,13 +137,13 @@ class HomepageEnricher():
         # Metainformation retrieval
         if self.opts.discover:
             logging.info("Discovering metadata...")
-            self.discover(uri, stream)
+            self._discover(uri, stream)
         # Validation
         if self.opts.w3c:
             logging.info("Validating markup...")
-            self.validate_markup(uri)
+            self._validate_markup(uri)
  
-    def validate_markup(self, uri):
+    def _validate_markup(self, uri):
         try:
             result = w3c_validator(uri)
         except W3CValidatorError, e:
@@ -159,7 +159,7 @@ class HomepageEnricher():
 
         time.sleep(self.opts.sleep)
 
-    def discover(self, homepage, stream):
+    def _discover(self, homepage, stream):
         try:
             self.htmlparser.feed(stream.read())
         except SGMLParseError, e:
@@ -174,20 +174,20 @@ class HomepageEnricher():
         logging.info("\tDiscovering RSS feeds...")
         for candidate in self.htmlparser.get_rss_hrefs():
             try:
-                self.discover_rss(homepage, urljoin(homepage, candidate))
+                self._discover_rss(homepage, urljoin(homepage, candidate))
             except RSSParsingError, e:
                 logging.error("\t%s" % e)
         
         logging.info("\tDiscovering RDF...")
         for candidate in self.htmlparser.get_rdf_meta_hrefs():
             try:
-                self.discover_meta(homepage, urljoin(homepage, candidate))
+                self._discover_meta(homepage, urljoin(homepage, candidate))
             except RDFDiscoveringError, e:
                 logging.error("\t%s" % e)
 
         self.htmlparser.reset()
 
-    def discover_rss(self, homepage, feed):
+    def _discover_rss(self, homepage, feed):
         self.triples.push_alternate(homepage, feed)
         self.stats.count_feed()
         logging.debug("\tTrying to determine RSS feed version for URI '%s'" % feed)
@@ -226,7 +226,7 @@ class HomepageEnricher():
             else:
                 logging.error("\tUnable to link feed '%s' to any channel. Not merging." % feed)
         
-    def discover_meta(self, homepage, candidate):
+    def _discover_meta(self, homepage, candidate):
         self.triples.push_meta(homepage, candidate)
         self.stats.count_rdf()
         logging.debug("\tAnalyzing '%s'" % candidate)
@@ -254,7 +254,5 @@ class HomepageEnricher():
         return rdfstring
 
         
-
-
 if __name__ == "__main__":
   HomepageEnricher().run()
