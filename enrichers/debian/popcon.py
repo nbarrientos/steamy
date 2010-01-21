@@ -106,11 +106,11 @@ class PopconEnricher():
 
         srcref = URIRef("%s/source/%s" % (self.opts.baseURI, srcpkg))
         
-        self.pool.add_triple((srcref, DEB.popconInstalled, int(inst)))
-        self.pool.add_triple((srcref, DEB.popconUsedRegularly, int(vote)))
-        self.pool.add_triple((srcref, DEB.popconInstalledButNotInUse, int(old)))
-        self.pool.add_triple((srcref, DEB.popconUpgradedRecently, int(recent)))
-        self.pool.add_triple((srcref, DEB.popconNoFiles, int(nofiles)))
+        self.pool.add_triple((srcref, DEB.popconInstalled, Literal(int(inst))))
+        self.pool.add_triple((srcref, DEB.popconUsedRegularly, Literal(int(vote))))
+        self.pool.add_triple((srcref, DEB.popconInstalledButNotInUse, Literal(int(old))))
+        self.pool.add_triple((srcref, DEB.popconUpgradedRecently, Literal(int(recent))))
+        self.pool.add_triple((srcref, DEB.popconNoFiles, Literal(int(nofiles))))
         
 
 if __name__ == "__main__":
