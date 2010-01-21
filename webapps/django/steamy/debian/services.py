@@ -67,7 +67,7 @@ class SPARQLQueryProcessor():
             obj.sourcename = result['sourcename']['value']
             obj.sourceurilink = result['source']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             obj.usourceurilink = result['unversionedsource']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
-            obj.fullversion = result['fullversion']['value']
+            obj.sourcefullversion = result['sourcefullversion']['value']
             obj.maintmail = result['maintmail']['value']
             obj.mainturilink = result['maint']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             if 'homepage' in result: obj.homepage = result['homepage']['value'] 
@@ -95,7 +95,8 @@ class SPARQLQueryProcessor():
             obj = Result()
             obj.sourcename = result['sourcename']['value']
             obj.sourceurilink = result['source']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
-            obj.fullversion = result['fullversion']['value']
+            obj.sourcefullversion = result['sourcefullversion']['value']
+            obj.binaryfullversion = result['binaryfullversion']['value']
             obj.binaryname = result['binaryname']['value']
             obj.binaryurilink = result['binary']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
             obj.ubinaryurilink = result['unversionedbinary']['value'].replace(RES_BASEURI, PUBBY_BASEURI)
@@ -194,9 +195,9 @@ class SPARQLQueryBuilder():
         self.helper.push_triple_variables(\
             Variable("maint"), FOAF.mbox, Variable("maintmail"))
         self.helper.push_triple_variables(\
-            Variable("source"), DEB.versionNumber, Variable("version"))
+            Variable("source"), DEB.versionNumber, Variable("sourceversion"))
         self.helper.push_triple_variables(\
-            Variable("version"), DEB.fullVersion, Variable("fullversion"))
+            Variable("sourceversion"), DEB.fullVersion, Variable("sourcefullversion"))
         self.helper.push_triple_variables(\
             Variable("source"), DEB.packageName, Variable("sourcename"))
  
@@ -211,6 +212,10 @@ class SPARQLQueryBuilder():
                 Variable("unversionedbinary"), DEB.version, Variable("binary"))
             self.helper.push_triple_variables(\
                 Variable("binary"), DEB.synopsis, Variable("synopsis"))
+            self.helper.push_triple_variables(\
+                Variable("binary"), DEB.versionNumber, Variable("binaryversion"))
+            self.helper.push_triple_variables(\
+                Variable("binaryversion"), DEB.fullVersion, Variable("binaryfullversion"))
 
     def _consume_filter(self):
         filter = self.params['filter']
