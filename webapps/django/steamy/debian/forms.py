@@ -14,6 +14,7 @@ DIST_OPTS = (
     (RES_BASEURI+'/distribution/slink', 'Slink'),
     (RES_BASEURI+'/distribution/potato', 'Potato'),
     (RES_BASEURI+'/distribution/woody', 'Woody'),
+    (RES_BASEURI+'/distribution/sarge', 'Sarge'),
     (RES_BASEURI+'/distribution/etch', 'Etch'),
     (RES_BASEURI+'/distribution/lenny', 'Lenny'),
 )
