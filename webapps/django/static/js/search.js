@@ -1,3 +1,10 @@
+uiblockcss = { border: 'none', 
+               padding: '15px', 
+               backgroundColor: '#000', 
+               opacity: .5, 
+               color: '#fff' } 
+
+
 $(function() {
     $("#accordion").accordion({ header: "h3", autoHeight: false});
     $("#tabs").tabs();
@@ -13,4 +20,14 @@ $(function() {
             $("#id_searchtype_2").removeAttr("disabled");
         } 
     });
+
+    $('#search-submit').click(function() { 
+            $.blockUI({message: "Now searching. This operation could take a while...",
+                       css: uiblockcss})
+        });
+
+    $('#sparql-submit').click(function() { 
+            $.blockUI({message: "Executing query. This operation could take a while...",
+                       css: uiblockcss})
+        });
 });
