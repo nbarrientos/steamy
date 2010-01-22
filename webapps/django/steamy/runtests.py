@@ -6,6 +6,7 @@ import unittest
 import xmlrunner
 
 from debian.sparql.test import helperstest, visitortest
+from debian.test import servicestest
 
 class TestRunner:
   def __init__(self):
@@ -28,6 +29,7 @@ class TestRunner:
   def run(self):
     suite = unittest.TestLoader().loadTestsFromModule(helperstest)
     suite.addTests(unittest.TestLoader().loadTestsFromModule(visitortest))
+    suite.addTests(unittest.TestLoader().loadTestsFromModule(servicestest))
     if self.opts.xml:
       xmlrunner.XMLTestRunner(self.out).run(suite)
       if self.out:
