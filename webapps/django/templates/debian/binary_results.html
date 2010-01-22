@@ -74,6 +74,7 @@
         {% if show_popcon %}
         <li>
           <span class="result-label">{{result.binaryname}} popcon statistics:</span>
+            <div class="result-popcon">
             <ul>
                 {% if result.popcon_installed %}
                 <li>
@@ -96,6 +97,7 @@
                 </li>
                 {% endif %}
             </ul>
+            </div>
         </li>
         {% endif %}
         <li>
