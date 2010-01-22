@@ -47,7 +47,11 @@ def results(request):
         data = searchform.cleaned_data
         builder = SPARQLQueryBuilder(data)
         processor = SPARQLQueryProcessor()
-        query = builder.create_query()
+
+        try:
+            query = builder.create_query()
+        except SPARQLQueryBuilderError, e:
+            return render_to_response('debian/error.html', {'reason': e.reason})
 
         try:
             processor.execute_sanitized_query(query)

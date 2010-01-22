@@ -11,7 +11,7 @@ from rdflib.sparql.bison import Parse as RdflibParse
 from debian.config import *
 from debian.sparql.helpers import SelectQueryHelper
 from debian.sparql.miniast import Triple
-from debian.errors import SPARQLQueryProcessorError
+from debian.errors import SPARQLQueryProcessorError, UnexpectedFieldValueError
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
 FOAF = Namespace(u"http://xmlns.com/foaf/0.1/")
@@ -166,11 +166,8 @@ class SPARQLQueryBuilder():
     def __init__(self, params):
         self.params = params
         self.helper = SelectQueryHelper()
-        self.binary_search = False
-        self.source_search = False
 
     def create_query(self):
-        self._consume_searchtype()
         self._add_base_elements()
         self._add_from()
         self._consume_distribution()
@@ -192,6 +189,30 @@ class SPARQLQueryBuilder():
         self.helper.set_distinct()
         return self.helper.__str__()
 
+    def _binary_search(self):
+        if 'searchtype' in self.params:
+            type = self.params['searchtype']
+            if type in ('BINARY', 'BINARYEXT'):
+                return True
+            elif type in ('SOURCE'):
+                return False
+            else:
+                raise UnexpectedFieldValueError("searchtype")
+        else:
+            raise UnexpectedFieldValueError("searchtype")
+
+    def _source_search(self):
+        return not self._binary_search()
+
+    def _extended_binary_search(self):
+        if 'searchtype' in self.params:
+            if self.params['searchtype'] == 'BINARYEXT':
+                return True
+            else:
+                return False
+        else:
+            raise UnexpectedFieldValueError("searchtype")
+
     def _add_base_elements(self):
         self.helper.push_triple_variables(\
             Variable("source"), RDF.type, DEB.Source)
@@ -208,7 +229,7 @@ class SPARQLQueryBuilder():
         self.helper.push_triple_variables(\
             Variable("source"), DEB.packageName, Variable("sourcename"))
  
-        if self.params['searchtype'] in ('BINARY', 'BINARYEXT'):
+        if self._binary_search() or self._extended_binary_search():
             self.helper.push_triple_variables(\
                 Variable("binary"), RDF.type, DEB.Binary)
             self.helper.push_triple_variables(\
@@ -230,15 +251,15 @@ class SPARQLQueryBuilder():
             filter = re.escape(filter).replace("\\", "\\\\")
             if self.params['exactmatch']: 
                 filter = ''.join(['^', filter, '$'])
-            if self.binary_search:
-                if self.params['searchtype'] == 'BINARYEXT':
+            if self._binary_search():
+                if self._extended_binary_search():
                     self.helper.push_triple(\
                         Variable("binary"), DEB.extendedDescription, Variable("desc"))
                     restrictions = {Variable("desc"): filter, Variable("binaryname"): filter}
                     self.helper.add_or_filter_regex(restrictions)
                 else:   
                     self.helper.add_or_filter_regex({Variable("binaryname"): filter})
-            elif self.source_search:
+            elif self._source_search():
                 self.helper.add_or_filter_regex({Variable("sourcename"): filter})
 
     def _consume_distribution(self):
@@ -259,22 +280,17 @@ class SPARQLQueryBuilder():
             self.helper.push_triple(Variable("source"),
                 DEB.area, URIRef(area))
 
-    def _consume_searchtype(self):
-        type = self.params['searchtype']
-        if type in ('BINARY', 'BINARYEXT'):
-            self.binary_search = True 
-        elif type in ('SOURCE'):
-            self.source_search = True
-
     def _consume_sort(self):
         sort = self.params['sort']
         if sort == 'MAINTMAIL':
             self.helper.set_orderby("maintmail")
-        else:
-            if self.binary_search:
+        elif sort == 'PACKAGE':
+            if self._binary_search():
                 self.helper.set_orderby("binaryname")
             else:
                 self.helper.set_orderby("sourcename")
+        else:
+            raise UnexpectedFieldValueError("sort")
 
     def _consume_homepage(self):
        if self.params['homepage']:
@@ -292,6 +308,10 @@ class SPARQLQueryBuilder():
         elif option == 'QA':
             uriref = URIRef(RES_BASEURI + "/team/packages%40qa.debian.org")
             self.helper.push_triple(Variable("source"), DEB.maintainer, uriref) 
+        elif option == 'ALL':
+            pass
+        else:
+            raise UnexpectedFieldValueError("maintainer")
 
     def _consume_version(self):
         options = self.params['version']
@@ -314,20 +334,20 @@ class SPARQLQueryBuilder():
         option = self.params['priority']
         if option == 'ANY':
             self.helper.add_variable("priority")
-            if self.binary_search:
+            if self._binary_search():
                 triple = Triple(\
                     Variable("binary"), DEB.priority, Variable("priority"))
-            elif self.source_search:
+            elif self._source_search():
                 triple = Triple(\
                     Variable("source"), DEB.priority, Variable("priority"))
             else:
                 raise Exception()  # FIXME
             self.helper.add_optional(triple)
         else:
-            if self.binary_search:
+            if self._binary_search():
                 self.helper.push_triple(\
                     Variable("binary"), DEB.priority, URIRef(option))
-            elif self.source_search:
+            elif self._source_search():
                 self.helper.push_triple(\
                     Variable("source"), DEB.priority, URIRef(option))
             else:
@@ -337,10 +357,10 @@ class SPARQLQueryBuilder():
         keyword = self.params['section']
         if keyword:
             keyword = re.escape(keyword).replace("\\", "\\\\")
-            if self.binary_search:
+            if self._binary_search():
                 self.helper.push_triple(\
                     Variable("binary"), DEB.section, Variable("section"))
-            elif self.source_search:
+            elif self._source_search():
                 self.helper.push_triple(\
                     Variable("source"), DEB.section, Variable("section"))
             else:
@@ -351,10 +371,10 @@ class SPARQLQueryBuilder():
         else:
             self.helper.add_variable("section")
             self.helper.add_variable("sectionname")
-            if self.binary_search:
+            if self._binary_search():
                 triple1 = Triple(\
                      Variable("binary"), DEB.section, Variable("section"))
-            elif self.source_search:
+            elif self._source_search():
                 triple1 = Triple(\
                      Variable("source"), DEB.section, Variable("section"))
             else:
@@ -373,6 +393,10 @@ class SPARQLQueryBuilder():
                 Variable("source"), DEB.uploader, Variable("uploader"))
             self.helper.add_optional(triple)
             self.helper.add_filter_notbound(Variable("uploader"))
+        elif option == 'ALL':
+            pass
+        else:
+            raise UnexpectedFieldValueError("comaintainer")
 
     def _consume_vcs(self):
         options = self.params['vcs']
@@ -399,22 +423,22 @@ class SPARQLQueryBuilder():
                 self.helper.add_union(*graphpatterns)
 
     def _consume_essential(self):
-        if self.binary_search and self.params['essential']:
+        if self._binary_search() and self.params['essential']:
             self.helper.push_triple(\
                 Variable("binary"), RDF.type, DEB.EssentialBinary)
 
     def _consume_buildessential(self):
-        if self.binary_search and self.params['buildessential']:
+        if self._binary_search() and self.params['buildessential']:
             self.helper.push_triple(\
                 Variable("binary"), RDF.type, DEB.BuildEssentialBinary)
 
     def _consume_dmuploadallowed(self):
-        if self.source_search and self.params['dmuploadallowed']:
+        if self._source_search() and self.params['dmuploadallowed']:
             self.helper.push_triple(\
                 Variable("source"), RDF.type, DEB.DMUploadAllowedSource)
 
     def _consume_popcon(self):
-        if self.binary_search and self.params['popcon']:
+        if self._binary_search() and self.params['popcon']:
             triple = Triple(Variable("unversionedbinary"), \
                             DEB.popconInstalled, Variable("?popconinstalled"))
             self.helper.add_variable("popconinstalled")
