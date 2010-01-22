@@ -4,6 +4,7 @@ from django.utils.encoding import smart_str
 
 from debian.forms import SPARQLForm, SearchForm
 from debian.services import SPARQLQueryProcessor, SPARQLQueryBuilder
+from debian.errors import SPARQLQueryProcessorError
 
 
 def index(request):
@@ -25,8 +26,8 @@ def sparql(request):
         processor = SPARQLQueryProcessor()
         try:
             processor.execute_query(smart_str(query))
-        except SyntaxError, e:
-            return render_to_response('debian/error.html', {'reason': e.msg})
+        except SPARQLQueryProcessorError, e:
+            return render_to_response('debian/error.html', {'reason': e.reason})
 
         (variables, results) = processor.format_sparql_results()
         dict = {'variables': variables, 'results': results}
@@ -48,7 +49,10 @@ def results(request):
         processor = SPARQLQueryProcessor()
         query = builder.create_query()
 
-        processor.execute_sanitized_query(query)
+        try:
+            processor.execute_sanitized_query(query)
+        except SPARQLQueryProcessorError, e:
+            return render_to_response('debian/error.html', {'reason': e.reason})
 
         if builder.source_search:
             results = processor.format_source_results()

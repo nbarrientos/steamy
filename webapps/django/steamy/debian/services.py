@@ -2,7 +2,7 @@ import logging
 import re
 
 from SPARQLWrapper import SPARQLWrapper, JSON
-from SPARQLWrapper.sparqlexceptions import QueryBadFormed
+from SPARQLWrapper.sparqlexceptions import EndPointNotFound
 
 from rdflib import Variable
 from rdflib import Namespace, URIRef, Literal, Variable
@@ -148,11 +148,18 @@ class SPARQLQueryProcessor():
     def execute_sanitized_query(self, query):
         self._init_endpoint()
         print query # FIXME
-        self.results = self._query_endpoint(query)
+        try:
+            self.results = self._query_endpoint(query)
+        except EndPointNotFound:
+            reason = "Endpoint not available. Try again later."
+            raise SPARQLQueryProcessorError(reason)
 
     def execute_query(self, query):
         query = self._clean_query(query)
-        RdflibParse(query)
+        try:
+            RdflibParse(query)
+        except SyntaxError, e:
+           raise SPARQLQueryProcessorError(e.msg)
         self.execute_sanitized_query(query)
 
 class SPARQLQueryBuilder():
