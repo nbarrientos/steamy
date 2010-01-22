@@ -290,18 +290,18 @@ class SPARQLQueryBuilder():
         options = self.params['version']
         if 'NATIVE' in options or 'NMU' in options:
             triple = Triple(\
-                Variable("version"), DEB.debianRevision, Variable("debianRevision"))
+                Variable("sourceversion"), DEB.debianRevision, Variable("debianRevision"))
             self.helper.add_optional(triple)
         if 'NATIVE' in options:
             self.helper.add_filter_notbound(Variable("debianRevision"))
         if 'NMU' in options:
             self.helper.push_triple(\
-                Variable("version"), DEB.upstreamVersion, Variable("upstreamVersion"))
+                Variable("sourceversion"), DEB.upstreamVersion, Variable("upstreamVersion"))
             restrictions = {Variable("debianRevision"): ".*\\\..*",\
                             Variable("upstreamVersion"): ".*\\\+nmu.*"}
             self.helper.add_or_filter_regex(restrictions)
         if 'EPOCH' in options:
-            self.helper.push_triple(Variable("version"), DEB.epoch, Variable("epoch"))
+            self.helper.push_triple(Variable("sourceversion"), DEB.epoch, Variable("epoch"))
 
     def _consume_priority(self):
         option = self.params['priority']
