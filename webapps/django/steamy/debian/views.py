@@ -4,7 +4,6 @@ from django.utils.encoding import smart_str
 
 from debian.forms import SPARQLForm, SearchForm
 from debian.services import SPARQLQueryProcessor, SPARQLQueryBuilder
-from debian.errors import SPARQLQueryProcessorError, InvalidKeywordError
 
 
 def index(request):
