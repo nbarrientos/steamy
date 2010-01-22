@@ -5,7 +5,6 @@ from rdflib import Variable, URIRef
 
 from debian.sparql.miniast import * 
 from debian.sparql.visitor import QueryStringVisitor
-from debian.errors import InvalidKeywordError
 
 class SelectQueryHelper():
     def __init__(self):

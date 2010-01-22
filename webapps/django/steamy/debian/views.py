@@ -4,7 +4,7 @@ from django.utils.encoding import smart_str
 
 from debian.forms import SPARQLForm, SearchForm
 from debian.services import SPARQLQueryProcessor, SPARQLQueryBuilder
-from debian.errors import SPARQLQueryProcessorError
+from debian.errors import SPARQLQueryProcessorError, UnexpectedSituationError
 
 
 def index(request):
@@ -59,7 +59,7 @@ def results(request):
         elif builder.binary_search:
             results = processor.format_binary_results()
         else:
-            raise Exception()
+            raise UnexpectedSituationError()
 
         replydata = {'results': results, 'filter': data['filter']}
         replydata['query'] = query if data['showquery'] else None
@@ -67,7 +67,9 @@ def results(request):
 
         if builder.source_search:
             return render_to_response('debian/source_results.html', replydata)
-        else:
+        elif builder.binary_search:
             return render_to_response('debian/binary_results.html', replydata)
+        else:
+            raise UnexpectedSituationError()
     else:
         return HttpResponse("405 - Method not allowed", status=405)
