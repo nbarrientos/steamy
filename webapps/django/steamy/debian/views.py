@@ -15,9 +15,14 @@ def index(request):
 
 def sparql(request):
     if request.method == 'POST':
-        f = SPARQLForm(request.POST)
-        f.is_valid()
-        query = f.cleaned_data['ns'] + f.cleaned_data['query']
+        sparqlform = SPARQLForm(request.POST)
+        
+        if sparqlform.is_valid() is False:
+            searchform = SearchForm()
+            dict = {'search': searchform, 'sparql': sparqlform}
+            return render_to_response('debian/search.html', dict)
+
+        query = sparqlform.cleaned_data['ns'] + sparqlform.cleaned_data['query']
         processor = SPARQLQueryProcessor()
         try:
             processor.execute_query(smart_str(query))
@@ -33,12 +38,13 @@ def sparql(request):
 def results(request):
     if request.method == 'POST':
         searchform = SearchForm(request.POST)
-        sparqlform = SPARQLForm()
-        if searchform.is_valid():
-            data = searchform.cleaned_data
-        else:
+
+        if searchform.is_valid() is False:
+            sparqlform = SPARQLForm()
             dict = {'search': searchform, 'sparql': sparqlform}
             return render_to_response('debian/search.html', dict)
+        
+        data = searchform.cleaned_data
         builder = SPARQLQueryBuilder(data)
         processor = SPARQLQueryProcessor()
         query = builder.create_query()

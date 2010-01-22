@@ -102,5 +102,5 @@ class SearchForm(forms.Form):
         max_length=20, required=False)
 
 class SPARQLForm(forms.Form):
-    ns = forms.CharField(label=None, initial=SPARQL_PREFIXES, widget=widgets.Textarea())
-    query = forms.CharField(label=None, initial=DEFAULT_QUERY, widget=widgets.Textarea())
+    ns = forms.CharField(initial=SPARQL_PREFIXES, widget=widgets.Textarea())
+    query = forms.CharField(initial=DEFAULT_QUERY, widget=widgets.Textarea())

@@ -7,20 +7,38 @@
     </div>
 
     <form action="{% url debian.views.sparql %}" method="post">
+
         <div class="query-textarea">
-        <label for="id_ns" class="field-label">Prefixes</label>
+        <label for="id_ns" class="field-label">Prefixes:</label>
             <span class="field-comment">
                 (you won't probably need to modify this)
             </span>
             {{ sparql.ns }}
         </div>
+        {% for error in sparql.ns.errors %}
+            <div class="ui-widget">
+                <div class="ui-state-error ui-corner-all"
+                    style="width: 40%; padding: 0 .7em; margin-bottom: .2em;"> 
+                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+                <strong>Error:</strong> {{ error }}</p>
+                </div>
+            </div>
+        {% endfor %}
+
         <div class="query-textarea">
-        <label for="id_query" class="field-label">Query</label>
-            <span class="field-comment">
-                (edit the default query as you wish)
-            </span>
+        <label for="id_query" class="field-label">Query:</label>
             {{ sparql.query }}
         </div>
+        {% for error in sparql.query.errors %}
+            <div class="ui-widget">
+                <div class="ui-state-error ui-corner-all"
+                    style="width: 40%; padding: 0 .7em; margin-bottom: .2em;"> 
+                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+                <strong>Error:</strong> {{ error }}</p>
+                </div>
+            </div>
+        {% endfor %}
+
         <div class="submit-button">
             <input id="sparql-submit" type="submit" class="fg-button ui-state-default ui-corner-all" value="Execute Query"/>
         </div>
