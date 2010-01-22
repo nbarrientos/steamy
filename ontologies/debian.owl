@@ -362,14 +362,6 @@
 
     <owl:ObjectProperty rdf:about="#version">
         <rdfs:subPropertyOf rdf:resource="&terms;hasVersion"/>
-        <rdfs:range>
-            <owl:Class>
-                <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="#Binary"/>
-                    <rdf:Description rdf:about="#Source"/>
-                </owl:unionOf>
-            </owl:Class>
-        </rdfs:range>
         <rdfs:domain>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
@@ -378,6 +370,14 @@
                 </owl:unionOf>
             </owl:Class>
         </rdfs:domain>
+        <rdfs:range>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#Binary"/>
+                    <rdf:Description rdf:about="#Source"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:range>
     </owl:ObjectProperty>
     
 
@@ -498,6 +498,61 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#packageName -->
 
     <owl:DatatypeProperty rdf:about="#packageName"/>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#popconInstalled -->
+
+    <owl:DatatypeProperty rdf:about="#popconInstalled">
+        <rdfs:comment xml:lang="en"
+            >Number of people who installed a package</rdfs:comment>
+        <rdfs:domain rdf:resource="#UnversionedBinary"/>
+        <rdfs:range rdf:resource="&xsd;nonNegativeInteger"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#popconInstalledButNotInUse -->
+
+    <owl:DatatypeProperty rdf:about="#popconInstalledButNotInUse">
+        <rdfs:comment xml:lang="en"
+            >Number of people who installed, but don&#39;t use a package regularly</rdfs:comment>
+        <rdfs:domain rdf:resource="#UnversionedBinary"/>
+        <rdfs:range rdf:resource="&xsd;nonNegativeInteger"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#popconNoFiles -->
+
+    <owl:DatatypeProperty rdf:about="#popconNoFiles">
+        <rdfs:comment xml:lang="en"
+            >Number of people whose entry didn&#39;t contain enough information</rdfs:comment>
+        <rdfs:domain rdf:resource="#UnversionedBinary"/>
+        <rdfs:range rdf:resource="&xsd;nonNegativeInteger"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#popconUpgradedRecently -->
+
+    <owl:DatatypeProperty rdf:about="#popconUpgradedRecently">
+        <rdfs:comment xml:lang="en"
+            >Number of people who upgraded a package recently</rdfs:comment>
+        <rdfs:domain rdf:resource="#UnversionedBinary"/>
+        <rdfs:range rdf:resource="&xsd;nonNegativeInteger"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#popconUsedRegularly -->
+
+    <owl:DatatypeProperty rdf:about="#popconUsedRegularly">
+        <rdfs:comment xml:lang="en"
+            >Number of people who use a package regularly</rdfs:comment>
+        <rdfs:domain rdf:resource="#UnversionedBinary"/>
+        <rdfs:range rdf:resource="&xsd;nonNegativeInteger"/>
+    </owl:DatatypeProperty>
     
 
 
