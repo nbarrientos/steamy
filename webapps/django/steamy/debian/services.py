@@ -201,7 +201,7 @@ class SPARQLQueryBuilder():
         self.helper.push_triple_variables(\
             Variable("source"), DEB.packageName, Variable("sourcename"))
  
-        if self.params['searchtype'] in ('BINARY', 'BINARYDESC'):
+        if self.params['searchtype'] in ('BINARY', 'BINARYEXT'):
             self.helper.push_triple_variables(\
                 Variable("binary"), RDF.type, DEB.Binary)
             self.helper.push_triple_variables(\
