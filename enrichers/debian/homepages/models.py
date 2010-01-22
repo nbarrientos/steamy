@@ -66,9 +66,7 @@ class Stats():
     
     def __str__(self):
         return """\n\nStats:
-\t* Total websites count: %s (%s not responding)
-\t* Valid markups: %s
-\t* RSS feeds processed: %s (%s invalid)
-\t* RDF files fetched: %s (%s invalid)""" % \
-        (self.homepages, self.broken_homepages, self.w3cok, \
-        self.feeds, self.invalidfeeds, self.rdf, self.invalidrdf)
+\t* Total websites count: %(homepages)s (%(broken_homepages)s not responding)
+\t* Valid markups: %(w3cok)s
+\t* RSS feeds processed: %(feeds)s (%(invalidfeeds)s invalid)
+\t* RDF files fetched: %(rdf)s (%(invalidrdf)s invalid)""" % self.__dict__

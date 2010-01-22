@@ -1,0 +1,131 @@
+<div id="tab-search">
+    <form action="{% url debian.views.results %}" method="post">
+    <div id="accordion"> 
+    <h3><a href="#">Basic search</a></h3>
+    <div> <!-- Basic search -->
+        <div class="form-field">
+            <label for="id_filter" class="field-label">Keyword:</label>
+            {{ search.filter }}
+            <span class="field-comment">
+                (blank is ok, but please consider using some filter if you
+                want useful results)
+            </span>
+            {% for error in search.filter.errors %}
+                <div class="ui-widget">
+                    <div class="ui-state-error ui-corner-all"
+                        style="width: 40%; padding: 0 .7em; margin-bottom: .2em;"> 
+                    <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+                    <strong>Error:</strong> {{ error }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="form-field">
+            <label for="id_distribution" class="field-label">Distribution:</label>
+            {{ search.distribution }}
+            <label for="id_area" class="field-label">Area:</label>
+            {{ search.area }}
+        </div>
+        <div class="form-field">
+            <label class="field-label">Search in:</label>
+            {{ search.searchtype }}
+        </div>
+        <div class="form-field">
+            {{ search.exactmatch }}
+            <label for="id_exactmatch" class="field-label">Only exact matches</label>
+        </div>
+    </div>
+
+    <h3><a href="#">Filters</a></h3>
+    <div> <!-- Filters -->
+        <fieldset>
+        <legend>Common filters</legend>
+        <div class="form-field">
+            <label for="id_section" class="field-label">Section:</label>
+            {{ search.section }}
+            <span class="field-comment">
+                (e.g. games, text)
+            </span>
+            {% for error in search.section.errors %}
+                <div class="ui-widget">
+                    <div class="ui-state-error ui-corner-all" style="padding: 0 .7em; margin-bottom: .3em;"> 
+                    <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+                    <strong>Error:</strong> {{ error }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="form-field">
+            <label class="field-label">Priority:</label>
+            {{ search.priority }}
+        </div>
+        <div class="form-field">
+            <label class="field-label">Version:</label>
+            <span class="field-comment">
+                (no selections will be interpreted as 'any')
+            </span>
+            {{ search.version }}
+        </div>
+        <div class="form-field">
+            <label class="field-label">Maintainer:</label>
+            {{ search.maintainer }}
+        </div>
+        <div class="form-field">
+            <label class="field-label">Comaintainer:</label>
+            {{ search.comaintainer }}
+        </div>
+        <div class="form-field">
+            <label class="field-label">Maintained using:</label>
+            <span class="field-comment">
+                (no selections will be interpreted as 'any')
+            </span>
+            {{ search.vcs }}
+        </div>
+        </fieldset>
+        <fieldset>
+        <legend>Source search filters</legend>
+        <div class="form-field">
+            {{ search.dmuploadallowed }}
+            <label for="id_dmuploadallowed" class="field-label">Only packages with DM upload allowed enabled</label>
+        </div>
+        </fieldset>
+        <fieldset>
+        <legend>Binary search filters</legend>
+        <div class="form-field">
+            {{ search.essential }}
+            <label for="id_essential" class="field-label">Only essential packages</label>
+        </div>
+        <div class="form-field">
+            {{ search.buildessential }}
+            <label for="id_buildessential" class="field-label">Only build-essential packages</label>
+        </div>
+        </fieldset>
+    </div> <!-- filters -->
+
+    <h3><a href="#">Output options</a></h3>
+    <div> <!-- Output options -->
+        <div class="form-field">
+            {{ search.homepage }}
+            <label for="id_homepage" class="field-label">Show package homepage</label>
+        </div>
+        <div class="form-field">
+            {{ search.popcon }}
+            <label for="id_popcon" class="field-label">Show package popularity statistics (binary searches only)</label>
+        </div>
+        <div class="form-field">
+            {{ search.showquery }}
+            <label for="id_showquery" class="field-label">Show auto-generated SPARQL query</label>
+        </div>
+        <div class="form-field">
+            <label class="field-label">Order by:</label>
+            {{ search.sort }}
+        </div>
+    </div>
+
+    </div> <!-- accordion -->
+
+    <div class="submit-button">
+        <input id="search-submit" type="submit" class="fg-button ui-state-default ui-corner-all" value="Get my results!"/>
+    </div>
+    </form>
+</div>

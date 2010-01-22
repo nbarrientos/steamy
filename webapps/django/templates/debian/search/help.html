@@ -1,0 +1,35 @@
+<div id="tab-help">
+    <h4 class="help-section">Introduction</h4>
+    <p>Welcome to an experimental interface to query Debian archive
+    metadata. At the moment only two search modes are availabe. Using
+    the first tab an assisted search will guide you to build a custom
+    search by applying filters and enabling output options. On the other
+    hand, this interface will let you construct your own SPARQL query (see
+    later sections of this help).</p>
+
+    <h4 class="help-section">What information is included?</h4>
+    <p>At the moment it is only available partial information about some stable 
+    distributions (from Hamm to Lenny). Every archive section is available
+    for querying but some information about packages part of stable updates
+    is not available. Also non-i386 binary builds are not inside the graph
+    for the moment.</p>
+
+    <h4 class="help-section">How does it work?</h4>
+    <p>This web application will query a SPARQL endpoint serving as
+    front-end of a Virtuoso triple store containing a RDFized
+    version of Debian Archive metadata files (i.e. Sources and Packages
+    files).
+    The archive was transformed using a set of Python programs and some
+    Bash scripts (also published). All resources were described using
+    the Debian Archive Ontology and several well-known third party
+    ongologies such as FOAF, DC, DOAP and so on. Search results are
+    enhanced with external links to a linked data browser deployed
+    using Pubby.</p>
+
+    <h4 class="help-section">SPARQL Examples</h4>
+    <p>I don't really know how this works. Fixme.</p>
+
+    <h4 class="help-section">Who's behind this initiative?</h4>
+    <p>Nacho Barrientos and Diego Berrueta, both members of the
+    STEAMY project.</p>
+</div>
