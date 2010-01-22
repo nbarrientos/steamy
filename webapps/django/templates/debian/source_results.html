@@ -63,7 +63,9 @@
         </li>
         {% endif %}
         <li>
-            <a class="result-label result-more" href="{{result.sourceurilink}}">More...</a>
+            <span class="result-more">
+            <a class="result-label" href="{{result.sourceurilink}}">More...</a>
+            (build-depends, uploaders, files...)</span>
         </li>
     </div>
     {% empty %}
