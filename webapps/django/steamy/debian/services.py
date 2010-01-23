@@ -515,7 +515,7 @@ WHERE {
 
     def _fetch_feeditems(self, feeduri):
         query = SPARQL_PREFIXES + """
-SELECT ?title ?link ?date
+SELECT DISTINCT ?title ?link ?date
 WHERE {
     ?channel a rss:channel ;
             rdfs:seeAlso <%s> ;
@@ -524,7 +524,7 @@ WHERE {
     ?item a rss:item ;
           dc:date ?date .
     {?item dc:title ?title} UNION {?item rss:title ?title} . 
-    OPTIONAL { ?item rss:link ?link }
+    OPTIONAL { { ?item rss:link ?link } UNION { ?item rss:comment ?link } }
     OPTIONAL { ?item dc:date ?date }
 }
 ORDER BY DESC(?date)""" % feeduri
