@@ -516,3 +516,32 @@ class FeedFinderTest(unittest.TestCase):
         channel = self.finder._fetch_feed_channel_information(feeduri)
         self.mox.VerifyAll()
         self.assertEqual("title1", channel['title'])
+
+    def test__fetch_feed_channel_information_channel_but_no_title(self):
+        feeduri = "http://example.org/p"
+        mock = self.mox.CreateMock(SPARQLQueryProcessor)
+        expectedarg = r"SELECT.+\<%s\>.+" % re.escape(feeduri)
+        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        binding1 = {}
+        bindings = [binding1]
+        fakeresults = {'results': {'bindings': bindings}}
+        self.finder.processor = mock
+        self.mox.ReplayAll()
+        self.finder.processor.results = fakeresults
+        channel = self.finder._fetch_feed_channel_information(feeduri)
+        self.mox.VerifyAll()
+        self.assertEqual(None, channel['title'])
+
+    def test__fetch_feed_channel_information_no_channel(self):
+        feeduri = "http://example.org/p"
+        mock = self.mox.CreateMock(SPARQLQueryProcessor)
+        expectedarg = r"SELECT.+\<%s\>.+" % re.escape(feeduri)
+        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        bindings = []
+        fakeresults = {'results': {'bindings': bindings}}
+        self.finder.processor = mock
+        self.mox.ReplayAll()
+        self.finder.processor.results = fakeresults
+        channel = self.finder._fetch_feed_channel_information(feeduri)
+        self.mox.VerifyAll()
+        self.assertEqual(None, channel)

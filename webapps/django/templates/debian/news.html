@@ -13,30 +13,41 @@
 	    </div>
     </div>
     {% for feed in feeds %}
-        <div class="result-feed">
+        <div id="feed-{{forloop.counter}}" class="result-feed">
             <div class="result-header">
-            <span class="result-number">#{{forloop.counter}}</span>
-            <span style="font-weight:bold">{{feed.channel.title}}</span>
+            <span class="result-number">
+            <span style="font-size:medium">feed</span>#{{forloop.counter}}</span>
+            {% if feed.channel and feed.channel.title %}
+                <span style="font-weight:bold">{{feed.channel.title}}</span>
+            {% else %}
+                {{feed.feeduri}}
+            {% endif %}
             <a href="{{feed.feeduri}}">
             <span class="ui-icon ui-icon-signal-diag" style="display: inline-block;"></span></a>
+            <a href="#" onclick="bury('{{source}}', '{{feed.feeduri}}', '{{forloop.counter}}')"> 
+            <span class="ui-icon ui-icon-close bury" style="display: inline-block;"></span></a>
             </div>
             <ul>
-            {% for item in feed.items %}
-            <li>
-                {% if item.link %}
-                    <a href="{{item.link}}">{{item.title}}</a>
-                {% else %}
-                    {{item.title}}
-                {% endif %}
-                {% if item.date %}
-                <span class="ui-icon ui-icon-calendar" style="display: inline-block;"></span>
-                <span class="result-feed-item-date">{{item.date|date}}</span>
-                {% endif %}
-            </li>
-            {% empty %}
-            <li>Empty feed</li>
-            {% endfor %}
-            </ul>
+            {% if feed.channel %}
+                {% for item in feed.items %}
+                <li>
+                    {% if item.link %}
+                        <a href="{{item.link}}">{{item.title}}</a>
+                    {% else %}
+                        {{item.title}}
+                    {% endif %}
+                    {% if item.date %}
+                    <span class="ui-icon ui-icon-calendar" style="display: inline-block;"></span>
+                    <span class="result-feed-item-date">{{item.date|date}}</span>
+                    {% endif %}
+                </li>
+                {% empty %}
+                <li>Empty feed</li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>It wasn't possible to fetch data from this feed, please visit it manually.</p>
+            {% endif %}
         </div>
     {% empty %}
         <div class="no-matches">

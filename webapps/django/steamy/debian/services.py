@@ -469,6 +469,8 @@ class SPARQLQueryBuilder():
 class RSSFeed():
     def __init__(self, feeduri):
         self.feeduri = feeduri
+        self.channel = None
+        self.items = None
 
 
 class FeedFinder():
@@ -484,7 +486,8 @@ class FeedFinder():
     def _fill_feeds(self, feeds):
         for feed in feeds:
             feed.channel = self._fetch_feed_channel_information(feed.feeduri)
-            feed.items = self._fetch_feeditems(feed.feeduri)
+            if feed.channel is not None:
+                feed.items = self._fetch_feeditems(feed.feeduri)
 
         return feeds
 
@@ -497,7 +500,6 @@ WHERE {
          deb:version ?source .
     ?source foaf:page ?homepage .
     ?homepage xhv:alternate ?feeduri .
-    ?channel rdfs:seeAlso ?feeduri
 }""" % unversionedsourceuri
         try:
             self.processor.execute_sanitized_query(query)
@@ -555,17 +557,19 @@ ORDER BY DESC(?date)""" % feeduri
 SELECT ?title
 WHERE {
     ?channel a rss:channel ;
-             rdfs:seeAlso <%s> ;
-             dc:title ?title .
+             rdfs:seeAlso <%s> .
+    OPTIONAL { ?channel dc:title ?title } .
 }""" % feeduri
         try:
             self.processor.execute_sanitized_query(query)
         except SPARQLQueryProcessorError, e:
             raise e # FIXME
 
-        result = self.processor.results['results']['bindings'][0]
-        data = {}
-        if 'title' in result:
-            data['title'] = result['title']['value']
-
-        return data
+        results = self.processor.results['results']['bindings']
+        if results:
+            data = {'title': None}
+            if 'title' in results[0]:
+                data['title'] = results[0]['title']['value']
+            return data
+        else:
+            return None
