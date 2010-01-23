@@ -23,12 +23,12 @@ from errors import W3CValidatorUnexpectedValidationResultError
 from errors import W3CValidatorUnexpectedStatusCodeError
 from namespaces import *
 
-def homepages(endpoint, graph):
+def homepages(endpoint, graph, triples):
     endpoint = SPARQLWrapper2(endpoint)
     q = """
         PREFIX deb: <http://idi.fundacionctic.org/steamy/debian.owl#>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-        SELECT DISTINCT ?homepage
+        SELECT DISTINCT ?source ?homepage
         %s
         WHERE { 
           ?source a deb:Source ;
@@ -42,12 +42,13 @@ def homepages(endpoint, graph):
         logging.error("Wrong or inactive endpoint, aborting.")
         return
 
-    for result in results["homepage"]:
+    for result in results["source", "homepage"]:
         homepage = re.sub("<|>", "", result["homepage"].value).strip()
-        for alternative in _alternatives(homepage):
+        source = result["source"].value
+        for alternative in _alternatives(source, homepage, triples):
             yield alternative
 
-def _alternatives(uri):
+def _alternatives(source, uri, triples):
     alternatives = [uri]
     sourceforge = re.compile(r"https?://(?P<project>.+?)\.(sourceforge|sf)\.net")
 
@@ -56,6 +57,7 @@ def _alternatives(uri):
         alternative = "http://sourceforge.net/projects/%s" % match1.group('project')
         logging.debug("Adding '%s' as an alternative of '%s'" % (alternative, uri))
         alternatives.append(alternative)
+        triples.push_homepage(source, alternative)
 
     return alternatives
 
@@ -154,6 +156,11 @@ class TripleProcessor():
         self.pool.add_triple((result, RDF.type, EARL.TestResult))
         self.pool.add_triple((result, EARL.outcome, EARL.failed))
         self.pool.add_triple((assertion, EARL.result, result))
+
+    def push_homepage(self, source, homepage):
+        source_ref = URIRef(source)
+        homepage_ref = URIRef(homepage)
+        self.pool.add_triple((source_ref, FOAF.page, homepage_ref))
 
     def _push_generic_validation(self, uri):
         assertion = BNode()

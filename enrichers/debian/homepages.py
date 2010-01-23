@@ -115,7 +115,7 @@ class HomepageEnricher():
         self._config_logger() 
         self._init_data()
 
-        for homepage in homepages(self.opts.endpoint, self.opts.graph):
+        for homepage in homepages(self.opts.endpoint, self.opts.graph, self.triples):
             self._process_homepage(homepage)
 
         self.triples.request_serialization()
