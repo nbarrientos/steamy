@@ -93,6 +93,10 @@ h5.help-subsection { color: #004276; }
 .form-field input[type="text"] { display: block; font-family: "Lucida Grande", Verdana, Arial, sans-serif; background-color: #ffeded; border-width: 1px; border-color: #cc0000; border-style: solid; }
 .result-header { width: 70%; border-bottom-color: #cc0000; border-bottom-width: 1px; border-bottom-style: dashed; margin-left: 2em; }
 .result-number { color: #cc0000; font-weight: bold; font-size: x-large; }
+.result-feed { font-family: "Lucida Grande", Verdana, Arial, sans-serif; }
+.result-feed-item-date { font-size: small; }
+.result-feed ul { margin-left: 10px; list-style-type: none; }
+.result-feed li { list-style-type: square; margin-left: 0px; }
 .result { font-family: "Lucida Grande", Verdana, Arial, sans-serif; }
 .result ul { list-style-type: none; }
 .result li { margin-left: 0px; }

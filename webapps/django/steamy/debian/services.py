@@ -1,6 +1,8 @@
 import logging
 import re
 
+from datetime import datetime
+
 from SPARQLWrapper import SPARQLWrapper, JSON
 from SPARQLWrapper.sparqlexceptions import EndPointNotFound
 
@@ -511,7 +513,7 @@ WHERE {
 
     def _fetch_feeditems(self, feeduri):
         query = SPARQL_PREFIXES + """
-SELECT ?title ?link
+SELECT ?title ?link ?date
 WHERE {
     ?channel a rss:channel ;
             rdfs:seeAlso <%s> ;
@@ -521,8 +523,9 @@ WHERE {
           dc:date ?date .
     {?item dc:title ?title} UNION {?item rss:title ?title} . 
     OPTIONAL { ?item rss:link ?link }
+    OPTIONAL { ?item dc:date ?date }
 }
-ORDER BY ?date""" % feeduri
+ORDER BY DESC(?date)""" % feeduri
         try:
             self.processor.execute_sanitized_query(query)
         except SPARQLQueryProcessorError, e:
@@ -535,6 +538,14 @@ ORDER BY ?date""" % feeduri
             item['link'] = None
             if 'link' in result:
                 item['link'] = result['link']['value']
+            item['date'] = None
+            if 'date' in result:
+                time8601 = result['date']['value'].replace(" ","")
+                mask8601 = "%Y-%m-%dT%H:%M:%S"
+                try:
+                    item['date'] = datetime.strptime(time8601, mask8601)
+                except ValueError:
+                    pass  # Remains None
             items.append(item)
 
         return items

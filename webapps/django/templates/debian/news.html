@@ -9,14 +9,14 @@
     <div class="subheader">
         <div class="ui-widget-content ui-corner-all">
 		    <h3 class="subtitle ui-widget-subheader ui-corner-all">
-            News related to source package {{source}}</h3>
+            News related to source package '{{source}}'</h3>
 	    </div>
     </div>
     {% for feed in feeds %}
-        <div class="result">
+        <div class="result-feed">
             <div class="result-header">
             <span class="result-number">#{{forloop.counter}}</span>
-            {{feed.channel.title}}
+            <span style="font-weight:bold">{{feed.channel.title}}</span>
             <a href="{{feed.feeduri}}">
             <span class="ui-icon ui-icon-signal-diag" style="display: inline-block;"></span></a>
             </div>
@@ -27,6 +27,10 @@
                     <a href="{{item.link}}">{{item.title}}</a>
                 {% else %}
                     {{item.title}}
+                {% endif %}
+                {% if item.date %}
+                <span class="ui-icon ui-icon-calendar" style="display: inline-block;"></span>
+                <span class="result-feed-item-date">{{item.date|date}}</span>
                 {% endif %}
             </li>
             {% empty %}
