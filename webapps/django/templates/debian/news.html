@@ -1,5 +1,9 @@
 {% extends "debian/base.html" %}
 
+{% block javascript %}
+    <script type="text/javascript" src="/debian/static/js/feeds.js"></script>
+{% endblock %}
+
 {% block content %}
     <div class="result-search-again">
     <a href="{% url debian.views.index %}" class="fg-button ui-state-default

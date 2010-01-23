@@ -1,5 +1,9 @@
 {% extends "debian/base.html" %}
 
+{% block javascript %}
+    <script type="text/javascript" src="/debian/static/js/results.js"></script>
+{% endblock %}
+
 {% block content %}
     <div class="result-search-again">
     <a href="{% url debian.views.index %}" class="fg-button ui-state-default
@@ -28,7 +32,7 @@
             <span class="result-label">Source:</span>
             <a href="{{result.sourceurilink}}">{{result.sourcename}} ({{result.sourcefullversion}})</a>
             <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
-            <a href="{% url debian.views.news result.sourcename %}">
+            <a class="wait" href="{% url debian.views.news result.sourcename %}">
             <span class="ui-icon ui-icon-comment" style="display: inline-block;"></span>
             </a>
         </li>
