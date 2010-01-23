@@ -32,6 +32,7 @@ from homepages.errors import W3CValidatorError, RSSParsingError
 from homepages.errors import RSSParsingFeedUnavailableError
 from homepages.errors import RSSParsingFeedMalformedError
 from homepages.errors import RSSParsingUnparseableVersionError
+from homepages.errors import RSSParsingXSLTError
 from homepages.errors import RDFDiscoveringError
 from homepages.errors import RDFDiscoveringBrokenLinkError
 from homepages.errors import RDFDiscoveringMalformedError
@@ -194,37 +195,52 @@ class HomepageEnricher():
 
         parse = feedparser.parse(feed)
 
-        if parse.status in (httplib.NOT_FOUND, httplib.GONE):
+        if parse.status in \
+                (httplib.MOVED_PERMANENTLY, httplib.FOUND, httplib.SEE_OTHER):
+            logging.debug("Feed location changed from '%s' to '%s'" % \
+                (feed, parse.href))
+        elif parse.status in (httplib.NOT_FOUND, httplib.GONE):
             self.stats.count_invalidfeed()
             raise RSSParsingFeedUnavailableError(feed)
-        elif parse.bozo:
-            self.stats.count_invalidfeed()
-            raise RSSParsingFeedMalformedError(feed)
+        
+        if parse.bozo:
+            try:
+                raise parse.bozo_exception
+            except (SAXParseException, feedparser.CharacterEncodingUnknown, 
+                    feedparser.NonXMLContentType):
+                self.stats.count_invalidfeed()
+                raise RSSParsingFeedMalformedError(feed)
+            except feedparser.CharacterEncodingOverride:
+                pass
+      
+        if parse.version:
+            graph = ConjunctiveGraph()
+            if parse.version in ("rss10"):
+                logging.debug("Looks like RDF (%s)" % parse.version)
+                graph.parse(feed, format="xml")
+            elif parse.version in ("rss20", "rss094"): #, ("atom10", "atom30", "rss20"):
+                logging.debug("Looks like XML (%s)" % parse.version)
+                try:
+                    transformed_feed = self._transform_feed(feed, parse.encoding)
+                except Exception:  # Ignoring all errors
+                    raise RSSParsingXSLTError(feed)
+                graph.parse(StringIO(transformed_feed), format="xml")
+            else:
+                self.stats.count_invalidfeed()
+                raise RSSParsingUnparseableVersionError(parse.version, feed)
         else:
-            if parse.version:
-                graph = ConjunctiveGraph()
-                if parse.version in ("rss10"):
-                    logging.debug("Looks like RDF (%s)" % parse.version)
-                    graph.parse(feed, format="xml")
-                elif parse.version in ("rss20", "rss094"): #, ("atom10", "atom30", "rss20"):
-                    logging.debug("Looks like XML (%s)" % parse.version)
-                    graph.parse(StringIO(self._transform_feed(feed)), format="xml")
-                else:
-                    self.stats.count_invalidfeed()
-                    raise RSSParsingUnparseableVersionError(parse.version, feed)
-            else:
-                raise RSSParsingError(feed)
+            raise RSSParsingError(feed)
 
-            channeluri = None
-            for channeluri in channel_uri_from_graph(graph):
-                logging.debug("Linking feedhref:'%s' to channeluri:'%s'" % (feed, channeluri))
-                self.triples.push_rss_channel(feed, channeluri)
-           
-            if channeluri is not None:
-                self.triples.push_graph(graph)
-                logging.debug("%s triples extracted and merged" % len(graph))
-            else:
-                logging.error("Unable to link feed '%s' to any channel. Not merging." % feed)
+        channeluri = None
+        for channeluri in channel_uri_from_graph(graph):
+            logging.debug("Linking feedhref:'%s' to channeluri:'%s'" % (feed, channeluri))
+            self.triples.push_rss_channel(feed, channeluri)
+       
+        if channeluri is not None:
+            self.triples.push_graph(graph)
+            logging.debug("%s triples extracted and merged" % len(graph))
+        else:
+            logging.error("Unable to link feed '%s' to any channel. Not merging." % feed)
         
     def _discover_meta(self, homepage, candidate):
         self.triples.push_meta(homepage, candidate)
@@ -244,8 +260,11 @@ class HomepageEnricher():
             self.triples.push_graph(graph)
             logging.debug("%s triples extracted and merged" % len(graph))
 
-    def _transform_feed(self, feeduri):
+    def _transform_feed(self, feeduri, encoding):
         document = InputSource.DefaultFactory.fromUri(feeduri)  
+        # Set encode to feedparser's guess to prevent unexpected
+        # tokens for feeds with mismatching encoding declared.
+        document.encoding = encoding
         stylesheet = InputSource.DefaultFactory.fromUri(RSS_2_RDF_XSL)
         processor = Processor.Processor()
         processor.appendStylesheet(stylesheet)

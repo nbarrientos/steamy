@@ -34,7 +34,6 @@ def homepages(endpoint, graph):
           ?source a deb:Source ;
                   foaf:page ?homepage .
         }
-        LIMIT 20 # FIXME
     """ % ("FROM <%s>" % graph if graph is not None else "")
     endpoint.setQuery(q)
     try:

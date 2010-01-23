@@ -13,6 +13,27 @@
 	    </div>
     </div>
     {% for feed in feeds %}
+        <div class="result">
+            <div class="result-header">
+            <span class="result-number">#{{forloop.counter}}</span>
+            {{feed.channel.title}}
+            <a href="{{feed.feeduri}}">
+            <span class="ui-icon ui-icon-signal-diag" style="display: inline-block;"></span></a>
+            </div>
+            <ul>
+            {% for item in feed.items %}
+            <li>
+                {% if item.link %}
+                    <a href="{{item.link}}">{{item.title}}</a>
+                {% else %}
+                    {{item.title}}
+                {% endif %}
+            </li>
+            {% empty %}
+            <li>Empty feed</li>
+            {% endfor %}
+            </ul>
+        </div>
     {% empty %}
         <div class="no-matches">
             I'm sorry but I'm unable to find any upstream news for this package

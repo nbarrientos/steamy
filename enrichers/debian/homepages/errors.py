@@ -45,6 +45,10 @@ class RSSParsingUnparseableVersionError(RSSParsingError):
     def __str__(self):
         return "'%s': untransformable feed version '%s'" % (self.uri, self.version)
 
+class RSSParsingXSLTError(RSSParsingError):
+    def __str__(self):
+        return "XSL transformation failed"
+
 class RDFDiscoveringError(Exception):
     def __init__(self, uri):
         self.uri = uri

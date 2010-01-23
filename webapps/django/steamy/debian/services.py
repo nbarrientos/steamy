@@ -474,25 +474,29 @@ class FeedFinder():
         self.processor = SPARQLQueryProcessor()
 
     def populate_feeds(self, sourcename):
-        unversionedsourceuri = "%s/%s" % (RES_BASEURI, sourcename)
+        unversionedsourceuri = "%s/source/%s" % (RES_BASEURI, sourcename)
         partial = self._fetch_feeduris(unversionedsourceuri)
 
         return self._fill_feeds(partial)
 
     def _fill_feeds(self, feeds):
         for feed in feeds:
+            feed.channel = self._fetch_feed_channel_information(feed.feeduri)
             feed.items = self._fetch_feeditems(feed.feeduri)
 
         return feeds
 
     def _fetch_feeduris(self, unversionedsourceuri):
+        # Feeds not linked to a channel won't be processed
         query = SPARQL_PREFIXES + """
 SELECT DISTINCT ?feeduri
 WHERE {
     <%s> a deb:UnversionedSource ;
          deb:version ?source .
     ?source foaf:page ?homepage .
-    ?homepage xhv:alternate ?feeduri }""" % unversionedsourceuri
+    ?homepage xhv:alternate ?feeduri .
+    ?channel rdfs:seeAlso ?feeduri
+}""" % unversionedsourceuri
         try:
             self.processor.execute_sanitized_query(query)
         except SPARQLQueryProcessorError, e:
@@ -507,12 +511,18 @@ WHERE {
 
     def _fetch_feeditems(self, feeduri):
         query = SPARQL_PREFIXES + """
-SELECT ?title
+SELECT ?title ?link
 WHERE {
-?channel rdfs:seeAlso <%s> ;
-        rss:items ?items .
-?items ?p ?item . 
-{?item dc:title ?title} UNION {?item rss:title ?title} . }""" % feeduri
+    ?channel a rss:channel ;
+            rdfs:seeAlso <%s> ;
+            rss:items ?items .
+    ?items ?p ?item .
+    ?item a rss:item ;
+          dc:date ?date .
+    {?item dc:title ?title} UNION {?item rss:title ?title} . 
+    OPTIONAL { ?item rss:link ?link }
+}
+ORDER BY ?date""" % feeduri
         try:
             self.processor.execute_sanitized_query(query)
         except SPARQLQueryProcessorError, e:
@@ -522,7 +532,29 @@ WHERE {
         for result in self.processor.results['results']['bindings']:
             item = {}
             item['title'] = result['title']['value']
-            item['link'] = "FIXME"
+            item['link'] = None
+            if 'link' in result:
+                item['link'] = result['link']['value']
             items.append(item)
 
         return items
+
+    def _fetch_feed_channel_information(self, feeduri):
+        query = SPARQL_PREFIXES + """
+SELECT ?title
+WHERE {
+    ?channel a rss:channel ;
+             rdfs:seeAlso <%s> ;
+             dc:title ?title .
+}""" % feeduri
+        try:
+            self.processor.execute_sanitized_query(query)
+        except SPARQLQueryProcessorError, e:
+            raise e # FIXME
+
+        result = self.processor.results['results']['bindings'][0]
+        data = {}
+        if 'title' in result:
+            data['title'] = result['title']['value']
+
+        return data

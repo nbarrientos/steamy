@@ -451,7 +451,7 @@ class FeedFinderTest(unittest.TestCase):
         expectedarg = r"SELECT.+\<%s\>.+" % re.escape(feeduri)
         mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
         binding1 = {'title': {'value': "title1"}, 'link': {'value': "link1"}}
-        binding2 = {'title': {'value': "title2"}, 'link': {'value': "link2"}}
+        binding2 = {'title': {'value': "title2"}}
         bindings = [binding1, binding2]
         fakeresults = {'results': {'bindings': bindings}}
         self.finder.processor = mock
@@ -461,9 +461,9 @@ class FeedFinderTest(unittest.TestCase):
         self.mox.VerifyAll()
         self.assertEqual(2, len(items))
         self.assertEqual("title1", items[0]['title'])
-        self.assertEqual("FIXME", items[0]['link'])
+        self.assertEqual("link1", items[0]['link'])
         self.assertEqual("title2", items[1]['title'])
-        self.assertEqual("FIXME", items[1]['link'])
+        self.assertEqual(None, items[1]['link'])
 
     def test__fetch_feeditems_no_bindings(self):
         feeduri = "http://example.org/p"
@@ -482,8 +482,14 @@ class FeedFinderTest(unittest.TestCase):
     def test__fill_feeds(self):
         input = [RSSFeed("uri1"), RSSFeed("uri2")]
         self.mox.StubOutWithMock(self.finder, "_fetch_feeditems")
-        self.finder._fetch_feeditems("uri1").AndReturn([])
+        self.mox.StubOutWithMock(self.finder, "_fetch_feed_channel_information")
+        uri1items = []
         uri2items = [{'title': "title21"}, {'title': "title22"}]
+        uri1channel = {'title': "title1"}
+        uri2channel = {'title': "title2"}
+        self.finder._fetch_feed_channel_information("uri1").AndReturn(uri1channel)
+        self.finder._fetch_feeditems("uri1").AndReturn(uri1items)
+        self.finder._fetch_feed_channel_information("uri2").AndReturn(uri2channel)
         self.finder._fetch_feeditems("uri2").AndReturn(uri2items)
         self.mox.ReplayAll()
         feeds = self.finder._fill_feeds(input)
@@ -493,3 +499,20 @@ class FeedFinderTest(unittest.TestCase):
         self.assertEqual(2, len(feeds[1].items))
         self.assertEqual("title21", feeds[1].items[0]['title'])
         self.assertEqual("title22", feeds[1].items[1]['title'])
+        self.assertEqual("title1", feeds[0].channel['title'])
+        self.assertEqual("title2", feeds[1].channel['title'])
+
+    def test__fetch_feed_channel_information(self):
+        feeduri = "http://example.org/p"
+        mock = self.mox.CreateMock(SPARQLQueryProcessor)
+        expectedarg = r"SELECT.+\<%s\>.+" % re.escape(feeduri)
+        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        binding1 = {'title': {'value': "title1"}}
+        bindings = [binding1]
+        fakeresults = {'results': {'bindings': bindings}}
+        self.finder.processor = mock
+        self.mox.ReplayAll()
+        self.finder.processor.results = fakeresults
+        channel = self.finder._fetch_feed_channel_information(feeduri)
+        self.mox.VerifyAll()
+        self.assertEqual("title1", channel['title'])
