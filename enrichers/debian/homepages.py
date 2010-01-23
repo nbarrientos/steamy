@@ -195,6 +195,16 @@ class HomepageEnricher():
 
         parse = feedparser.parse(feed)
 
+        # Feedparser bug? Sometimes status attribute is missing, even using
+        # remote feeds :(
+        # From: http://www.feedparser.org/docs/reference-status.html
+        # "status will only be present if the feed was retrieved from a web
+        # server"
+        try:
+            getattr(parse, "status")
+        except AttributeError:
+            raise RSSParsingError(feed) 
+
         if parse.status in \
                 (httplib.MOVED_PERMANENTLY, httplib.FOUND, httplib.SEE_OTHER):
             logging.debug("Feed location changed from '%s' to '%s'" % \
