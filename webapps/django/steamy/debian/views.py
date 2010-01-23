@@ -4,6 +4,7 @@ from django.utils.encoding import smart_str
 
 from debian.forms import SPARQLForm, SearchForm
 from debian.services import SPARQLQueryProcessor, SPARQLQueryBuilder
+from debian.services import FeedFinder
 from debian.errors import SPARQLQueryProcessorError, UnexpectedSituationError
 
 
@@ -77,3 +78,14 @@ def results(request):
             raise UnexpectedSituationError()
     else:
         return HttpResponse("405 - Method not allowed", status=405)
+
+def news(request, source, version):
+    finder = FeedFinder()
+
+    try:
+        feeds = finder.populate_feeds(source, version)
+    except SPARQLQueryProcessorError, e:
+        return render_to_response('debian/error.html', {'reason': e.reason})
+
+    replydata = {'source': source, 'version': version, 'feeds': feeds}
+    return render_to_response('debian/news.html', replydata)

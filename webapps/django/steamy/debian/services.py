@@ -462,3 +462,64 @@ class SPARQLQueryBuilder():
     def _add_from(self):
         if FROM_GRAPH is not None:
             self.helper.set_from(FROM_GRAPH)
+
+
+class RSSFeed():
+    def __init__(self, feeduri):
+        self.feeduri = feeduri
+
+
+class FeedFinder():
+    def __init__(self):
+        self.processor = SPARQLQueryProcessor()
+
+    def populate_feeds(self, source, version):
+        sourceuri = "%s/%s/%s" % (RES_BASEURI, source, version)
+        partial = self._fetch_feeduris(sourceuri)
+
+        return self._fetch_feedcontents(partial)
+
+    def _fetch_feedcontents(self, partial):
+        for feed in partial:
+            feed.items = self._fetch_feeditems(feed.feeduri)
+
+        return partial
+
+    def _fetch_feeduris(self, sourceuri):
+        query = SPARQL_PREFIXES + """
+SELECT ?feeduri
+WHERE {
+    <%s> foaf:page ?homepage .
+    ?homepage xhv:alternate ?feeduri }""" % sourceuri
+        try:
+            self.processor.execute_sanitized_query(query)
+        except SPARQLQueryProcessorError, e:
+            raise e  # FIXME
+
+        feeds = []
+        for result in self.processor.results['results']['bindings']:
+            feeds.append(RSSFeed(result['feeduri']['value']))
+
+        return feeds
+
+    def _fetch_feeditems(self, feeduri):
+        query = SPARQL_PREFIXES + """
+SELECT ?title
+WHERE {
+?channel rdfs:seeAlso <%s> ;
+        rss:items ?items .
+?items ?p ?item . 
+{?item dc:title ?title} UNION {?item rss:title ?title} . }""" % feeduri
+        try:
+            self.processor.execute_sanitized_query(query)
+        except SPARQLQueryProcessorError, e:
+            raise e # FIXME
+
+        items = []
+        for result in self.processor.results['results']['bindings']:
+            item = {}
+            item['title'] = result['title']['value']
+            item['link'] = "FIXME"
+            items.append(item)
+
+        return items
