@@ -31,8 +31,9 @@ def homepages(endpoint, graph, triples):
         SELECT DISTINCT ?source ?homepage
         %s
         WHERE { 
-          ?source a deb:Source ;
+          ?source a deb:Source;
                   foaf:page ?homepage .
+          FILTER(regex(str(?homepage), "^http://"))
         }
     """ % ("FROM <%s>" % graph if graph is not None else "")
     endpoint.setQuery(q)
