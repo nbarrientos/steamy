@@ -59,9 +59,9 @@ def results(request):
         except SPARQLQueryProcessorError, e:
             return render_to_response('debian/error.html', {'reason': e.reason})
 
-        if builder.source_search:
+        if builder._source_search():
             results = processor.format_source_results()
-        elif builder.binary_search:
+        elif builder._binary_search():
             results = processor.format_binary_results()
         else:
             raise UnexpectedSituationError()
@@ -70,22 +70,22 @@ def results(request):
         replydata['query'] = query if data['showquery'] else None
         replydata['show_popcon'] = True if data['popcon'] else False
 
-        if builder.source_search:
+        if builder._source_search():
             return render_to_response('debian/source_results.html', replydata)
-        elif builder.binary_search:
+        elif builder._binary_search():
             return render_to_response('debian/binary_results.html', replydata)
         else:
             raise UnexpectedSituationError()
     else:
         return HttpResponse("405 - Method not allowed", status=405)
 
-def news(request, source, version):
+def news(request, source):
     finder = FeedFinder()
 
     try:
-        feeds = finder.populate_feeds(source, version)
+        feeds = finder.populate_feeds(source)
     except SPARQLQueryProcessorError, e:
         return render_to_response('debian/error.html', {'reason': e.reason})
 
-    replydata = {'source': source, 'version': version, 'feeds': feeds}
+    replydata = {'source': source, 'feeds': feeds}
     return render_to_response('debian/news.html', replydata)

@@ -5,7 +5,7 @@ urlpatterns = patterns('debian.views',
     (r'^$', 'index'),
     (r'^sparql/$', 'sparql'),
     (r'^results/$', 'results'),
-    (r'^news/(?P<source>[-a-zA-Z0-9+.]+)/(?P<version>\S+?)/$', 'news'),
+    (r'^news/(?P<source>[-a-zA-Z0-9+.]+)/$', 'news'),
 )
 
 if settings.DEBUG:

@@ -473,24 +473,26 @@ class FeedFinder():
     def __init__(self):
         self.processor = SPARQLQueryProcessor()
 
-    def populate_feeds(self, source, version):
-        sourceuri = "%s/%s/%s" % (RES_BASEURI, source, version)
-        partial = self._fetch_feeduris(sourceuri)
+    def populate_feeds(self, sourcename):
+        unversionedsourceuri = "%s/%s" % (RES_BASEURI, sourcename)
+        partial = self._fetch_feeduris(unversionedsourceuri)
 
-        return self._fetch_feedcontents(partial)
+        return self._fill_feeds(partial)
 
-    def _fetch_feedcontents(self, partial):
-        for feed in partial:
+    def _fill_feeds(self, feeds):
+        for feed in feeds:
             feed.items = self._fetch_feeditems(feed.feeduri)
 
-        return partial
+        return feeds
 
-    def _fetch_feeduris(self, sourceuri):
+    def _fetch_feeduris(self, unversionedsourceuri):
         query = SPARQL_PREFIXES + """
-SELECT ?feeduri
+SELECT DISTINCT ?feeduri
 WHERE {
-    <%s> foaf:page ?homepage .
-    ?homepage xhv:alternate ?feeduri }""" % sourceuri
+    <%s> a deb:UnversionedSource ;
+         deb:version ?source .
+    ?source foaf:page ?homepage .
+    ?homepage xhv:alternate ?feeduri }""" % unversionedsourceuri
         try:
             self.processor.execute_sanitized_query(query)
         except SPARQLQueryProcessorError, e:
@@ -498,7 +500,8 @@ WHERE {
 
         feeds = []
         for result in self.processor.results['results']['bindings']:
-            feeds.append(RSSFeed(result['feeduri']['value']))
+            if 'feeduri' in result:
+                feeds.append(RSSFeed(result['feeduri']['value']))
 
         return feeds
 

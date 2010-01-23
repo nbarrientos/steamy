@@ -1,12 +1,15 @@
 # -*- coding: utf8 -*-
 
 import unittest
-import mox
+import re
+
+from mox import Mox, IgnoreArg, Regex
 
 from rdflib import Namespace, URIRef, Literal, Variable
 
 from debian.sparql.miniast import Triple
-from debian.services import SPARQLQueryBuilder
+from debian.services import SPARQLQueryBuilder, FeedFinder
+from debian.services import SPARQLQueryProcessor, RSSFeed
 from debian.errors import UnexpectedFieldValueError
 from debian.sparql.helpers import SelectQueryHelper
 
@@ -19,7 +22,7 @@ DOAP = Namespace(u"http://usefulinc.com/ns/doap#")
 class SPARQLQueryBuilderTest(unittest.TestCase):
     def setUp(self):
         self.builder = SPARQLQueryBuilder({})
-        self.mox = mox.Mox()
+        self.mox = Mox()
 
     # No optional calls in PyMox :(
     def mock_binary_search(self):
@@ -385,3 +388,108 @@ class SPARQLQueryBuilderTest(unittest.TestCase):
         self.mox.ReplayAll()
         self.builder._consume_essential()
         self.mox.VerifyAll()
+
+
+class FeedFinderTest(unittest.TestCase):
+    def setUp(self):
+        self.finder = FeedFinder()
+        self.mox = Mox()
+
+    def test__fetch_feeduris(self):
+        unversionedsourceuri = "http://example.org/p"
+        mock = self.mox.CreateMock(SPARQLQueryProcessor)
+        expectedarg = r"SELECT.+\<%s\>.+" % re.escape(unversionedsourceuri)
+        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        binding1 = {'feeduri': {'value': "feed1"}}
+        binding2 = {'feeduri': {'value': "feed2"}}
+        bindings = [binding1, binding2]
+        fakeresults = {'results': {'bindings': bindings}}
+        self.finder.processor = mock
+        self.mox.ReplayAll()
+        self.finder.processor.results = fakeresults
+        feeds = self.finder._fetch_feeduris(unversionedsourceuri)
+        self.mox.VerifyAll()
+        self.assertEqual(2, len(feeds))
+        self.assertEqual("feed1", feeds[0].feeduri)
+        self.assertEqual("feed2", feeds[1].feeduri)
+
+    # This cannot never happen, homepages without alternatives
+    # won't match SPARQL patterns and won't be in the result set
+    def test__fetch_feeduris_no_feeduris_in_bindings(self):
+        unversionedsourceuri = "http://example.org/p"
+        mock = self.mox.CreateMock(SPARQLQueryProcessor)
+        expectedarg = r"SELECT.+\<%s\>.+" % re.escape(unversionedsourceuri)
+        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        binding1 = {}
+        binding2 = {}
+        bindings = [binding1, binding2]
+        fakeresults = {'results': {'bindings': bindings}}
+        self.finder.processor = mock
+        self.mox.ReplayAll()
+        self.finder.processor.results = fakeresults
+        feeds = self.finder._fetch_feeduris(unversionedsourceuri)
+        self.mox.VerifyAll()
+        self.assertEqual(0, len(feeds))
+
+    def test__fetch_feeduris_no_bindings(self):
+        unversionedsourceuri = "http://example.org/p"
+        mock = self.mox.CreateMock(SPARQLQueryProcessor)
+        expectedarg = r"SELECT.+\<%s\>.+" % re.escape(unversionedsourceuri)
+        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        bindings = []
+        fakeresults = {'results': {'bindings': bindings}}
+        self.finder.processor = mock
+        self.mox.ReplayAll()
+        self.finder.processor.results = fakeresults
+        feeds = self.finder._fetch_feeduris(unversionedsourceuri)
+        self.mox.VerifyAll()
+        self.assertEqual(0, len(feeds))
+
+    def test__fetch_feeditems(self):
+        feeduri = "http://example.org/p"
+        mock = self.mox.CreateMock(SPARQLQueryProcessor)
+        expectedarg = r"SELECT.+\<%s\>.+" % re.escape(feeduri)
+        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        binding1 = {'title': {'value': "title1"}, 'link': {'value': "link1"}}
+        binding2 = {'title': {'value': "title2"}, 'link': {'value': "link2"}}
+        bindings = [binding1, binding2]
+        fakeresults = {'results': {'bindings': bindings}}
+        self.finder.processor = mock
+        self.mox.ReplayAll()
+        self.finder.processor.results = fakeresults
+        items = self.finder._fetch_feeditems(feeduri)
+        self.mox.VerifyAll()
+        self.assertEqual(2, len(items))
+        self.assertEqual("title1", items[0]['title'])
+        self.assertEqual("FIXME", items[0]['link'])
+        self.assertEqual("title2", items[1]['title'])
+        self.assertEqual("FIXME", items[1]['link'])
+
+    def test__fetch_feeditems_no_bindings(self):
+        feeduri = "http://example.org/p"
+        mock = self.mox.CreateMock(SPARQLQueryProcessor)
+        expectedarg = r"SELECT.+\<%s\>.+" % re.escape(feeduri)
+        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        bindings = []
+        fakeresults = {'results': {'bindings': bindings}}
+        self.finder.processor = mock
+        self.mox.ReplayAll()
+        self.finder.processor.results = fakeresults
+        items = self.finder._fetch_feeditems(feeduri)
+        self.mox.VerifyAll()
+        self.assertEqual(0, len(items))
+
+    def test__fill_feeds(self):
+        input = [RSSFeed("uri1"), RSSFeed("uri2")]
+        self.mox.StubOutWithMock(self.finder, "_fetch_feeditems")
+        self.finder._fetch_feeditems("uri1").AndReturn([])
+        uri2items = [{'title': "title21"}, {'title': "title22"}]
+        self.finder._fetch_feeditems("uri2").AndReturn(uri2items)
+        self.mox.ReplayAll()
+        feeds = self.finder._fill_feeds(input)
+        self.assertEqual("uri1", feeds[0].feeduri)
+        self.assertEqual("uri2", feeds[1].feeduri)
+        self.assertEqual([], feeds[0].items)
+        self.assertEqual(2, len(feeds[1].items))
+        self.assertEqual("title21", feeds[1].items[0]['title'])
+        self.assertEqual("title22", feeds[1].items[1]['title'])
