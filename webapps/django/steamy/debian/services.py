@@ -193,7 +193,7 @@ class SPARQLQueryBuilder():
         self.helper.set_distinct()
         return self.helper.__str__()
 
-    def _binary_search(self):
+    def binary_search(self):
         if 'searchtype' in self.params:
             type = self.params['searchtype']
             if type in ('BINARY', 'BINARYEXT'):
@@ -205,8 +205,8 @@ class SPARQLQueryBuilder():
         else:
             raise UnexpectedFieldValueError("searchtype")
 
-    def _source_search(self):
-        return not self._binary_search()
+    def source_search(self):
+        return not self.binary_search()
 
     def _extended_binary_search(self):
         if 'searchtype' in self.params:
@@ -233,7 +233,7 @@ class SPARQLQueryBuilder():
         self.helper.push_triple_variables(\
             Variable("source"), DEB.packageName, Variable("sourcename"))
  
-        if self._binary_search() or self._extended_binary_search():
+        if self.binary_search() or self._extended_binary_search():
             self.helper.push_triple_variables(\
                 Variable("binary"), RDF.type, DEB.Binary)
             self.helper.push_triple_variables(\
@@ -255,7 +255,7 @@ class SPARQLQueryBuilder():
             filter = re.escape(filter).replace("\\", "\\\\")
             if self.params['exactmatch']: 
                 filter = ''.join(['^', filter, '$'])
-            if self._binary_search():
+            if self.binary_search():
                 if self._extended_binary_search():
                     self.helper.push_triple(\
                         Variable("binary"), DEB.extendedDescription, Variable("desc"))
@@ -263,7 +263,7 @@ class SPARQLQueryBuilder():
                     self.helper.add_or_filter_regex(restrictions)
                 else:   
                     self.helper.add_or_filter_regex({Variable("binaryname"): filter})
-            elif self._source_search():
+            elif self.source_search():
                 self.helper.add_or_filter_regex({Variable("sourcename"): filter})
 
     def _consume_distribution(self):
@@ -289,7 +289,7 @@ class SPARQLQueryBuilder():
         if sort == 'MAINTMAIL':
             self.helper.set_orderby("maintmail")
         elif sort == 'PACKAGE':
-            if self._binary_search():
+            if self.binary_search():
                 self.helper.set_orderby("binaryname")
             else:
                 self.helper.set_orderby("sourcename")
@@ -338,20 +338,20 @@ class SPARQLQueryBuilder():
         option = self.params['priority']
         if option == 'ANY':
             self.helper.add_variable("priority")
-            if self._binary_search():
+            if self.binary_search():
                 triple = Triple(\
                     Variable("binary"), DEB.priority, Variable("priority"))
-            elif self._source_search():
+            elif self.source_search():
                 triple = Triple(\
                     Variable("source"), DEB.priority, Variable("priority"))
             else:
                 raise Exception()  # FIXME
             self.helper.add_optional(triple)
         else:
-            if self._binary_search():
+            if self.binary_search():
                 self.helper.push_triple(\
                     Variable("binary"), DEB.priority, URIRef(option))
-            elif self._source_search():
+            elif self.source_search():
                 self.helper.push_triple(\
                     Variable("source"), DEB.priority, URIRef(option))
             else:
@@ -361,10 +361,10 @@ class SPARQLQueryBuilder():
         keyword = self.params['section']
         if keyword:
             keyword = re.escape(keyword).replace("\\", "\\\\")
-            if self._binary_search():
+            if self.binary_search():
                 self.helper.push_triple(\
                     Variable("binary"), DEB.section, Variable("section"))
-            elif self._source_search():
+            elif self.source_search():
                 self.helper.push_triple(\
                     Variable("source"), DEB.section, Variable("section"))
             else:
@@ -375,10 +375,10 @@ class SPARQLQueryBuilder():
         else:
             self.helper.add_variable("section")
             self.helper.add_variable("sectionname")
-            if self._binary_search():
+            if self.binary_search():
                 triple1 = Triple(\
                      Variable("binary"), DEB.section, Variable("section"))
-            elif self._source_search():
+            elif self.source_search():
                 triple1 = Triple(\
                      Variable("source"), DEB.section, Variable("section"))
             else:
@@ -427,22 +427,22 @@ class SPARQLQueryBuilder():
                 self.helper.add_union(*graphpatterns)
 
     def _consume_essential(self):
-        if self._binary_search() and self.params['essential']:
+        if self.binary_search() and self.params['essential']:
             self.helper.push_triple(\
                 Variable("binary"), RDF.type, DEB.EssentialBinary)
 
     def _consume_buildessential(self):
-        if self._binary_search() and self.params['buildessential']:
+        if self.binary_search() and self.params['buildessential']:
             self.helper.push_triple(\
                 Variable("binary"), RDF.type, DEB.BuildEssentialBinary)
 
     def _consume_dmuploadallowed(self):
-        if self._source_search() and self.params['dmuploadallowed']:
+        if self.source_search() and self.params['dmuploadallowed']:
             self.helper.push_triple(\
                 Variable("source"), RDF.type, DEB.DMUploadAllowedSource)
 
     def _consume_popcon(self):
-        if self._binary_search() and self.params['popcon']:
+        if self.binary_search() and self.params['popcon']:
             triple = Triple(Variable("unversionedbinary"), \
                             DEB.popconInstalled, Variable("?popconinstalled"))
             self.helper.add_variable("popconinstalled")
@@ -468,7 +468,7 @@ class SPARQLQueryBuilder():
             self.helper.set_from(FROM_GRAPH)
 
     def create_binaries_query(self, source, version):
-        self._binary_search = lambda: True  # Kind of a hack :/
+        self.binary_search = lambda: True  # Kind of a hack :/
         self._add_base_elements()
         sourceuri = "%s/source/%s/%s" % (RES_BASEURI, urlquote_plus(source),\
                     urlquote_plus(version))

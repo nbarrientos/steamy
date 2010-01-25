@@ -27,47 +27,47 @@ class SPARQLQueryBuilderTest(unittest.TestCase):
 
     # No optional calls in PyMox :(
     def mock_binary_search(self):
-        self.builder._binary_search = lambda : True
+        self.builder.binary_search = lambda : True
         self.builder._extended_binary_search = lambda : False
-        self.builder._source_search = lambda : False
+        self.builder.source_search = lambda : False
 
     def mock_source_search(self):
-        self.builder._binary_search = lambda : False
+        self.builder.binary_search = lambda : False
         self.builder._extended_binary_search = lambda : False
-        self.builder._source_search = lambda : True
+        self.builder.source_search = lambda : True
 
     def mock_extended_binary_search(self):
-        self.builder._binary_search = lambda : True
+        self.builder.binary_search = lambda : True
         self.builder._extended_binary_search = lambda : True
-        self.builder._source_search = lambda : False
+        self.builder.source_search = lambda : False
 
     def test__searchtype_source(self):
         self.builder.params['searchtype'] = "SOURCE"
-        self.assertTrue(self.builder._source_search())
-        self.assertFalse(self.builder._binary_search())
+        self.assertTrue(self.builder.source_search())
+        self.assertFalse(self.builder.binary_search())
 
     def test__searchtype_binary(self):
         self.builder.params['searchtype'] = "BINARY"
-        self.assertTrue(self.builder._binary_search())
-        self.assertFalse(self.builder._source_search())
+        self.assertTrue(self.builder.binary_search())
+        self.assertFalse(self.builder.source_search())
 
     def test__searchtype_binary_description(self):
         self.builder.params['searchtype'] = "BINARYEXT"
-        self.assertTrue(self.builder._binary_search())
-        self.assertFalse(self.builder._source_search())
+        self.assertTrue(self.builder.binary_search())
+        self.assertFalse(self.builder.source_search())
 
     def test__searchtype_unexpected(self):
         self.builder.params['searchtype'] = "FAIL"
         self.assertRaises(UnexpectedFieldValueError, \
-            self.builder._binary_search)
+            self.builder.binary_search)
         self.assertRaises(UnexpectedFieldValueError, \
-            self.builder._source_search)
+            self.builder.source_search)
 
         self.builder.params.pop('searchtype')
         self.assertRaises(UnexpectedFieldValueError, \
-            self.builder._binary_search)
+            self.builder.binary_search)
         self.assertRaises(UnexpectedFieldValueError, \
-            self.builder._source_search)
+            self.builder.source_search)
 
     def test__consume_homepage_true(self):
         self.builder.params['homepage'] = True
