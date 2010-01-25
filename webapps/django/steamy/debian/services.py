@@ -167,11 +167,11 @@ class SPARQLQueryProcessor():
         self.execute_sanitized_query(query)
 
 class SPARQLQueryBuilder():
-    def __init__(self, params=None):
-        self.params = params
+    def __init__(self):
         self.helper = SelectQueryHelper()
 
-    def create_query(self):
+    def create_query_from_form(self, formdata):
+        self.params = formdata
         self._add_base_elements()
         self._add_from()
         self._consume_distribution()

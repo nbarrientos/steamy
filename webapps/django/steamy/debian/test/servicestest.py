@@ -21,7 +21,8 @@ DOAP = Namespace(u"http://usefulinc.com/ns/doap#")
 
 class SPARQLQueryBuilderTest(unittest.TestCase):
     def setUp(self):
-        self.builder = SPARQLQueryBuilder({})
+        self.builder = SPARQLQueryBuilder()
+        self.builder.params = {}
         self.mox = Mox()
 
     # No optional calls in PyMox :(
