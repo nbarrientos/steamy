@@ -55,7 +55,7 @@
         {% if result.homepage %}
         <li>
             <span class="result-label">Homepage:</span> 
-            <a href="{{result.homepage}}">{{result.homepage}}</a>
+            {{result.homepage|urlize}}</a>
             <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
         </li>
         {% endif %}

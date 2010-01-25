@@ -36,9 +36,9 @@
                 {% for item in feed.items %}
                 <li>
                     {% if item.link %}
-                        <a href="{{item.link}}">{{item.title}}</a>
+                        <a href="{{item.link}}">{{item.title|truncatewords:10}}</a>
                     {% else %}
-                        {{item.title}}
+                        {{item.title|truncatewords:10}}
                     {% endif %}
                     {% if item.date %}
                     <span class="ui-icon ui-icon-calendar" style="display: inline-block;"></span>
