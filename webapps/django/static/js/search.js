@@ -21,13 +21,17 @@ $(function() {
         } 
     });
 
-    $('#search-submit').click(function() { 
-            $.blockUI({message: "Now searching. This operation could take a while...",
-                       css: uiblockcss})
+    $('#search-submit').click(function() {
+            if (!$('#id_tojson').is(':checked')) {
+                $.blockUI({message: "Now searching. This operation could take a while...",
+                           css: uiblockcss})
+            }
         });
 
     $('#sparql-submit').click(function() { 
-            $.blockUI({message: "Executing query. This operation could take a while...",
-                       css: uiblockcss})
+            if (!$('#id_tojson_sparql').is(':checked')) {
+                $.blockUI({message: "Executing query. This operation could take a while...",
+                           css: uiblockcss})
+            }
         });
 });

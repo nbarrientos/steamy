@@ -117,6 +117,10 @@
             <label for="id_showquery" class="field-label">Show auto-generated SPARQL query</label>
         </div>
         <div class="form-field">
+            {{ search.tojson }}
+            <label class="field-label">Return JSON instead of HTML</label>
+        </div>
+        <div class="form-field">
             <label class="field-label">Order by:</label>
             {{ search.sort }}
         </div>

@@ -72,6 +72,7 @@ SORT_OPTS = (
     ('MAINTMAIL', 'Maintainer email'),
 )
 
+
 class SearchForm(forms.Form):
     distribution = forms.ChoiceField(widget=widgets.Select, choices=DIST_OPTS)
     area = forms.ChoiceField(widget=widgets.Select, choices=AREA_OPTS)
@@ -100,7 +101,9 @@ class SearchForm(forms.Form):
     popcon = forms.BooleanField(required=False)
     section = forms.RegexField(regex=re.compile(r"^[a-zA-Z]*$"),\
         max_length=20, required=False)
+    tojson = forms.BooleanField(required=False)
 
 class SPARQLForm(forms.Form):
     ns = forms.CharField(initial=SPARQL_PREFIXES, widget=widgets.Textarea())
     query = forms.CharField(initial=DEFAULT_QUERY, widget=widgets.Textarea())
+    tojson_sparql = forms.BooleanField(required=False)

@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 from django.utils.encoding import smart_str
+from django.utils import simplejson
 
 from debian.forms import SPARQLForm, SearchForm
 from debian.services import SPARQLQueryProcessor, SPARQLQueryBuilder
@@ -31,9 +32,13 @@ def sparql(request):
         except SPARQLQueryProcessorError, e:
             return render_to_response('debian/error.html', {'reason': e.reason})
 
-        (variables, results) = processor.format_sparql_results()
-        dict = {'variables': variables, 'results': results}
-        return render_to_response('debian/results.html', dict)
+        if sparqlform.cleaned_data['tojson_sparql'] is True:
+            return HttpResponse(simplejson.dumps(processor.results), \
+                mimetype="application/json")
+        else:
+            (variables, results) = processor.format_sparql_results()
+            dict = {'variables': variables, 'results': results}
+            return render_to_response('debian/results.html', dict)
     else:
         return HttpResponse("405 - Method not allowed", status=405)
 
@@ -48,22 +53,27 @@ def results(request):
         
         data = searchform.cleaned_data
         builder = SPARQLQueryBuilder()
-        processor = SPARQLQueryProcessor()
-
         try:
             query = builder.create_query_from_form(data)
         except SPARQLQueryBuilderError, e:
             return render_to_response('debian/error.html', {'reason': e.reason})
 
+        processor = SPARQLQueryProcessor()
         try:
             processor.execute_sanitized_query(query)
         except SPARQLQueryProcessorError, e:
             return render_to_response('debian/error.html', {'reason': e.reason})
 
-        if builder.source_search():
-            results = processor.format_source_results()
-        elif builder.binary_search():
-            results = processor.format_binary_results()
+        if builder.wants_json():
+            return HttpResponse(simplejson.dumps(processor.results), \
+                mimetype="application/json")
+        elif builder.wants_html():
+            if builder.source_search():
+                results = processor.format_source_results()
+            elif builder.binary_search():
+                results = processor.format_binary_results()
+            else:
+                raise UnexpectedSituationError()
         else:
             raise UnexpectedSituationError()
 

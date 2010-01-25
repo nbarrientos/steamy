@@ -57,9 +57,12 @@ class Result():
 
 
 class SPARQLQueryProcessor():
+    def __init__(self, results_format=JSON):
+        self.format = results_format
+
     def _init_endpoint(self):
         self.endpoint = SPARQLWrapper(SPARQL_ENDPOINT)
-        self.endpoint.setReturnFormat(JSON)
+        self.endpoint.setReturnFormat(self.format)
 
     def _query_endpoint(self, query):
         self.endpoint.setQuery(query)
@@ -208,6 +211,12 @@ class SPARQLQueryBuilder():
 
     def source_search(self):
         return not self.binary_search()
+
+    def wants_json(self):
+        return self.params['tojson']
+
+    def wants_html(self):
+        return not self.params['tojson']
 
     def _extended_binary_search(self):
         if 'searchtype' in self.params:

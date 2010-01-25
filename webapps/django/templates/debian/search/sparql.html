@@ -39,6 +39,10 @@
             </div>
         {% endfor %}
 
+        <div class="form-field">
+            {{ sparql.tojson_sparql }}
+            <label class="field-label">Return JSON instead of HTML</label>
+        </div>
         <div class="submit-button">
             <input id="sparql-submit" type="submit" class="fg-button ui-state-default ui-corner-all" value="Execute Query"/>
         </div>
