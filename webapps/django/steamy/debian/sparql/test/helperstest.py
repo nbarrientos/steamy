@@ -139,3 +139,11 @@ class SelectQueryHelperTest(unittest.TestCase):
         u1 = UnaryExpression(FunCall("bound", Variable("a")), "!")
         f1 = Filter(u1)
         self.assertEqual(f1, self.s.query.whereclause.stmts[0])
+
+    def test_add_filter_regex_str_var(self):
+        self.s.add_filter_regex_str_var(Variable("var"), "regex")
+        self.assertEqual(1, len(self.s.query.whereclause.stmts))
+        str = FunCall("str", Variable("var"))
+        regex = FunCall("regex", str, '"regex"')
+        f1 = Filter(regex)
+        self.assertEqual(f1, self.s.query.whereclause.stmts[0])
