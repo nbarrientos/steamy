@@ -6,7 +6,8 @@ class UnexpectedSituationError(Exception):
     pass
 
 class SPARQLQueryBuilderError(Exception):
-    pass
+    def __init__(self, reason):
+        self.reason = reason
 
 class UnexpectedFieldValueError(Exception):
     def __init__(self, field):

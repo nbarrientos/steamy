@@ -10,7 +10,7 @@ from rdflib import Namespace, URIRef, Literal, Variable
 from debian.sparql.miniast import Triple
 from debian.services import SPARQLQueryBuilder, FeedFinder
 from debian.services import SPARQLQueryProcessor, RSSFeed
-from debian.errors import UnexpectedFieldValueError
+from debian.errors import UnexpectedFieldValueError, SPARQLQueryBuilderError
 from debian.sparql.helpers import SelectQueryHelper
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
@@ -389,6 +389,13 @@ class SPARQLQueryBuilderTest(unittest.TestCase):
         self.mox.ReplayAll()
         self.builder._consume_essential()
         self.mox.VerifyAll()
+
+    def test_create_binaries_query_bad_source(self):
+        source = "{"
+        version = "1.0"
+        self.assertRaises(SPARQLQueryBuilderError, self.builder.create_binaries_query,\
+            source, version)
+
 
 
 class FeedFinderTest(unittest.TestCase):

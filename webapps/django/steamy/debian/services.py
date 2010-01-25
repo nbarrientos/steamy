@@ -16,6 +16,7 @@ from debian.config import *
 from debian.sparql.helpers import SelectQueryHelper
 from debian.sparql.miniast import Triple
 from debian.errors import SPARQLQueryProcessorError, UnexpectedFieldValueError
+from debian.errors import SPARQLQueryBuilderError
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
 FOAF = Namespace(u"http://xmlns.com/foaf/0.1/")
@@ -468,6 +469,9 @@ class SPARQLQueryBuilder():
             self.helper.set_from(FROM_GRAPH)
 
     def create_binaries_query(self, source, version):
+        if re.match("^[-a-zA-Z0-9+.]+$", source) is None:
+            raise SPARQLQueryBuilderError("Unrecognized package naming scheme")
+
         self.binary_search = lambda: True  # Kind of a hack :/
         self._add_base_elements()
         sourceuri = "%s/source/%s/%s" % (RES_BASEURI, urlquote_plus(source),\
