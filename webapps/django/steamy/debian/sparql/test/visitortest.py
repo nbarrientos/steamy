@@ -146,7 +146,7 @@ class VisitorTest(unittest.TestCase):
         expected = "SELECT?e?f?d WHERE{?d ?e ?f.FILTER(regex(?var,\"regex\"))}LIMIT 50"
         result = self.v.visit(helper.query)
         self.assertEqual(expected, result) 
-        self.assertEqual(Query, Parse(result).__class__)
+        self.assertNotEqual(None, Parse(result))
 
         helper.set_offset("2")
         expected = "SELECT?e?f?d WHERE{?d ?e ?f.FILTER(regex(?var,\"regex\"))}LIMIT 50 OFFSET 2"
