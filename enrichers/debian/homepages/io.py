@@ -52,10 +52,17 @@ def homepages(endpoint, graph, triples):
 def _alternatives(source, uri, triples):
     alternatives = [uri]
     sourceforge = re.compile(r"https?://(?P<project>.+?)\.(sourceforge|sf)\.net")
+    alioth = re.compile(r"https?://(?P<project>.+?)\.alioth\.debian\.org")
 
     match1 = sourceforge.match(uri)
+    match2 = alioth.match(uri)
     if match1 is not None:
         alternative = "http://sourceforge.net/projects/%s" % match1.group('project')
+        logging.debug("Adding '%s' as an alternative of '%s'" % (alternative, uri))
+        alternatives.append(alternative)
+        triples.push_homepage(source, alternative)
+    elif match2 is not None:
+        alternative = "http://alioth.debian.org/projects/%s" % match2.group('project')
         logging.debug("Adding '%s' as an alternative of '%s'" % (alternative, uri))
         alternatives.append(alternative)
         triples.push_homepage(source, alternative)
