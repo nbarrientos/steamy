@@ -6,6 +6,7 @@ from debian.forms import SPARQLForm, SearchForm
 from debian.services import SPARQLQueryProcessor, SPARQLQueryBuilder
 from debian.services import FeedFinder
 from debian.errors import SPARQLQueryProcessorError, UnexpectedSituationError
+from debian.errors import SPARQLQueryBuilderError
 
 
 def index(request):
@@ -89,3 +90,22 @@ def news(request, source):
 
     replydata = {'source': source, 'feeds': feeds}
     return render_to_response('debian/news.html', replydata)
+
+def source_detail(request, source, version):
+    if request.method == 'GET':
+        builder = SPARQLQueryBuilder()
+        try:
+            query = builder.create_binaries_query(source, version)
+        except SPARQLQueryBuilderError, e:
+            return render_to_response('debian/error.html', {'reason': e.reason})
+
+        processor = SPARQLQueryProcessor()
+        try:
+            processor.execute_sanitized_query(query)
+        except SPARQLQueryProcessorError, e:
+            return render_to_response('debian/error.html', {'reason': e.reason})
+
+        results = processor.format_binary_results()
+        return render_to_response('debian/binary_results.html', {'results': results})
+    else:
+        return HttpResponse("405 - Method not allowed", status=405)

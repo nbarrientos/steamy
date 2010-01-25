@@ -3,6 +3,8 @@ import re
 
 from datetime import datetime
 
+from django.utils.http import urlquote_plus
+
 from SPARQLWrapper import SPARQLWrapper, JSON
 from SPARQLWrapper.sparqlexceptions import EndPointNotFound
 
@@ -165,7 +167,7 @@ class SPARQLQueryProcessor():
         self.execute_sanitized_query(query)
 
 class SPARQLQueryBuilder():
-    def __init__(self, params):
+    def __init__(self, params=None):
         self.params = params
         self.helper = SelectQueryHelper()
 
@@ -465,7 +467,15 @@ class SPARQLQueryBuilder():
         if FROM_GRAPH is not None:
             self.helper.set_from(FROM_GRAPH)
 
+    def create_binaries_query(self, source, version):
+        self._binary_search = lambda: True  # Kind of a hack :/
+        self._add_base_elements()
+        sourceuri = "%s/source/%s/%s" % (RES_BASEURI, urlquote_plus(source),\
+                    urlquote_plus(version))
+        self.helper.add_filter_regex_str_var(Variable("source"), sourceuri)
+        return self.helper.__str__()
 
+        
 class RSSFeed():
     def __init__(self, feeduri):
         self.feeduri = feeduri

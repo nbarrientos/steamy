@@ -32,7 +32,7 @@
             <span class="result-label">Source:</span>
             <a href="{{result.sourceurilink}}">{{result.sourcename}} ({{result.sourcefullversion}})</a>
             <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
-            <a class="wait" href="{% url debian.views.news result.sourcename %}">
+            <a class="wait" href="{% url debian.views.news result.sourcename|urlencode %}">
             <span class="ui-icon ui-icon-comment" style="display: inline-block;"></span>
             </a>
         </li>

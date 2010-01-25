@@ -77,6 +77,10 @@ class SelectQueryHelper():
         unexp = UnaryExpression(f, "!")
         self.add_filter(unexp)
 
+    def add_filter_regex_str_var(self, var, regex):
+        f = FunCall("str", var)
+        self.add_filter(FunCall("regex", f, '"%s"' % regex))
+
     def _build_fixed_operator_tree(self, operator, items):
         if len(items) == 1:
             return items.pop()
