@@ -15,7 +15,7 @@ from datetime import datetime
 from rdflib.Graph import ConjunctiveGraph
 from rdflib import URIRef, Literal, BNode
 from SPARQLWrapper import SPARQLWrapper2
-from SPARQLWrapper.sparqlexceptions import EndPointNotFound
+from SPARQLWrapper.SPARQLExceptions import EndPointNotFound
 
 from models import AlternateLink, MetaLink
 from errors import W3CValidatorUnableToConnectError 
