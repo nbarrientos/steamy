@@ -81,15 +81,18 @@ def results(request):
         return HttpResponse("405 - Method not allowed", status=405)
 
 def news(request, source):
-    finder = FeedFinder()
+    if request.method == 'GET':
+        finder = FeedFinder()
 
-    try:
-        feeds = finder.populate_feeds(source)
-    except SPARQLQueryProcessorError, e:
-        return render_to_response('debian/error.html', {'reason': e.reason})
+        try:
+            feeds = finder.populate_feeds(source)
+        except SPARQLQueryProcessorError, e:
+            return render_to_response('debian/error.html', {'reason': e.reason})
 
-    replydata = {'source': source, 'feeds': feeds}
-    return render_to_response('debian/news.html', replydata)
+        replydata = {'source': source, 'feeds': feeds}
+        return render_to_response('debian/news.html', replydata)
+    else:
+        return HttpResponse("405 - Method not allowed", status=405)
 
 def source_detail(request, source, version):
     if request.method == 'GET':
