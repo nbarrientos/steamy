@@ -6,7 +6,7 @@ from datetime import datetime
 from django.utils.http import urlquote_plus
 
 from SPARQLWrapper import SPARQLWrapper, JSON
-from SPARQLWrapper.sparqlexceptions import EndPointNotFound
+from SPARQLWrapper.SPARQLExceptions import EndPointNotFound
 
 from rdflib import Variable
 from rdflib import Namespace, URIRef, Literal, Variable
