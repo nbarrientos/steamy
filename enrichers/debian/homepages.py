@@ -24,6 +24,7 @@ from urlparse import urljoin
 from xml.sax import SAXParseException
 
 from rdflib.Graph import ConjunctiveGraph
+from rdflib.exceptions import ParserError as RdflibParserError
 
 from tools.pool import GraphPool
 from homepages.io import LinkRetrieval, TripleProcessor
@@ -259,9 +260,9 @@ class HomepageEnricher():
             graph = ConjunctiveGraph()
             try:
                 graph.parse(candidate)
-            except SAXParseException:
+            except (SAXParseException, RdflibParserError), e:
                 self.stats.count_invalidrdf()
-                raise RDFDiscoveringMalformedError(candidate)
+                raise RDFDiscoveringMalformedError(str(e), candidate)
             except urllib2.URLError:
                 self.stats.count_invalidrdf()
                 raise RDFDiscoveringBrokenLinkError(candidate)

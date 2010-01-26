@@ -61,5 +61,10 @@ class RDFDiscoveringBrokenLinkError(RDFDiscoveringError):
         return "'%s' is not available, skipping..." % self.uri
 
 class RDFDiscoveringMalformedError(RDFDiscoveringError):
+    def __init__(self, reason, *args, **kwargs):
+        self.reason = reason
+        RDFDiscoveringError.__init__(self, *args, **kwargs)
+
     def __str__(self):
-        return "'%s' malformed (SAX parser error), skipping..." % self.uri
+        return "'%s' malformed (SAX/Rdflib parser error) (%s), skipping..." % \
+        (self.uri, self.reason)
