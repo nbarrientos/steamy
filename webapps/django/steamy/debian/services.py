@@ -213,10 +213,14 @@ class SPARQLQueryBuilder():
         return not self.binary_search()
 
     def wants_json(self):
-        return self.params['tojson']
+        if 'tojson' in self.params:
+            return self.params['tojson']
+        else:
+            raise UnexpectedFieldValueError("json")
 
     def wants_html(self):
-        return not self.params['tojson']
+        # For the moment json/html are dual parameters
+        return not self.wants_json()
 
     def _extended_binary_search(self):
         if 'searchtype' in self.params:

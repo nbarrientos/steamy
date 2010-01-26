@@ -396,6 +396,18 @@ class SPARQLQueryBuilderTest(unittest.TestCase):
         self.assertRaises(SPARQLQueryBuilderError, self.builder.create_binaries_query,\
             source, version)
 
+    def test_wants_json(self):
+        self.assertRaises(UnexpectedFieldValueError, self.builder.wants_json)
+        self.assertRaises(UnexpectedFieldValueError, self.builder.wants_html)
+
+        self.builder.params['tojson'] = True
+        self.assertTrue(self.builder.wants_json())
+        self.assertFalse(self.builder.wants_html())
+
+        self.builder.params['tojson'] = False
+        self.assertFalse(self.builder.wants_json())
+        self.assertTrue(self.builder.wants_html())
+
 
 
 class FeedFinderTest(unittest.TestCase):
