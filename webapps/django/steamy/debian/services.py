@@ -505,6 +505,9 @@ class FeedFinder():
         self.processor = SPARQLQueryProcessor()
 
     def populate_feeds(self, sourcename):
+        if re.match("^[-a-zA-Z0-9+.]+$", sourcename) is None:
+            raise SPARQLQueryBuilderError("Unrecognized package naming scheme")
+
         unversionedsourceuri = "%s/source/%s" % (RES_BASEURI, sourcename)
         partial = self._fetch_feeduris(unversionedsourceuri)
 

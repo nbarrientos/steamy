@@ -11,10 +11,13 @@ from debian.errors import SPARQLQueryBuilderError
 
 
 def index(request):
-    searchform = SearchForm()
-    sparqlform = SPARQLForm()
-    dict = {'search': searchform, 'sparql': sparqlform}
-    return render_to_response('debian/search.html', dict)
+    if request.method == 'GET':
+        searchform = SearchForm()
+        sparqlform = SPARQLForm()
+        dict = {'search': searchform, 'sparql': sparqlform}
+        return render_to_response('debian/search.html', dict)
+    else:
+        return HttpResponse("405 - Method not allowed", status=405)
 
 def sparql(request):
     if request.method == 'POST':
@@ -96,7 +99,7 @@ def news(request, source):
 
         try:
             feeds = finder.populate_feeds(source)
-        except SPARQLQueryProcessorError, e:
+        except (SPARQLQueryProcessorError, SPARQLQueryBuilderError), e:
             return render_to_response('debian/error.html', {'reason': e.reason})
 
         replydata = {'source': source, 'feeds': feeds}
