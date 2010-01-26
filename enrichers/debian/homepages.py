@@ -10,7 +10,6 @@ import time
 import logging
 import httplib
 import urllib2
-import socket
 import re
 
 import feedparser
@@ -58,7 +57,6 @@ class HomepageEnricher():
         self.triples = TripleProcessor(pool)
         self.htmlparser = LinkRetrieval()
         self.stats = Stats()
-        socket.setdefaulttimeout(10)
 
     def _parse_args(self):
         parser = OptionParser(usage="%prog [options]", version="%prog " + VERSION)

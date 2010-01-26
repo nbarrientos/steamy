@@ -7,6 +7,7 @@
 import logging
 import httplib
 import urllib
+import socket
 import re
 
 from sgmllib import SGMLParser
@@ -42,6 +43,9 @@ def homepages(endpoint, graph, triples):
     except EndPointNotFound, e:
         logging.error("Wrong or inactive endpoint, aborting.")
         return
+
+    # Got query results, it's safe now to lower conn timeout
+    socket.setdefaulttimeout(10)
 
     for result in results["source", "homepage"]:
         homepage = re.sub("<|>", "", result["homepage"].value).strip()
