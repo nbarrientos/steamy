@@ -12,6 +12,7 @@ from debian.services import SPARQLQueryBuilder, FeedFinder
 from debian.services import SPARQLQueryProcessor, RSSFeed
 from debian.errors import UnexpectedFieldValueError, SPARQLQueryBuilderError
 from debian.sparql.helpers import SelectQueryHelper
+from debian.config import RES_BASEURI
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
@@ -348,7 +349,17 @@ class SPARQLQueryBuilderTest(unittest.TestCase):
         self.builder._consume_maintainer()
         self.mox.VerifyAll()
 
-    # TODO: Test QA, DEBIAN, TEAM
+    def test__consume_maintainer_qa(self):
+        self.builder.params['maintainer'] = "QA"
+        mock = self.mox.CreateMock(SelectQueryHelper)
+        qaref = URIRef(RES_BASEURI + "/team/packages%40qa.debian.org")
+        mock.push_triple(Variable("source"), DEB.maintainer, qaref)
+        self.builder.helper = mock 
+        self.mox.ReplayAll()
+        self.builder._consume_maintainer()
+        self.mox.VerifyAll()
+        
+    # TODO: Test DEBIAN, TEAM
 
     def test__consume_comaintainer_error(self):
         self.builder.params['comaintainer'] = "FAIL"
