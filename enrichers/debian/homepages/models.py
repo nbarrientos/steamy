@@ -40,6 +40,9 @@ class Stats():
         self.w3cok = 0
         self.feeds = 0
         self.invalidfeeds = 0
+        self.rss1feeds = 0
+        self.rss2feeds = 0
+        self.atomfeeds = 0
         self.rdf = 0
         self.invalidrdf = 0
 
@@ -58,6 +61,15 @@ class Stats():
     def count_feed(self):
         self.feeds += 1
 
+    def count_rss1feed(self):
+        self.rss1feeds += 1
+    
+    def count_rss2feed(self):
+        self.rss2feeds += 1
+    
+    def count_atomfeed(self):
+        self.atomfeeds += 1
+
     def count_invalidfeed(self):
         self.invalidfeeds += 1
 
@@ -69,4 +81,5 @@ class Stats():
 \t* Total websites count: %(homepages)s (%(broken_homepages)s not responding)
 \t* Valid markups: %(w3cok)s
 \t* RSS feeds processed: %(feeds)s (%(invalidfeeds)s invalid)
+\t\t RSS1: %(rss1feeds) RSS2: %(rss2feeds) Atom: %(atomfeeds)
 \t* RDF files fetched: %(rdf)s (%(invalidrdf)s invalid)""" % self.__dict__

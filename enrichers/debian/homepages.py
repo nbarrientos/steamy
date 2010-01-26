@@ -163,7 +163,7 @@ class HomepageEnricher():
     def _discover(self, homepage, stream):
         try:
             self.htmlparser.feed(stream.read())
-        except SGMLParseError, e:
+        except (SGMLParseError, ValueError), e:
             logging.error("'%s' is unparseable (%s), skipping..." % (homepage, e))
             self.htmlparser.reset()
             return
@@ -227,18 +227,32 @@ class HomepageEnricher():
             graph = ConjunctiveGraph()
             if parse.version in ("rss10"):
                 logging.debug("Looks like RDF (%s)" % parse.version)
-                graph.parse(feed, format="xml")
-            elif parse.version in ("rss20", "rss094"): #, ("atom10", "atom30", "rss20"):
+                try:
+                    graph.parse(feed, format="xml")
+                except (SAXParseException, RdflibParserError), e:
+                    self.stats.count_invalidfeed()
+                    raise RSSParsingFeedMalformedError(feed)
+                self.stats.count_rss1feed()
+            elif parse.version in ("rss20", "rss094"):
                 logging.debug("Looks like XML (%s)" % parse.version)
                 try:
                     transformed_feed = self._transform_feed(feed, parse.encoding)
                 except Exception:  # Ignoring all errors
+                    self.stats.count_invalidfeed()
                     raise RSSParsingXSLTError(feed)
-                graph.parse(StringIO(transformed_feed), format="xml")
+                try:
+                    graph.parse(StringIO(transformed_feed), format="xml")
+                except (SAXParseException, RdflibParserError), e:
+                    self.stats.count_invalidfeed()
+                    raise RSSParsingFeedMalformedError(feed)
+                self.stats.count_rss2feed()
+            elif parse.version in ("atom01", "atom02", "atom30", "atom10", "atom"):
+                self.stats.count_atomfeed()
+                raise RSSParsingUnparseableVersionError(parse.version, feed)
             else:
-                self.stats.count_invalidfeed()
                 raise RSSParsingUnparseableVersionError(parse.version, feed)
         else:
+            self.stats.count_invalidfeed()
             raise RSSParsingError(feed)
 
         channeluri = None
