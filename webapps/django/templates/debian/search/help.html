@@ -41,11 +41,11 @@
 SELECT DISTINCT ?usource
 WHERE
 {
-?source a deb:Source ;
-        deb:maintainer ?maintainer .
-?usource a deb:UnversionedSource  ;
-         deb:version ?source .
-?maintainer foaf:mbox "nacho@debian.org".
+    ?source a deb:Source ;
+            deb:maintainer ?maintainer .
+    ?usource a deb:UnversionedSource  ;
+             deb:version ?source .
+    ?maintainer foaf:mbox "nacho@debian.org".
 }
     </pre>
     </div>
@@ -61,11 +61,11 @@ WHERE
 SELECT ?binary
 WHERE
 {
-?binary a deb:Binary .
-?binary deb:section &lt;http://rdf.debian.net/section/libdevel&gt; .
-{?binary tag:taggedWithTag &lt;http://rdf.debian.net/tag/devel/library&gt;} 
-  UNION 
-{?binary tag:taggedWithTag &lt;http://rdf.debian.net/tag/role/debug-symbols&gt;} .
+    ?binary a deb:Binary .
+    ?binary deb:section &lt;http://rdf.debian.net/section/libdevel&gt; .
+    {?binary tag:taggedWithTag &lt;http://rdf.debian.net/tag/devel/library&gt;} 
+     UNION 
+    {?binary tag:taggedWithTag &lt;http://rdf.debian.net/tag/role/debug-symbols&gt;} .
 }
     </pre>
     </div>
@@ -74,23 +74,90 @@ WHERE
     </div>
 
     <h5  class="help-subsection">
-    File URIs and sizes for i386 binary builds associated to source package acl version 2.2.47-2 
+    File URIs and sizes for i386 binary builds associated to source package
+    'acl' version '2.2.47-2' 
     </h5>
     <div id="help-example3" class="querystring">
     <pre>
 SELECT ?file ?size
 WHERE
 {
-&lt;http://rdf.debian.net/source/acl/2.2.47-2&gt; deb:binary ?binary .
-?binary deb:build ?build .
-?build deb:architecture &lt;http://rdf.debian.net/arch/i386&gt; .
-?file deb:productOf ?build .
-?file nfo:fileSize ?size .
+    &lt;http://rdf.debian.net/source/acl/2.2.47-2&gt; deb:binary ?binary .
+    ?binary deb:build ?build .
+    ?build deb:architecture &lt;http://rdf.debian.net/arch/i386&gt; .
+    ?file deb:productOf ?build .
+    ?file nfo:fileSize ?size .
 }
     </pre>
     </div>
     <div class="run-example-link">
     <a href="#" onclick="javascript:execute_example_query('#help-example3')">Run Example</a>
+    </div>
+
+    <h5  class="help-subsection">
+    Does exist any source package with the same upstream version in all 
+    (currently 7) distributions (only main)?
+    </h5>
+    <div id="help-example4" class="querystring">
+    <pre>
+SELECT ?unversionedsource COUNT(?distribution) as ?counter
+WHERE
+{
+    ?unversionedsource deb:version ?source .
+    ?source deb:distribution ?distribution ;
+       deb:versionNumber ?version ;
+       deb:area deb:main .
+    ?version deb:upstreamVersion ?upstream
+} 
+ORDER BY DESC(?counter) ASC(?unversionedsource)
+    </pre>
+    </div>
+    <div class="run-example-link">
+    <a href="#" onclick="javascript:execute_example_query('#help-example4')">Run Example</a>
+    </div>
+
+    <h5  class="help-subsection">
+    What is the maximum number of times a source package has been seen along
+    several distributions?
+    </h5>
+    <div id="help-example5" class="querystring">
+    <pre>
+SELECT ?source COUNT(?distribution) as ?counter
+WHERE 
+{
+    ?source deb:distribution ?distribution
+} 
+ORDER BY DESC(?counter)
+    </pre>
+    </div>
+    <div class="run-example-link">
+    <a href="#" onclick="javascript:execute_example_query('#help-example5')">Run Example</a>
+    </div>
+
+    <h5  class="help-subsection">
+    News headlines for packages maintained by identity 'nacho@debian.org'
+    ordered by publication date
+    </h5>
+    <div id="help-example6" class="querystring">
+    <pre>
+SELECT ?title ?date
+WHERE
+{
+    ?source deb:maintainer &lt;http://rdf.debian.net/people/nacho%40debian.org&gt; ;
+            foaf:page ?homepage .
+    ?homepage xhv:alternate ?feeduri .
+    ?channel rdfs:seeAlso ?feeduri ;
+             rss:items ?items .
+    ?items ?doesntmind ?item .
+    ?item a rss:item ;
+          dc:title ?title ;
+          dc:date ?date .
+} 
+ORDER BY DESC(?date)
+    </pre>
+    </div>
+    <div class="run-example-link">
+    <a href="#" onclick="javascript:execute_example_query('#help-example6')">Run Example</a>
     </div>
 
     <h4 class="help-section">Who's behind this initiative?</h4>
