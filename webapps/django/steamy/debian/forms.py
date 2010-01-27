@@ -121,7 +121,7 @@ class SearchForm(forms.Form, HiddenBaseForm):
     popcon = forms.BooleanField(required=False)
     section = forms.RegexField(regex=re.compile(r"^[a-zA-Z]*$"),\
         max_length=20, required=False)
-    maintainerfilter = forms.RegexField(regex=re.compile(r"^[-\w@.+]*$"),\
+    maintainerfilter = forms.RegexField(regex=re.compile(r"^[-\w@.+ ]*$"),\
         max_length=40, required=False)
     tojson = forms.BooleanField(required=False)
 
