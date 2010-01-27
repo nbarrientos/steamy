@@ -44,6 +44,10 @@ class FunctionalTest(unittest.TestCase):
         response = self.c.post("/debian/news/sourcename/")
         self.failUnlessEqual(response.status_code, 405)
 
+    def test_allnews_get(self):
+        response = self.c.get("/debian/results/news/")
+        self.failUnlessEqual(response.status_code, 405)
+
     def test_binaries_badsourcename(self):
         response = self.c.get("/debian/binaries/%7B/1.0/")
         self.failUnlessEqual(response.status_code, 200)
@@ -162,3 +166,18 @@ ORDER BY DESC(?c)"""
         self.assertEqual(2, len(template_names))
         self.assertTrue('debian/base.html' in template_names)
         self.assertTrue('debian/results.html' in template_names)
+
+
+    def test_result_based_news(self):
+        body = {'sort': 'PACKAGE', 'priority': 'ANY',
+                'maintainer': 'ALL', 'searchtype': 'BINARY',
+                'area': 'ANY', 'section': '',
+                'filter': '', 'comaintainer': 'ALL',
+                'distribution': 'ANY'}
+        response = self.c.post("/debian/results/news/", body)
+        template_names = [x.name for x in response.template]
+        self.failUnlessEqual(response.status_code, 200)
+        self.assertEqual("text/html; charset=utf-8", response['Content-Type'])
+        self.assertEqual(2, len(template_names))
+        self.assertTrue('debian/base.html' in template_names)
+        self.assertTrue('debian/news.html' in template_names)
