@@ -6,6 +6,9 @@
 
 {% block content %}
     <div class="result-search-again">
+    <a href="#" id="button-all-news" class="fg-button ui-state-default
+    ui-corner-all">Show recent news
+    <span class="ui-icon ui-icon-comment" style="display: inline-block;"></span></a>
     <a href="{% url debian.views.index %}" class="fg-button ui-state-default
     ui-corner-all">Start a new search
     <span class="ui-icon ui-icon-refresh" style="display: inline-block;"></span></a>
@@ -91,4 +94,7 @@
             </div>
 	    </div>
     {% endif %}
+    <form id="form-all-news" action="{% url debian.views.allnews %}" method="post">
+      {{ memory }}
+    </form>
 {% endblock %}

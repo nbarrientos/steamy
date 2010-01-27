@@ -9,10 +9,23 @@ import re
 from django.forms import widgets
 from django import forms
 from django.shortcuts import render_to_response
+from django.utils.safestring import mark_safe
 
 from debian.config import SPARQL_PREFIXES, RES_BASEURI, ONT_URI 
 from debian.config import DEFAULT_QUERY
 from debian.services import SPARQLQueryBuilder, SPARQLQueryProcessor
+
+
+# Thanks: http://www.djangosnippets.org/snippets/316/
+class HiddenBaseForm(forms.BaseForm):
+    def as_hidden(self):
+        """
+        Returns this form rendered entirely as hidden fields.
+        """
+        return mark_safe(u'\n'.join(forms.forms.BoundField(self, field, name).as_hidden() \
+                                    for name, field in self.fields.items()))
+    as_hidden.needs_autoescape = True
+
 
 DIST_OPTS = (
     ('ANY', 'any'),
@@ -80,7 +93,7 @@ SORT_OPTS = (
 )
 
 
-class SearchForm(forms.Form):
+class SearchForm(forms.Form, HiddenBaseForm):
     distribution = forms.ChoiceField(widget=widgets.Select, choices=DIST_OPTS)
     area = forms.ChoiceField(widget=widgets.Select, choices=AREA_OPTS)
     searchtype = forms.ChoiceField(initial="SOURCE", label="Search in:",\

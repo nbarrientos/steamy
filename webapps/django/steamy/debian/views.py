@@ -83,6 +83,7 @@ def results(request):
         replydata = {'results': results, 'filter': data['filter']}
         replydata['query'] = query if data['showquery'] else None
         replydata['show_popcon'] = True if data['popcon'] else False
+        replydata['memory'] = searchform.as_hidden()
 
         if builder.source_search():
             return render_to_response('debian/source_results.html', replydata)
@@ -96,13 +97,49 @@ def results(request):
 def news(request, source):
     if request.method == 'GET':
         finder = FeedFinder()
-
         try:
             feeds = finder.populate_feeds(source)
         except (SPARQLQueryProcessorError, SPARQLQueryBuilderError), e:
             return render_to_response('debian/error.html', {'reason': e})
 
         replydata = {'source': source, 'feeds': feeds}
+        return render_to_response('debian/news.html', replydata)
+    else:
+        return HttpResponse("405 - Method not allowed", status=405)
+
+def allnews(request):
+    if request.method == 'POST':
+        searchform = SearchForm(request.POST)
+        
+        if searchform.is_valid() is False:
+            return HttpResponse("400 - Bad request", status=400)
+
+        data = searchform.cleaned_data
+        builder = SPARQLQueryBuilder()
+        try:
+            query = builder.create_query_from_form(data)
+        except SPARQLQueryBuilderError, e:
+            return render_to_response('debian/error.html', {'reason': e})
+
+        processor = SPARQLQueryProcessor()
+        try:
+            processor.execute_sanitized_query(query)
+        except SPARQLQueryProcessorError, e:
+            return render_to_response('debian/error.html', {'reason': e})
+
+        if builder.source_search():
+            results = processor.format_source_results()
+        elif builder.binary_search():
+            results = processor.format_binary_results()
+        else:
+            raise UnexpectedSituationError()
+
+        finder = FeedFinder()
+        aggregated_feeds = []
+        for result in results:
+            aggregated_feeds.extend(finder.populate_feeds(result.sourcename))
+
+        replydata = {'source': '', 'feeds': aggregated_feeds}
         return render_to_response('debian/news.html', replydata)
     else:
         return HttpResponse("405 - Method not allowed", status=405)
