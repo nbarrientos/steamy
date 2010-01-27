@@ -51,20 +51,6 @@ class Result():
         self.popcon_notinuse = None
         self.popcon_upgraded = None
 
-    # Inspired by: http://www.peterbe.com/plog/uniqifiers-benchmark
-    @staticmethod
-    def remove_duplicates(seq, hashfun):
-        seen = {}
-        filtered = []
-        for element in seq:
-            hash = hashfun(element)
-            if hash in seen:
-                continue
-            else:
-                seen[hash] = True
-                filtered.append(element)
-
-        return filtered
 
 
 class SPARQLQueryProcessor():
@@ -623,3 +609,20 @@ WHERE {
             return data
         else:
             return None
+
+
+## Other tools ##
+
+# Inspired by: http://www.peterbe.com/plog/uniqifiers-benchmark
+def remove_duplicates(seq, hashfun):
+    seen = {}
+    filtered = []
+    for element in seq:
+        hash = hashfun(element)
+        if hash in seen:
+            continue
+        else:
+            seen[hash] = True
+            filtered.append(element)
+
+    return filtered

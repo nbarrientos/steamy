@@ -5,7 +5,7 @@ from django.utils import simplejson
 
 from debian.forms import SPARQLForm, SearchForm
 from debian.services import SPARQLQueryProcessor, SPARQLQueryBuilder
-from debian.services import FeedFinder
+from debian.services import FeedFinder, remove_duplicates
 from debian.errors import SPARQLQueryProcessorError, UnexpectedSituationError
 from debian.errors import SPARQLQueryBuilderError
 
@@ -134,11 +134,14 @@ def allnews(request):
         else:
             raise UnexpectedSituationError()
 
+        sourcenames = [x.sourcename for x in results]
+        if builder.binary_search():
+            sourcenames = remove_duplicates(sourcenames, lambda x: x)
+
         finder = FeedFinder()
         aggregated_feeds = []
-        for result in results:
-            # TODO: Remove duplicates (binary searches)
-            aggregated_feeds.extend(finder.populate_feeds(result.sourcename))
+        for sourcename in sourcenames:
+            aggregated_feeds.extend(finder.populate_feeds(sourcename))
 
         replydata = {'source': '', 'feeds': aggregated_feeds}
         return render_to_response('debian/news.html', replydata)
