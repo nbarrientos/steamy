@@ -134,6 +134,10 @@ class HomepageEnricher():
             self.stats.count_brokenhomepage()
             logging.error("'%s' is unreachable (reason: %s), skipping..." % (uri, e))
             return
+        except UnicodeEncodeError, e:
+            self.stats.count_brokenhomepage()
+            logging.error("'%s' encoding failure (%s), skipping..." % (uri, e))
+            return
 
         # Metainformation retrieval
         if self.opts.discover:
