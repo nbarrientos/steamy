@@ -25,25 +25,24 @@
             <a href="{{result.sourceurilink}}">{{result.sourcename}} ({{result.sourcefullversion}})</a>
         </span>
         is version of <a href="{{result.usourceurilink}}">{{result.sourcename}}</a>
-        <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
         <a class="wait" href="{% url debian.views.news result.sourcename|urlencode %}">
-            <span class="ui-icon ui-icon-comment" style="display: inline-block;"></span>
-        </a>
+            <span class="ui-icon ui-icon-comment" style="display: inline-block;"></span></a>
+        <a href="http://bugs.debian.org/cgi-bin/pkgreport.cgi?package={{result.sourcename}}">
+        <span class="ui-icon ui-icon-wrench" style="display: inline-block;"></span></a>
         <a class="wait" href="{% url debian.views.source_detail result.sourcename|urlencode,result.sourcefullversion|urlencode %}">
-            <span class="ui-icon ui-icon-plusthick" style="display: inline-block;"></span>
-        </a>
+            <span class="ui-icon ui-icon-plusthick" style="display: inline-block;"></span></a>
         </div>
         <ul>
         <li>
             <span class="result-label">Maintainer:</span>
             <a href="{{result.mainturilink}}">{{result.maintmail}}</a>
-            <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
+            <a href="http://qa.debian.org/developer.php?login={{result.maintmail}}">
+            <span class="ui-icon ui-icon-person" style="display: inline-block;"></span></a>
         </li>
         {% if result.sectionname and result.sectionurilink %}
         <li>
             <span class="result-label">Section:</span>
             <a href="{{result.sectionurilink}}">{{result.sectionname}}</a>
-            <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
         </li>
         {% endif %}
         {% if result.homepage %}
@@ -57,7 +56,6 @@
         <li>
             <span class="result-label">Distribution:</span> 
             <a href="{{result.distributionurilink}}">{{result.distribution}}</a>
-            <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
         </li>
         {% endif %}
         {% if result.area %}
