@@ -27,6 +27,10 @@
 
         <div class="query-textarea">
         <label for="id_query" class="field-label">Query:</label>
+            <span class="field-comment">
+                (only SELECT queries are allowed. FROM, LIMIT and OFFSET
+                statements will be ignored. LIMIT will be set to 100)
+            </span>
             {{ sparql.query }}
         </div>
         {% for error in sparql.query.errors %}
