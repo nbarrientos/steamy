@@ -34,6 +34,11 @@ $(function() {
                            css: uiblockcss})
             }
         });
+
+    $('#id_maintainerfilter').click(function() {
+        $('[name=maintainer]').removeAttr("checked");
+        $('#id_maintainer_4').attr("checked", "checked");
+    });
 });
 
 function execute_example_query(querydivid) {

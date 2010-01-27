@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+#
+# Nacho Barrientos Arias <nacho@debian.org>
+#
+# License: MIT
+
 import logging
 import re
 import urllib2
@@ -338,6 +344,8 @@ class SPARQLQueryBuilder():
         elif option == 'QA':
             uriref = URIRef(RES_BASEURI + "/team/packages%40qa.debian.org")
             self.helper.push_triple(Variable("source"), DEB.maintainer, uriref) 
+        elif option == 'CUSTOM':
+            self._consume_maintainer_filter()
         elif option == 'ALL':
             pass
         else:
@@ -488,6 +496,15 @@ class SPARQLQueryBuilder():
                             DEB.popconUpgradedRecently, Variable("?popconupgraded"))
             self.helper.add_variable("popconupgraded")
             self.helper.add_optional(triple)
+
+    def _consume_maintainer_filter(self):
+        filter = self.params['maintainerfilter']
+        if filter:
+            filter = re.escape(filter).replace("\\", "\\\\")
+            self.helper.push_triple(\
+                Variable("maint"), FOAF.name, Variable("maintname"))
+            restrictions = {Variable("maintmail"): filter, Variable("maintname"): filter}
+            self.helper.add_or_filter_regex(restrictions)
 
     def _add_from(self):
         if FROM_GRAPH is not None:

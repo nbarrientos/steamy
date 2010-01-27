@@ -77,6 +77,20 @@
             <label class="field-label">Maintainer:</label>
             {{ search.maintainer }}
         </div>
+        <div class="form-field" style="margin-left: 5%">
+            {{ search.maintainerfilter }}
+            <span class="field-comment">
+                (e.g. Joe, deity@debian.org)
+            </span>
+            {% for error in search.maintainerfilter.errors %}
+                <div class="ui-widget">
+                    <div class="ui-state-error ui-corner-all" style="padding: 0 .7em; margin-bottom: .3em;"> 
+                    <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> 
+                    <strong>Error:</strong> {{ error }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
         <div class="form-field">
             <label class="field-label">Comaintainer:</label>
             {{ search.comaintainer }}

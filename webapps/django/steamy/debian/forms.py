@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+#
+# Nacho Barrientos Arias <nacho@debian.org>
+#
+# License: MIT
+
 import re
 
 from django.forms import widgets
@@ -46,6 +52,7 @@ MAINT_OPTS = (
     ('TEAM', 'Team-maintained packages'),
     ('DEBIAN', 'Only maintainers with @debian.org address'),
     ('QA', 'Maintainer is Debian Quality Assurance Group'),
+    ('CUSTOM', 'Custom filter (use text field below to set one)'),
 )
 
 COMAINT_OPTS = (
@@ -101,6 +108,8 @@ class SearchForm(forms.Form):
     popcon = forms.BooleanField(required=False)
     section = forms.RegexField(regex=re.compile(r"^[a-zA-Z]*$"),\
         max_length=20, required=False)
+    maintainerfilter = forms.RegexField(regex=re.compile(r"^[-\w@.+]*$"),\
+        max_length=40, required=False)
     tojson = forms.BooleanField(required=False)
 
 class SPARQLForm(forms.Form):

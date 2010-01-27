@@ -349,6 +349,16 @@ class SPARQLQueryBuilderTest(unittest.TestCase):
         self.builder._consume_maintainer()
         self.mox.VerifyAll()
 
+    def test__consume_maintainer_custom(self):
+        self.builder.params['maintainer'] = "CUSTOM"
+        mock = self.mox.CreateMock(SelectQueryHelper)
+        self.mox.StubOutWithMock(self.builder, "_consume_maintainer_filter")
+        self.builder._consume_maintainer_filter()
+        self.builder.helper = mock 
+        self.mox.ReplayAll()
+        self.builder._consume_maintainer()
+        self.mox.VerifyAll()
+
     def test__consume_maintainer_qa(self):
         self.builder.params['maintainer'] = "QA"
         mock = self.mox.CreateMock(SelectQueryHelper)
@@ -420,6 +430,25 @@ class SPARQLQueryBuilderTest(unittest.TestCase):
         self.assertFalse(self.builder.wants_json())
         self.assertTrue(self.builder.wants_html())
 
+    def test__consume_maintainer_filter_empty(self):
+        self.builder.params['maintainerfilter'] = ""
+        mock = self.mox.CreateMock(SelectQueryHelper)
+        self.builder.helper = mock 
+        self.mox.ReplayAll()
+        self.builder._consume_maintainer_filter()
+        self.mox.VerifyAll()
+
+    def test__consume_maintainer_filter(self):
+        self.builder.params['maintainerfilter'] = "keyword"
+        mock = self.mox.CreateMock(SelectQueryHelper)
+        mock.push_triple(\
+            Variable("maint"), FOAF.name, Variable("maintname"))
+        mock.add_or_filter_regex({Variable("maintmail"): "keyword",\
+            Variable("maintname"): "keyword"})
+        self.builder.helper = mock 
+        self.mox.ReplayAll()
+        self.builder._consume_maintainer_filter()
+        self.mox.VerifyAll()
 
 
 class FeedFinderTest(unittest.TestCase):
