@@ -3,6 +3,12 @@
 import unittest
 from django.test.client import Client
 
+from debian.errors import SPARQLQueryProcessorError
+from debian.errors import SPARQLQueryProcessorEndpointNotFoundError
+from debian.errors import SPARQLQueryProcessorQueryBadFormedError 
+from debian.errors import SPARQLQueryProcessorUnacceptableQueryFormatError
+
+
 class FunctionalTest(unittest.TestCase):
     def setUp(self):
         self.c = Client()
@@ -91,3 +97,68 @@ class FunctionalTest(unittest.TestCase):
         response = self.c.post("/debian/results/", body)
         self.failUnlessEqual(response.status_code, 200)
         self.assertEqual("application/json", response['Content-Type'])
+
+    def test_malformed_sparql_query(self):
+        query = "SELECT * WHERE { ?s ?p }"
+        body = {'ns': '', 'query': query}
+        response = self.c.post("/debian/sparql/", body)
+        self.failUnlessEqual(response.status_code, 200)
+        template_names = [x.name for x in response.template]
+        self.assertEqual(2, len(template_names))
+        self.assertTrue('debian/base.html' in template_names)
+        self.assertTrue('debian/error.html' in template_names)
+        e = SPARQLQueryProcessorQueryBadFormedError()
+        self.assertEqual(e, response.context['reason'])
+
+    def test_malformed_sparql_query_mistyped_type(self):
+        query = "SLECT * WHERE { ?s ?p ?o . }"
+        body = {'ns': '', 'query': query}
+        response = self.c.post("/debian/sparql/", body)
+        self.failUnlessEqual(response.status_code, 200)
+        template_names = [x.name for x in response.template]
+        self.assertEqual(2, len(template_names))
+        self.assertTrue('debian/base.html' in template_names)
+        self.assertTrue('debian/error.html' in template_names)
+        e = SPARQLQueryProcessorQueryBadFormedError()
+        self.assertEqual(e, response.context['reason'])
+
+    def test_malformed_sparql_query_unsupported_type(self):
+        query = "CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o . }"
+        body = {'ns': '', 'query': query}
+        response = self.c.post("/debian/sparql/", body)
+        self.failUnlessEqual(response.status_code, 200)
+        template_names = [x.name for x in response.template]
+        self.assertEqual(2, len(template_names))
+        self.assertTrue('debian/base.html' in template_names)
+        self.assertTrue('debian/error.html' in template_names)
+        e = SPARQLQueryProcessorUnacceptableQueryFormatError()
+        self.assertEqual(e, response.context['reason'])
+
+    def test_malformed_sparql_query_ok(self):
+        query = "SELECT * WHERE { ?s ?p ?o . }"
+        body = {'ns': '', 'query': query}
+        response = self.c.post("/debian/sparql/", body)
+        self.failUnlessEqual(response.status_code, 200)
+        template_names = [x.name for x in response.template]
+        self.assertEqual(2, len(template_names))
+        self.assertTrue('debian/base.html' in template_names)
+        self.assertTrue('debian/results.html' in template_names)
+
+    # Will fail in non-virtuoso stores
+    def test_malformed_sparql_query_ok2(self):
+        ns = "PREFIX deb:<http://idi.fundacionctic.org/steamy/debian.owl#>"
+        query = """
+SELECT ?s COUNT(?d) as ?c
+WHERE {
+
+?s deb:distribution ?d
+
+} 
+ORDER BY DESC(?c)"""
+        body = {'ns': ns, 'query': query}
+        response = self.c.post("/debian/sparql/", body)
+        self.failUnlessEqual(response.status_code, 200)
+        template_names = [x.name for x in response.template]
+        self.assertEqual(2, len(template_names))
+        self.assertTrue('debian/base.html' in template_names)
+        self.assertTrue('debian/results.html' in template_names)

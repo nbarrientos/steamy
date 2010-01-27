@@ -1,5 +1,6 @@
 import logging
 import re
+import urllib2
 
 from datetime import datetime
 
@@ -7,16 +8,20 @@ from django.utils.http import urlquote_plus
 
 from SPARQLWrapper import SPARQLWrapper, JSON
 from SPARQLWrapper.SPARQLExceptions import EndPointNotFound
+from SPARQLWrapper.SPARQLExceptions import QueryBadFormed
 
 from rdflib import Variable
 from rdflib import Namespace, URIRef, Literal, Variable
-from rdflib.sparql.bison import Parse as RdflibParse
 
 from debian.config import *
 from debian.sparql.helpers import SelectQueryHelper
 from debian.sparql.miniast import Triple
-from debian.errors import SPARQLQueryProcessorError, UnexpectedFieldValueError
-from debian.errors import SPARQLQueryBuilderError
+from debian.errors import SPARQLQueryProcessorError
+from debian.errors import SPARQLQueryProcessorEndpointNotFoundError
+from debian.errors import SPARQLQueryProcessorQueryBadFormedError
+from debian.errors import SPARQLQueryProcessorUnacceptableQueryFormatError
+from debian.errors import SPARQLQueryBuilderUnexpectedFieldValueError
+from debian.errors import SPARQLQueryBuilderPackageNameSchemeError
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
 FOAF = Namespace(u"http://xmlns.com/foaf/0.1/")
@@ -66,7 +71,18 @@ class SPARQLQueryProcessor():
 
     def _query_endpoint(self, query):
         self.endpoint.setQuery(query)
-        return self.endpoint.query().convert()
+
+        if self.endpoint.queryType == 'SELECT':
+            try:
+                return self.endpoint.query().convert()
+            except QueryBadFormed:
+                raise SPARQLQueryProcessorQueryBadFormedError()
+            except EndPointNotFound:
+                raise SPARQLQueryProcessorEndpointNotFoundError()
+            except urllib2.URLError:
+                raise SPARQLQueryProcessorError()
+        else:
+            raise SPARQLQueryProcessorUnacceptableQueryFormatError()
 
     def format_source_results(self):
         resultlist = []
@@ -151,23 +167,19 @@ class SPARQLQueryProcessor():
         return (variables, resultlist)
 
     def _clean_query(self, query):
-        return re.sub("LIMIT.*|OFFSET.*", "", query) + "LIMIT " + str(RESULTS_PER_PAGE)
+        query = re.sub(r"((LIMIT|OFFSET)\s*\d+)|(FROM(\sNAMED)?\s*<.*>)", "", query) 
+        if RESULTS_PER_PAGE:
+            query = "%s LIMIT %s" % (query, RESULTS_PER_PAGE)
+        if FROM_GRAPH:
+            query = re.sub(r"WHERE", "FROM <%s> WHERE" % FROM_GRAPH, query)
+        return query
 
     def execute_sanitized_query(self, query):
         self._init_endpoint()
-        print query # FIXME
-        try:
-            self.results = self._query_endpoint(query)
-        except EndPointNotFound:
-            reason = "Endpoint not available. Try again later."
-            raise SPARQLQueryProcessorError(reason)
+        self.results = self._query_endpoint(query)
 
     def execute_query(self, query):
         query = self._clean_query(query)
-        try:
-            RdflibParse(query)
-        except SyntaxError, e:
-           raise SPARQLQueryProcessorError(e.msg)
         self.execute_sanitized_query(query)
 
 class SPARQLQueryBuilder():
@@ -205,9 +217,9 @@ class SPARQLQueryBuilder():
             elif type in ('SOURCE'):
                 return False
             else:
-                raise UnexpectedFieldValueError("searchtype")
+                raise SPARQLQueryBuilderUnexpectedFieldValueError("searchtype")
         else:
-            raise UnexpectedFieldValueError("searchtype")
+            raise SPARQLQueryBuilderUnexpectedFieldValueError("searchtype")
 
     def source_search(self):
         return not self.binary_search()
@@ -216,7 +228,7 @@ class SPARQLQueryBuilder():
         if 'tojson' in self.params:
             return self.params['tojson']
         else:
-            raise UnexpectedFieldValueError("json")
+            raise SPARQLQueryBuilderUnexpectedFieldValueError("json")
 
     def wants_html(self):
         # For the moment json/html are dual parameters
@@ -229,7 +241,7 @@ class SPARQLQueryBuilder():
             else:
                 return False
         else:
-            raise UnexpectedFieldValueError("searchtype")
+            raise SPARQLQueryBuilderUnexpectedFieldValueError("searchtype")
 
     def _add_base_elements(self):
         self.helper.push_triple_variables(\
@@ -308,7 +320,7 @@ class SPARQLQueryBuilder():
             else:
                 self.helper.set_orderby("sourcename")
         else:
-            raise UnexpectedFieldValueError("sort")
+            raise SPARQLQueryBuilderUnexpectedFieldValueError("sort")
 
     def _consume_homepage(self):
        if self.params['homepage']:
@@ -329,7 +341,7 @@ class SPARQLQueryBuilder():
         elif option == 'ALL':
             pass
         else:
-            raise UnexpectedFieldValueError("maintainer")
+            raise SPARQLQueryBuilderUnexpectedFieldValueError("maintainer")
 
     def _consume_version(self):
         options = self.params['version']
@@ -414,7 +426,7 @@ class SPARQLQueryBuilder():
         elif option == 'ALL':
             pass
         else:
-            raise UnexpectedFieldValueError("comaintainer")
+            raise SPARQLQueryBuilderUnexpectedFieldValueError("comaintainer")
 
     def _consume_vcs(self):
         options = self.params['vcs']
@@ -483,7 +495,7 @@ class SPARQLQueryBuilder():
 
     def create_binaries_query(self, source, version):
         if re.match("^[-a-zA-Z0-9+.]+$", source) is None:
-            raise SPARQLQueryBuilderError("Unrecognized package naming scheme")
+            raise SPARQLQueryBuilderPackageNameSchemeError()
 
         self.binary_search = lambda: True  # Kind of a hack :/
         self._add_base_elements()
@@ -506,7 +518,7 @@ class FeedFinder():
 
     def populate_feeds(self, sourcename):
         if re.match("^[-a-zA-Z0-9+.]+$", sourcename) is None:
-            raise SPARQLQueryBuilderError("Unrecognized package naming scheme")
+            raise SPARQLQueryBuilderPackageNameSchemeError()
 
         unversionedsourceuri = "%s/source/%s" % (RES_BASEURI, sourcename)
         partial = self._fetch_feeduris(unversionedsourceuri)
@@ -531,10 +543,7 @@ WHERE {
     ?source foaf:page ?homepage .
     ?homepage xhv:alternate ?feeduri .
 }""" % unversionedsourceuri
-        try:
-            self.processor.execute_sanitized_query(query)
-        except SPARQLQueryProcessorError, e:
-            raise e  # FIXME
+        self.processor.execute_sanitized_query(query)
 
         feeds = []
         for result in self.processor.results['results']['bindings']:
@@ -558,10 +567,7 @@ WHERE {
     OPTIONAL { ?item dc:date ?date }
 }
 ORDER BY DESC(?date)""" % feeduri
-        try:
-            self.processor.execute_sanitized_query(query)
-        except SPARQLQueryProcessorError, e:
-            raise e # FIXME
+        self.processor.execute_sanitized_query(query)
 
         items = []
         for result in self.processor.results['results']['bindings']:
@@ -590,10 +596,7 @@ WHERE {
              rdfs:seeAlso <%s> .
     OPTIONAL { ?channel dc:title ?title } .
 }""" % feeduri
-        try:
-            self.processor.execute_sanitized_query(query)
-        except SPARQLQueryProcessorError, e:
-            raise e # FIXME
+        self.processor.execute_sanitized_query(query)
 
         results = self.processor.results['results']['bindings']
         if results:

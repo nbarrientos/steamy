@@ -33,7 +33,7 @@ def sparql(request):
         try:
             processor.execute_query(smart_str(query))
         except SPARQLQueryProcessorError, e:
-            return render_to_response('debian/error.html', {'reason': e.reason})
+            return render_to_response('debian/error.html', {'reason': e})
 
         if sparqlform.cleaned_data['tojson_sparql'] is True:
             return HttpResponse(simplejson.dumps(processor.results), \
@@ -59,13 +59,13 @@ def results(request):
         try:
             query = builder.create_query_from_form(data)
         except SPARQLQueryBuilderError, e:
-            return render_to_response('debian/error.html', {'reason': e.reason})
+            return render_to_response('debian/error.html', {'reason': e})
 
         processor = SPARQLQueryProcessor()
         try:
             processor.execute_sanitized_query(query)
         except SPARQLQueryProcessorError, e:
-            return render_to_response('debian/error.html', {'reason': e.reason})
+            return render_to_response('debian/error.html', {'reason': e})
 
         if builder.wants_json():
             return HttpResponse(simplejson.dumps(processor.results), \
@@ -100,7 +100,7 @@ def news(request, source):
         try:
             feeds = finder.populate_feeds(source)
         except (SPARQLQueryProcessorError, SPARQLQueryBuilderError), e:
-            return render_to_response('debian/error.html', {'reason': e.reason})
+            return render_to_response('debian/error.html', {'reason': e})
 
         replydata = {'source': source, 'feeds': feeds}
         return render_to_response('debian/news.html', replydata)
@@ -113,13 +113,13 @@ def source_detail(request, source, version):
         try:
             query = builder.create_binaries_query(source, version)
         except SPARQLQueryBuilderError, e:
-            return render_to_response('debian/error.html', {'reason': e.reason})
+            return render_to_response('debian/error.html', {'reason': e})
 
         processor = SPARQLQueryProcessor()
         try:
             processor.execute_sanitized_query(query)
         except SPARQLQueryProcessorError, e:
-            return render_to_response('debian/error.html', {'reason': e.reason})
+            return render_to_response('debian/error.html', {'reason': e})
 
         results = processor.format_binary_results()
         return render_to_response('debian/binary_results.html', {'results': results})

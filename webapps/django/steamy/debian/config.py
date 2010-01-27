@@ -1,11 +1,11 @@
 #SPARQL_ENDPOINT = "http://data.fundacionctic.org/sparql"
 #FROM_GRAPH = "http://data.fundacionctic.org/idi/debian"
 
-#SPARQL_ENDPOINT = "http://wopr:8890/sparql"
-#FROM_GRAPH = "http://wopr/debian"
+SPARQL_ENDPOINT = "http://wopr:8890/sparql"
+FROM_GRAPH = "http://wopr/debian"
 
-SPARQL_ENDPOINT = "http://localhost:8180/openrdf-sesame/repositories/STEAMY"
-FROM_GRAPH = None
+#SPARQL_ENDPOINT = "http://localhost:8180/openrdf-sesame/repositories/STEAMY"
+#FROM_GRAPH = None
 
 SPARQL_PREFIXES = """
 PREFIX deb:<http://idi.fundacionctic.org/steamy/debian.owl#>

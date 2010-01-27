@@ -104,6 +104,6 @@ class SearchForm(forms.Form):
     tojson = forms.BooleanField(required=False)
 
 class SPARQLForm(forms.Form):
-    ns = forms.CharField(initial=SPARQL_PREFIXES, widget=widgets.Textarea())
+    ns = forms.CharField(required=False, initial=SPARQL_PREFIXES, widget=widgets.Textarea())
     query = forms.CharField(initial=DEFAULT_QUERY, widget=widgets.Textarea())
     tojson_sparql = forms.BooleanField(required=False)

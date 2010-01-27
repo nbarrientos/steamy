@@ -7,12 +7,12 @@ from mox import Mox, IgnoreArg, Regex
 
 from rdflib import Namespace, URIRef, Literal, Variable
 
+import debian.services
 from debian.sparql.miniast import Triple
 from debian.services import SPARQLQueryBuilder, FeedFinder
 from debian.services import SPARQLQueryProcessor, RSSFeed
-from debian.errors import UnexpectedFieldValueError, SPARQLQueryBuilderError
+from debian.errors import SPARQLQueryBuilderUnexpectedFieldValueError, SPARQLQueryBuilderError
 from debian.sparql.helpers import SelectQueryHelper
-from debian.config import RES_BASEURI
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
 DEB = Namespace(u"http://idi.fundacionctic.org/steamy/debian.owl#")
@@ -59,15 +59,15 @@ class SPARQLQueryBuilderTest(unittest.TestCase):
 
     def test__searchtype_unexpected(self):
         self.builder.params['searchtype'] = "FAIL"
-        self.assertRaises(UnexpectedFieldValueError, \
+        self.assertRaises(SPARQLQueryBuilderUnexpectedFieldValueError, \
             self.builder.binary_search)
-        self.assertRaises(UnexpectedFieldValueError, \
+        self.assertRaises(SPARQLQueryBuilderUnexpectedFieldValueError, \
             self.builder.source_search)
 
         self.builder.params.pop('searchtype')
-        self.assertRaises(UnexpectedFieldValueError, \
+        self.assertRaises(SPARQLQueryBuilderUnexpectedFieldValueError, \
             self.builder.binary_search)
-        self.assertRaises(UnexpectedFieldValueError, \
+        self.assertRaises(SPARQLQueryBuilderUnexpectedFieldValueError, \
             self.builder.source_search)
 
     def test__consume_homepage_true(self):
@@ -315,7 +315,7 @@ class SPARQLQueryBuilderTest(unittest.TestCase):
 
     def test__consume_sort_error(self):
         self.builder.params['sort'] = "FAIL"
-        self.assertRaises(UnexpectedFieldValueError, self.builder._consume_sort)
+        self.assertRaises(SPARQLQueryBuilderUnexpectedFieldValueError, self.builder._consume_sort)
 
     def test__consume_sort_package_source(self):
         self.mock_source_search()
@@ -339,7 +339,7 @@ class SPARQLQueryBuilderTest(unittest.TestCase):
 
     def test__consume_maintainer_error(self):
         self.builder.params['maintainer'] = "FAIL"
-        self.assertRaises(UnexpectedFieldValueError, self.builder._consume_maintainer)
+        self.assertRaises(SPARQLQueryBuilderUnexpectedFieldValueError, self.builder._consume_maintainer)
 
     def test__consume_maintainer_all(self):
         self.builder.params['maintainer'] = "ALL"
@@ -352,7 +352,8 @@ class SPARQLQueryBuilderTest(unittest.TestCase):
     def test__consume_maintainer_qa(self):
         self.builder.params['maintainer'] = "QA"
         mock = self.mox.CreateMock(SelectQueryHelper)
-        qaref = URIRef(RES_BASEURI + "/team/packages%40qa.debian.org")
+        debian.services.RES_BASEURI = "base"
+        qaref = URIRef("base/team/packages%40qa.debian.org")
         mock.push_triple(Variable("source"), DEB.maintainer, qaref)
         self.builder.helper = mock 
         self.mox.ReplayAll()
@@ -363,7 +364,7 @@ class SPARQLQueryBuilderTest(unittest.TestCase):
 
     def test__consume_comaintainer_error(self):
         self.builder.params['comaintainer'] = "FAIL"
-        self.assertRaises(UnexpectedFieldValueError, self.builder._consume_comaintainer)
+        self.assertRaises(SPARQLQueryBuilderUnexpectedFieldValueError, self.builder._consume_comaintainer)
 
     def test__consume_comaintainer_all(self):
         self.builder.params['comaintainer'] = "ALL"
@@ -408,8 +409,8 @@ class SPARQLQueryBuilderTest(unittest.TestCase):
             source, version)
 
     def test_wants_json(self):
-        self.assertRaises(UnexpectedFieldValueError, self.builder.wants_json)
-        self.assertRaises(UnexpectedFieldValueError, self.builder.wants_html)
+        self.assertRaises(SPARQLQueryBuilderUnexpectedFieldValueError, self.builder.wants_json)
+        self.assertRaises(SPARQLQueryBuilderUnexpectedFieldValueError, self.builder.wants_html)
 
         self.builder.params['tojson'] = True
         self.assertTrue(self.builder.wants_json())
@@ -576,3 +577,63 @@ class FeedFinderTest(unittest.TestCase):
         channel = self.finder._fetch_feed_channel_information(feeduri)
         self.mox.VerifyAll()
         self.assertEqual(None, channel)
+
+
+class SPARQLQueryProcessorTest(unittest.TestCase):
+    def setUp(self):
+        self.processor = SPARQLQueryProcessor()
+        self.rpp = debian.services.RESULTS_PER_PAGE
+        self.fg = debian.services.FROM_GRAPH
+        debian.services.RESULTS_PER_PAGE = None
+        debian.services.FROM_GRAPH = None
+
+    def tearDown(self):
+        debian.services.RESULTS_PER_PAGE = self.rpp
+        debian.services.FROM_GRAPH = self.fg
+
+    def test__clean_query_limit(self):
+        debian.services.RESULTS_PER_PAGE = 5 
+        input = "SELECT * WHERE { ?s ?p ?o } LIMIT 150"
+        expected = "SELECT * WHERE { ?s ?p ?o }  LIMIT 5"
+        self.assertEqual(expected, self.processor._clean_query(input))
+
+    def test__clean_query_offset(self):
+        debian.services.RESULTS_PER_PAGE = 5 
+        input = "SELECT * WHERE { ?s ?p ?o } OFFSET 5"
+        expected = "SELECT * WHERE { ?s ?p ?o }  LIMIT 5"
+        self.assertEqual(expected, self.processor._clean_query(input))
+
+    def test__clean_query_offset_limit(self):
+        debian.services.RESULTS_PER_PAGE = 5 
+        input = "SELECT * WHERE { ?s ?p ?o } OFFSET 5 LIMIT 6"
+        expected = "SELECT * WHERE { ?s ?p ?o }   LIMIT 5"
+        self.assertEqual(expected, self.processor._clean_query(input))
+
+        input = "SELECT * WHERE { ?s ?p ?o } LIMIT 7 OFFSET 5"
+        expected = "SELECT * WHERE { ?s ?p ?o }   LIMIT 5"
+        self.assertEqual(expected, self.processor._clean_query(input))
+
+    def test__clean_query_from(self):
+        debian.services.RESULTS_PER_PAGE = 5 
+        input = "SELECT * FROM <uriref> WHERE { ?s ?p ?o }"
+        expected = "SELECT *  WHERE { ?s ?p ?o } LIMIT 5"
+        self.assertEqual(expected, self.processor._clean_query(input))
+
+        input = "SELECT * FROM<uriref> WHERE { ?s ?p ?o }"
+        expected = "SELECT *  WHERE { ?s ?p ?o } LIMIT 5"
+        self.assertEqual(expected, self.processor._clean_query(input))
+
+        input = "SELECT * FROM NAMED <uriref> WHERE { ?s ?p ?o }"
+        expected = "SELECT *  WHERE { ?s ?p ?o } LIMIT 5"
+        self.assertEqual(expected, self.processor._clean_query(input))
+
+    def test__clean_query_reassisgn(self):
+        debian.services.FROM_GRAPH = "http://example.org"
+        input = "SELECT * FROM <uriref> WHERE { ?s ?p ?o }"
+        expected = "SELECT *  FROM <http://example.org> WHERE { ?s ?p ?o }"
+        self.assertEqual(expected, self.processor._clean_query(input))
+
+        debian.services.FROM_GRAPH = "http://example.org"
+        input = "SELECT * FROM NAMED <uriref> WHERE { ?s ?p ?o }"
+        expected = "SELECT *  FROM <http://example.org> WHERE { ?s ?p ?o }"
+        self.assertEqual(expected, self.processor._clean_query(input))
