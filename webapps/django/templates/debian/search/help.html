@@ -33,54 +33,64 @@
     </p>
 
     <h5 class="help-subsection">
-    URIs for unversioned source packages maintained by Jon Doe for some time
+    URIs for unversioned source packages some time maintained by identity
+    "nacho@debian.org"
     </h5>
-    <div class="querystring">
+    <div id="help-example1" class="querystring">
     <pre>
-    SELECT DISTINCT ?usource
-    WHERE
-    {
-    ?source a deb:Source ;
-            deb:maintainer ?maintainer .
-    ?usource a deb:UnversionedSource  ;
-             deb:version ?source .
-    ?maintainer foaf:name "Jon Doe".
-    }
+SELECT DISTINCT ?usource
+WHERE
+{
+?source a deb:Source ;
+        deb:maintainer ?maintainer .
+?usource a deb:UnversionedSource  ;
+         deb:version ?source .
+?maintainer foaf:mbox "nacho@debian.org".
+}
     </pre>
     </div>
+    <div class="run-example-link">
+    <a href="#" onclick="javascript:execute_example_query('#help-example1')">Run Example</a>
+    </div>
 
-    <h5 class="help-subsection">
+    <h5  class="help-subsection">
     URIs for binary packages in libdevel section and tagged either with devel::library or role::debug-symbols
     </h5>
-    <div class="querystring">
+    <div id="help-example2" class="querystring">
     <pre>
-    SELECT ?binary
-    WHERE
-    {
-    ?binary a deb:Binary .
-    ?binary deb:section &lt;http://rdf.debian.net/section/libdevel&gt; .
-    {?binary tag:taggedWithTag &lt;http://rdf.debian.net/tag/devel/library&gt;} 
-      UNION 
-    {?binary tag:taggedWithTag &lt;http://rdf.debian.net/tag/role/debug-symbols&gt;} .
-    }
+SELECT ?binary
+WHERE
+{
+?binary a deb:Binary .
+?binary deb:section &lt;http://rdf.debian.net/section/libdevel&gt; .
+{?binary tag:taggedWithTag &lt;http://rdf.debian.net/tag/devel/library&gt;} 
+  UNION 
+{?binary tag:taggedWithTag &lt;http://rdf.debian.net/tag/role/debug-symbols&gt;} .
+}
     </pre>
     </div>
+    <div class="run-example-link">
+    <a href="#" onclick="javascript:execute_example_query('#help-example2')">Run Example</a>
+    </div>
 
-    <h5 class="help-subsection">
+    <h5  class="help-subsection">
     File URIs and sizes for i386 binary builds associated to source package acl version 2.2.47-2 
     </h5>
-    <div class="querystring">
+    <div id="help-example3" class="querystring">
     <pre>
-    SELECT ?file ?size
-    WHERE
-    {
-    &lt;http://rdf.debian.net/source/acl/2.2.47-2&gt; deb:binary ?binary .
-    ?binary deb:build ?build .
-    ?build deb:architecture &lt;http://rdf.debian.net/arch/i386&gt; .
-    ?file deb:productOf ?build .
-    ?file nfo:fileSize ?size .
-    }
+SELECT ?file ?size
+WHERE
+{
+&lt;http://rdf.debian.net/source/acl/2.2.47-2&gt; deb:binary ?binary .
+?binary deb:build ?build .
+?build deb:architecture &lt;http://rdf.debian.net/arch/i386&gt; .
+?file deb:productOf ?build .
+?file nfo:fileSize ?size .
+}
     </pre>
+    </div>
+    <div class="run-example-link">
+    <a href="#" onclick="javascript:execute_example_query('#help-example3')">Run Example</a>
     </div>
 
     <h4 class="help-section">Who's behind this initiative?</h4>

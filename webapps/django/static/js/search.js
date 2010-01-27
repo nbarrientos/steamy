@@ -35,3 +35,9 @@ $(function() {
             }
         });
 });
+
+function execute_example_query(querydivid) {
+    querytext = $(querydivid).text();
+    $('textarea#id_query').val(querytext);
+    $('#sparql-submit').click();
+}
