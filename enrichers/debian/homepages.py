@@ -197,7 +197,10 @@ class HomepageEnricher():
         self.stats.count_feed()
         logging.debug("Trying to determine RSS feed version for URI '%s'" % feed)
 
-        parse = feedparser.parse(feed)
+        try:
+            parse = feedparser.parse(feed)
+        except UnicodeDecodeError:
+            raise RSSParsingFeedMalformedError(feed)
 
         # Feedparser bug? Sometimes status attribute is missing, even using
         # remote feeds :(
