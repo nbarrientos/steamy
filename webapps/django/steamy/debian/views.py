@@ -137,6 +137,7 @@ def allnews(request):
         finder = FeedFinder()
         aggregated_feeds = []
         for result in results:
+            # TODO: Remove duplicates (binary searches)
             aggregated_feeds.extend(finder.populate_feeds(result.sourcename))
 
         replydata = {'source': '', 'feeds': aggregated_feeds}

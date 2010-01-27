@@ -36,14 +36,21 @@
             <a class="wait" href="{% url debian.views.news result.sourcename|urlencode %}">
             <span class="ui-icon ui-icon-comment" style="display: inline-block;"></span>
             </a>
-            <a href="http://bugs.debian.org/cgi-bin/pkgreport.cgi?package={{result.sourcename}}">
-            <span class="ui-icon ui-icon-wrench" style="display: inline-block;"></span></a>
+            <a class="minilink"
+            href="http://bugs.debian.org/cgi-bin/pkgreport.cgi?package={{result.sourcename}}">BTS
+            <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
+            </a>
+            <a class="minilink" 
+            href="http://packages.qa.debian.org/common/index.html?src={{result.sourcename}}">PTS
+            <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>
+            </a>
         </li>
         <li>
             <span class="result-label">Maintainer:</span>
             <a href="{{result.mainturilink}}">{{result.maintmail}}</a>
             <a href="http://qa.debian.org/developer.php?login={{result.maintmail}}">
-            <span class="ui-icon ui-icon-person" style="display: inline-block;"></span></a>
+            <span class="ui-icon ui-icon-person" style="display: inline-block;"></span>
+            <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span></a>
         </li>
         <li>
             <span class="result-label">Short description:</span>
