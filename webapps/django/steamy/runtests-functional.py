@@ -5,8 +5,15 @@ from optparse import OptionParser
 import unittest
 import xmlrunner
 
-from debian.sparql.test import helperstest, visitortest
-from debian.test import servicestest
+from django.core.management import setup_environ
+import settings
+settings.DATABASE_ENGINE = "dummy"
+setup_environ(settings)
+
+from django.test.utils import setup_test_environment
+from django.test.utils import teardown_test_environment
+
+from debian.test import functionaltest
 
 class TestRunner:
   def __init__(self):
@@ -27,9 +34,8 @@ class TestRunner:
     return self
 
   def run(self):
-    suite = unittest.TestLoader().loadTestsFromModule(helperstest)
-    suite.addTests(unittest.TestLoader().loadTestsFromModule(visitortest))
-    suite.addTests(unittest.TestLoader().loadTestsFromModule(servicestest))
+    setup_test_environment()
+    suite = unittest.TestLoader().loadTestsFromModule(functionaltest)
     if self.opts.xml:
       xmlrunner.XMLTestRunner(self.out).run(suite)
       if self.out:
@@ -37,6 +43,7 @@ class TestRunner:
     else:
       unittest.TextTestRunner(verbosity=2).run(suite)
 
+    teardown_test_environment()
 
 if __name__ == '__main__':
     TestRunner().config().run()
