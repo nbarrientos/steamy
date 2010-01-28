@@ -138,6 +138,10 @@ class HomepageEnricher():
             self.stats.count_brokenhomepage()
             logging.error("'%s' encoding or format failure (%s), skipping..." % (uri, e))
             return
+        except Exception:
+            self.stats.count_brokenhomepage()
+            logging.error("'%s' Unknown error (%s), skipping..." % (uri, e))
+            return
 
         # Metainformation retrieval
         if self.opts.discover:
