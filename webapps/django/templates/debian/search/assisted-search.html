@@ -14,8 +14,7 @@
             <label for="id_filter" class="field-label">Keyword:</label>
             {{ search.filter }}
             <span class="field-comment">
-                (blank is ok, but please consider using some filter if you
-                want useful results)
+                (blank is ok, although the result set will be automatically limited in size)
             </span>
             {% for error in search.filter.errors %}
                 <div class="ui-widget">
@@ -51,7 +50,7 @@
             <label for="id_section" class="field-label">Section:</label>
             {{ search.section }}
             <span class="field-comment">
-                (e.g. games, text)
+                (e.g. games, text...)
             </span>
             {% for error in search.section.errors %}
                 <div class="ui-widget">
@@ -69,7 +68,7 @@
         <div class="form-field">
             <label class="field-label">Version:</label>
             <span class="field-comment">
-                (no selections will be interpreted as 'any')
+                (if no option is checked no restriction will be applied)
             </span>
             {{ search.version }}
         </div>
@@ -98,7 +97,7 @@
         <div class="form-field">
             <label class="field-label">Maintained using:</label>
             <span class="field-comment">
-                (no selections will be interpreted as 'any')
+                (if no option is checked no restriction will be applied)
             </span>
             {{ search.vcs }}
         </div>
