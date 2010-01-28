@@ -159,7 +159,60 @@ ORDER BY DESC(?date)
     <div class="run-example-link">
     <a href="#" onclick="javascript:execute_example_query('#help-example6')">Run Example</a>
     </div>
-    
+
+    <h5 class="help-subsection">
+    What is the binary package with the bigger number of dependencies? What's
+    the name of the distribution it belongs to?
+    </h5>
+    <div id="help-example7" class="querystring">
+    <pre>
+SELECT ?binary COUNT(?d) as ?depnum ?distribution
+WHERE
+{
+    ?binary a deb:Binary .
+    ?binary deb:depends ?d.
+    ?source deb:binary ?binary .
+    ?source deb:distribution ?distribution .
+} 
+ORDER BY DESC(?depnum)
+    </pre>
+    </div>
+    <div class="run-example-link">
+    <a href="#" onclick="javascript:execute_example_query('#help-example7')">Run Example</a>
+    </div>
+
+    <h5 class="help-subsection">
+    Focusing in Lenny, what are the package names for 'python-simplejson' reverse 
+    dependencies?
+    </h5>
+    <div id="help-example8" class="querystring">
+    <pre>
+SELECT ?rdependname
+WHERE
+{
+    { ?rdepend deb:depends ?dorconstraint .
+      ?dorconstraint deb:alternative ?dalternative .
+      ?satisfier deb:satisfies ?dalternative . }
+    UNION
+    { ?rdepend deb:recommends ?rorconstraint .
+      ?rorconstraint deb:alternative ?ralternative .
+      ?satisfier deb:satisfies ?ralternative . }
+
+    ?rdepend deb:packageName ?rdependname .
+    ?rdependsource deb:binary ?rdepend ;
+                   deb:distribution &lt;http://rdf.debian.net/distribution/lenny&gt; .
+
+    &lt;http://rdf.debian.net/binary/python-simplejson&gt; deb:version ?satisfier .
+    ?satisfiersource deb:binary ?satisfier ;
+                     deb:distribution &lt;http://rdf.debian.net/distribution/lenny&gt; .
+} 
+ORDER BY ASC(?rdependname)
+    </pre>
+    </div>
+    <div class="run-example-link">
+    <a href="#" onclick="javascript:execute_example_query('#help-example8')">Run Example</a>
+    </div>
+
     <h4 class="help-section">What about ASK, CONSTRUCT and DESCRIBE queries?</h4>
     <p>Unfortunately it is not possible to perform this kind of queries using
     this web interface. However, the endpoint is public and can be  
