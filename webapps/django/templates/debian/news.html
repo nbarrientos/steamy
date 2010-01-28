@@ -31,8 +31,8 @@
             <a href="#" onclick="bury('{{source}}', '{{feed.feeduri}}', '{{forloop.counter}}')"> 
             <span class="ui-icon ui-icon-close bury" style="display: inline-block;"></span></a>
             </div>
-            <ul>
             {% if feed.channel %}
+                <ul>
                 {% for item in feed.items %}
                 <li>
                     {% if item.link %}
@@ -46,11 +46,12 @@
                     {% endif %}
                 </li>
                 {% empty %}
-                <li>Empty feed</li>
+                <li>This feed is empty</li>
                 {% endfor %}
                 </ul>
             {% else %}
-                <p>It wasn't possible to fetch data from this feed, please visit it manually.</p>
+                <p style="margin-left: 35px; font-size: small;">
+                    It wasn't possible to fetch data from this feed, please visit it manually.</p>
             {% endif %}
         </div>
     {% empty %}
