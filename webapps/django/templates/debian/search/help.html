@@ -190,17 +190,16 @@ ORDER BY DESC(?depnum)
 SELECT ?rdependname
 WHERE
 {
-    { ?rdepend deb:depends ?dorconstraint .
-      ?dorconstraint deb:alternative ?dalternative .
-      ?satisfier deb:satisfies ?dalternative . }
-    UNION
-    { ?rdepend deb:recommends ?rorconstraint .
-      ?rorconstraint deb:alternative ?ralternative .
-      ?satisfier deb:satisfies ?ralternative . }
-
     ?rdepend deb:packageName ?rdependname .
     ?rdependsource deb:binary ?rdepend ;
                    deb:distribution &lt;http://rdf.debian.net/distribution/lenny&gt; .
+
+    { ?rdepend deb:depends ?orconstraint . }
+    UNION
+    { ?rdepend deb:recommends ?orconstraint . }
+
+    ?orconstraint deb:alternative ?alternative .
+    ?satisfier deb:satisfies ?alternative . 
 
     &lt;http://rdf.debian.net/binary/python-simplejson&gt; deb:version ?satisfier .
     ?satisfiersource deb:binary ?satisfier ;
