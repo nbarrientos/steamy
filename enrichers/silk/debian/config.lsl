@@ -20,17 +20,17 @@
   <Interlink id="packages-projects">
     <LinkType>rdfs:seeAlso</LinkType>
 
-    <SourceDataset dataSource="dbpedia" var="theirs">
+    <TargetDataset dataSource="dbpedia" var="theirs">
       <RestrictTo>
          ?theirs rdf:type dbpedia:Software
       </RestrictTo>
-    </SourceDataset>
+    </TargetDataset>
 
-    <TargetDataset dataSource="debian" var="ours">
+    <SourceDataset dataSource="debian" var="ours">
       <RestrictTo>
         ?ours rdf:type deb:UnversionedSource
       </RestrictTo>
-    </TargetDataset>
+    </SourceDataset>
 
     <LinkCondition>
       <MAX>
