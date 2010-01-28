@@ -28,7 +28,7 @@
 
     <TargetDataset dataSource="debian" var="ours">
       <RestrictTo>
-        ?ours rdf:type deb:Source
+        ?ours rdf:type deb:UnversionedSource
       </RestrictTo>
     </TargetDataset>
 
@@ -41,7 +41,7 @@
                 <Param name="string" path="?theirs/dbpprop:name" />
             </Transform>
           </Param>
-          <Param name="str2" path="?ours/deb:packageName" />
+          <Param name="str2" path="?ours/deb:version/deb:packageName" />
         </Compare>
         <Compare metric="stringEquality">
           <Param name="str1">
@@ -49,7 +49,7 @@
                 <Param name="string" path="?theirs/foaf:name" />
             </Transform>
           </Param>
-          <Param name="str2" path="?ours/deb:packageName" />
+          <Param name="str2" path="?ours/deb:version/deb:packageName" />
         </Compare>
         <Compare metric="jaroSimilarity">
           <Param name="str1">
@@ -57,20 +57,20 @@
                 <Param name="string" path="?theirs/rdfs:label" />
             </Transform>
           </Param>
-          <Param name="str2" path="?ours/deb:packageName" />
+          <Param name="str2" path="?ours/deb:version/deb:packageName" />
         </Compare>
         <!-- Homepages -->
         <Compare metric="stringEquality">
           <Param name="str1" path="?theirs/foaf:homepage" />
-          <Param name="str2" path="?ours/foaf:page" />
+          <Param name="str2" path="?ours/deb:version/foaf:page" />
         </Compare>
         <Compare metric="stringEquality">
           <Param name="str1" path="?theirs/dbpprop:website" />
-          <Param name="str2" path="?ours/foaf:page" />
+          <Param name="str2" path="?ours/deb:version/foaf:page" />
         </Compare>
         <Compare metric="stringEquality">
           <Param name="str1" path="?theirs/foaf:page" />
-          <Param name="str2" path="?ours/foaf:page" />
+          <Param name="str2" path="?ours/deb:version/foaf:page" />
         </Compare>
         </MAX>
     </LinkCondition>
