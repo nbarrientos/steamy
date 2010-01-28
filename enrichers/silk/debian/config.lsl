@@ -35,7 +35,7 @@
     <LinkCondition>
       <MAX>
         <!-- Source package names -->
-        <Compare metric="stringEquality">
+        <Compare metric="jaroSimilarity">
           <Param name="str1">
             <Transform function="lowerCase">
                 <Param name="string" path="?theirs/dbpprop:name" />
@@ -43,7 +43,7 @@
           </Param>
           <Param name="str2" path="?ours/deb:version/deb:packageName" />
         </Compare>
-        <Compare metric="stringEquality">
+        <Compare metric="jaroSimilarity">
           <Param name="str1">
             <Transform function="lowerCase">
                 <Param name="string" path="?theirs/foaf:name" />
@@ -60,15 +60,15 @@
           <Param name="str2" path="?ours/deb:version/deb:packageName" />
         </Compare>
         <!-- Homepages -->
-        <Compare metric="stringEquality">
+        <Compare metric="jaroSimilarity">
           <Param name="str1" path="?theirs/foaf:homepage" />
           <Param name="str2" path="?ours/deb:version/foaf:page" />
         </Compare>
-        <Compare metric="stringEquality">
+        <Compare metric="jaroSimilarity">
           <Param name="str1" path="?theirs/dbpprop:website" />
           <Param name="str2" path="?ours/deb:version/foaf:page" />
         </Compare>
-        <Compare metric="stringEquality">
+        <Compare metric="jaroSimilarity">
           <Param name="str1" path="?theirs/foaf:page" />
           <Param name="str2" path="?ours/deb:version/foaf:page" />
         </Compare>
