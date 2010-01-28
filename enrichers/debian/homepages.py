@@ -130,13 +130,13 @@ class HomepageEnricher():
         # Is it usable?
         try:
             stream = urllib2.urlopen(uri)
-        except urllib2.URLError, e: # Includes 404
+        except IOError, e: # Includes 404
             self.stats.count_brokenhomepage()
             logging.error("'%s' is unreachable (reason: %s), skipping..." % (uri, e))
             return
-        except UnicodeEncodeError, e:
+        except (UnicodeEncodeError, httplib.BadStatusLine), e:
             self.stats.count_brokenhomepage()
-            logging.error("'%s' encoding failure (%s), skipping..." % (uri, e))
+            logging.error("'%s' encoding or format failure (%s), skipping..." % (uri, e))
             return
 
         # Metainformation retrieval
