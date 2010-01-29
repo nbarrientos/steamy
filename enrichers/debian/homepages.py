@@ -138,7 +138,7 @@ class HomepageEnricher():
             self.stats.count_brokenhomepage()
             logging.error("'%s' encoding or format failure (%s), skipping..." % (uri, e))
             return
-        except Exception:
+        except Exception, e:
             self.stats.count_brokenhomepage()
             logging.error("'%s' Unknown error (%s), skipping..." % (uri, e))
             return
@@ -172,8 +172,13 @@ class HomepageEnricher():
         try:
             self.htmlparser.feed(stream.read())
         except (SGMLParseError, ValueError), e:
+            self.stats.count_brokenhomepage()
             logging.error("'%s' is unparseable (%s), skipping..." % (homepage, e))
             self.htmlparser.reset()
+            return
+        except Exception, e:
+            self.stats.count_brokenhomepage()
+            logging.error("'%s' Unknown error (%s), skipping..." % (uri, e))
             return
         finally:
             stream.close()
@@ -204,7 +209,11 @@ class HomepageEnricher():
         try:
             parse = feedparser.parse(feed)
         except UnicodeDecodeError:
+            self.stats.count_invalidfeed()
             raise RSSParsingFeedMalformedError(feed)
+        except Exception, e:
+            self.stats.count_invalidfeed()
+            raise RSSParsingError(feed)
 
         # Feedparser bug? Sometimes status attribute is missing, even using
         # remote feeds :(
@@ -291,7 +300,10 @@ class HomepageEnricher():
             except urllib2.URLError:
                 self.stats.count_invalidrdf()
                 raise RDFDiscoveringBrokenLinkError(candidate)
-            
+            except Exception, e:
+                self.stats.count_invalidrdf()
+                raise RDFDiscoveringError(candidate)
+
             self.triples.push_graph(graph)
             logging.debug("%s triples extracted and merged" % len(graph))
 
