@@ -81,7 +81,7 @@ def _get_sources_linked_to_homepage(homepage, endpoint, graph):
         %s
         WHERE { 
           ?source a deb:Source ;
-                  foaf:page <%s>;
+                  foaf:page <%s> .
         }
     """ % ("FROM <%s>" % graph if graph is not None else "", homepage)
     endpoint.setQuery(q)
