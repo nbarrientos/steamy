@@ -7,7 +7,6 @@
 import logging
 import httplib
 import urllib
-import socket
 import re
 
 from sgmllib import SGMLParser
@@ -29,10 +28,10 @@ def homepages(endpoint, graph, triples):
     q = """
         PREFIX deb: <http://idi.fundacionctic.org/steamy/debian.owl#>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-        SELECT DISTINCT ?source ?homepage
+        SELECT DISTINCT ?homepage
         %s
         WHERE { 
-          ?source a deb:Source;
+          ?source a deb:Source ;
                   foaf:page ?homepage .
           FILTER(regex(str(?homepage), "^http://"))
         }
@@ -44,17 +43,13 @@ def homepages(endpoint, graph, triples):
         logging.error("Wrong or inactive endpoint, aborting.")
         return
 
-    # Got query results, it's safe now to lower conn timeout
-    socket.setdefaulttimeout(10)
-
-    for result in results["source", "homepage"]:
+    for result in results["homepage"]:
         homepage = re.sub("<|>", "", result["homepage"].value).strip()
-        source = result["source"].value
-        for alternative in _alternatives(source, homepage, triples):
+        for alternative in _alternatives(homepage, triples, endpoint, graph):
             yield alternative
 
-def _alternatives(source, uri, triples):
-    alternatives = [uri]
+def _alternatives(uri, triples, endpoint, graph):
+    alternatives = []
     sourceforge = re.compile(r"https?://(?P<project>.+?)\.(sourceforge|sf)\.net")
     alioth = re.compile(r"https?://(?P<project>.+?)\.alioth\.debian\.org")
 
@@ -64,14 +59,39 @@ def _alternatives(source, uri, triples):
         alternative = "http://sourceforge.net/projects/%s" % match1.group('project')
         logging.debug("Adding '%s' as an alternative of '%s'" % (alternative, uri))
         alternatives.append(alternative)
-        triples.push_homepage(source, alternative)
     elif match2 is not None:
         alternative = "http://alioth.debian.org/projects/%s" % match2.group('project')
         logging.debug("Adding '%s' as an alternative of '%s'" % (alternative, uri))
         alternatives.append(alternative)
-        triples.push_homepage(source, alternative)
 
+    if alternatives:
+        sources = _get_sources_linked_to_homepage(uri, endpoint, graph)
+        for source in sources:
+            for alternative in alternatives:
+                triples.push_homepage(source, alternative)
+
+    alternatives.insert(0, uri)
     return alternatives
+
+def _get_sources_linked_to_homepage(homepage, endpoint, graph):
+    q = """
+        PREFIX deb: <http://idi.fundacionctic.org/steamy/debian.owl#>
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        SELECT ?source 
+        %s
+        WHERE { 
+          ?source a deb:Source ;
+                  foaf:page <%s>;
+        }
+    """ % ("FROM <%s>" % graph if graph is not None else "", homepage)
+    endpoint.setQuery(q)
+    try:
+        results = endpoint.query()
+    except EndPointNotFound, e:
+        logging.error("Wrong or inactive endpoint, aborting.")
+        return
+
+    return [result["source"].value for result in results["source"]]
 
 def w3c_validator(uri):
     conn = httplib.HTTPConnection("validator.w3.org")

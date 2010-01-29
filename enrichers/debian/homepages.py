@@ -29,6 +29,7 @@ from rdflib.exceptions import ParserError as RdflibParserError
 from tools.pool import GraphPool
 from homepages.io import LinkRetrieval, TripleProcessor
 from homepages.io import homepages, w3c_validator, channel_uri_from_graph
+from homepages.models import AlternateLink
 from homepages.errors import W3CValidatorError, RSSParsingError
 from homepages.errors import RSSParsingFeedUnavailableError
 from homepages.errors import RSSParsingFeedMalformedError
@@ -184,7 +185,7 @@ class HomepageEnricher():
             stream.close()
 
         self.htmlparser.close()
-        
+
         logging.info("Discovering RSS feeds...")
         for candidate in self.htmlparser.get_rss_hrefs():
             try:
