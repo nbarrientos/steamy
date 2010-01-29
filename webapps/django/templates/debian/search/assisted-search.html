@@ -79,6 +79,8 @@
         <div class="form-field" style="margin-left: 5%">
             {{ search.maintainerfilter }}
             <span class="field-comment">
+                <span class="ui-icon ui-icon-alert" style="display: inline-block;"></span>
+                Case sensitive
                 (e.g. Joe, deity@debian.org)
             </span>
             {% for error in search.maintainerfilter.errors %}
