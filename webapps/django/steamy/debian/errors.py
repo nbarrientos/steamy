@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+#
+# Nacho Barrientos Arias <nacho@debian.org>
+#
+# License: MIT
+
 class SPARQLQueryProcessorError(Exception):
     def __str__(self):
         return "Unexpected error processing the query, please report."

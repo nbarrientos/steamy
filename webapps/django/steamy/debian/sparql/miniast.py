@@ -1,4 +1,8 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
+#
+# Nacho Barrientos Arias <nacho@debian.org>
+#
+# License: MIT
 
 class SelectQuery():
     def __init__(self, distinct=False):

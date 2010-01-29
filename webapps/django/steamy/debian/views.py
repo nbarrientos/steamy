@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+#
+# Nacho Barrientos Arias <nacho@debian.org>
+#
+# License: MIT
+
 from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
 from django.utils.encoding import smart_str

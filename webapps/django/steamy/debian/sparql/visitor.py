@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+#
+# Nacho Barrientos Arias <nacho@debian.org>
+#
+# License: MIT
+
 from debian.sparql.miniast import *
 
 from debian.config import SPARQL_PREFIXES as PREFIX

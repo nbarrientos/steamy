@@ -1,5 +1,9 @@
 #!/usr/bin/python
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
+#
+# Nacho Barrientos Arias <nacho@debian.org>
+#
+# License: MIT
 
 from optparse import OptionParser
 import unittest

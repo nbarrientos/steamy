@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+#
+# Nacho Barrientos Arias <nacho@debian.org>
+#
+# License: MIT
+
 from django.conf.urls.defaults import *
 from django.conf import settings
 
