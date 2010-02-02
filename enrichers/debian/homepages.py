@@ -179,7 +179,7 @@ class HomepageEnricher():
             return
         except Exception, e:
             self.stats.count_brokenhomepage()
-            logging.error("'%s' Unknown error (%s), skipping..." % (uri, e))
+            logging.error("'%s' Unknown error (%s), skipping..." % (homepage, e))
             return
         finally:
             stream.close()
