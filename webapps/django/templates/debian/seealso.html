@@ -1,0 +1,34 @@
+{% extends "debian/base.html" %}
+
+{% block javascript %}
+    <script type="text/javascript" src="/debian/static/js/feeds.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="result-search-again">
+    <a href="{% url debian.views.index %}" class="fg-button ui-state-default
+    ui-corner-all">Start a new search
+    <span class="ui-icon ui-icon-refresh" style="display: inline-block;"></span></a>
+    </div>
+    <div class="subheader">
+        <div class="ui-widget-content ui-corner-all">
+		    <h3 class="subtitle ui-widget-subheader ui-corner-all">
+            External resources {% if source %} related to source package '{{source}}'{% endif %}</h3>
+	    </div>
+    </div>
+    {% for uri in uris %}
+        <div id="feed-{{forloop.counter}}" class="result-feed">
+            <div class="result-header">
+            <span class="result-number">
+            <span style="font-size:medium">resource</span>#{{forloop.counter}}</span>
+            <a href="{{uri}}">{{uri}}</a>
+            <a href="#" onclick="bury('{{source}}', '{{feed.feeduri}}', '{{forloop.counter}}')"> 
+            <span class="ui-icon ui-icon-close bury" style="display: inline-block;"></span></a>
+            </div>
+        </div>
+    {% empty %}
+        <div class="no-matches">
+            I'm sorry but I'm unable to find any external resource for this package
+        </div>
+    {% endfor %}
+{% endblock %}

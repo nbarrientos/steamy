@@ -30,8 +30,11 @@
         is version of <a href="{{result.usourceurilink}}">{{result.sourcename}}</a>
         <a class="wait" href="{% url debian.views.news result.sourcename|urlencode %}">
             <span class="ui-icon ui-icon-comment" style="display: inline-block;"></span></a>
-        <a class="wait" href="{% url debian.views.source_detail result.sourcename|urlencode,result.sourcefullversion|urlencode %}">
+        <a class="wait" href="{% url debian.views.seealso result.sourcename|urlencode %}">
             <span class="ui-icon ui-icon-plusthick" style="display: inline-block;"></span></a>
+        <a class="wait, minilink" 
+           href="{% url debian.views.source_detail result.sourcename|urlencode,result.sourcefullversion|urlencode %}">
+           BINARIES</a>
         <a class="minilink"
         href="http://bugs.debian.org/cgi-bin/pkgreport.cgi?package={{result.sourcename}}">BTS
         <span class="ui-icon ui-icon-extlink" style="display: inline-block;"></span>

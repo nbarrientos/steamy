@@ -13,6 +13,7 @@ urlpatterns = patterns('debian.views',
     (r'^results/$', 'results'),
     (r'^results/news/$', 'allnews'),
     (r'^news/(?P<source>[^/ ]+)/$', 'news'),
+    (r'^seealso/(?P<source>[^/ ]+)/$', 'seealso'),
     (r'^binaries/(?P<source>[^/ ]+)/(?P<version>[^/ ]+)/$', 'source_detail'),
 )
 

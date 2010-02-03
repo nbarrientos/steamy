@@ -11,7 +11,7 @@ from django.utils import simplejson
 
 from debian.forms import SPARQLForm, SearchForm
 from debian.services import SPARQLQueryProcessor, SPARQLQueryBuilder
-from debian.services import FeedFinder, remove_duplicates
+from debian.services import FeedFinder, SeeAlsoFinder, remove_duplicates
 from debian.errors import SPARQLQueryProcessorError, UnexpectedSituationError
 from debian.errors import SPARQLQueryBuilderError
 
@@ -170,5 +170,18 @@ def source_detail(request, source, version):
 
         results = processor.format_binary_results()
         return render_to_response('debian/binary_results.html', {'results': results})
+    else:
+        return HttpResponse("405 - Method not allowed", status=405)
+
+def seealso(request, source):
+    if request.method == 'GET':
+        finder = SeeAlsoFinder()
+        try:
+            uris = finder.find(source)
+        except (SPARQLQueryProcessorError, SPARQLQueryBuilderError), e:
+            return render_to_response('debian/error.html', {'reason': e})
+
+        replydata = {'source': source, 'uris': uris}
+        return render_to_response('debian/seealso.html', replydata)
     else:
         return HttpResponse("405 - Method not allowed", status=405)

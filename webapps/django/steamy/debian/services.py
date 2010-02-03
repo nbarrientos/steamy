@@ -611,6 +611,33 @@ WHERE {
             return None
 
 
+class SeeAlsoFinder():
+    def __init__(self):
+        self.processor = SPARQLQueryProcessor()
+
+    def find(self, sourcename):
+        if re.match("^[-a-zA-Z0-9+.]+$", sourcename) is None:
+            raise SPARQLQueryBuilderPackageNameSchemeError()
+
+        sourcename = urlquote_plus(sourcename)
+        sourceuri = RES_BASEURI + "/source/%s" % sourcename
+        return self._fetch_seealso_uris(sourceuri)
+
+    def _fetch_seealso_uris(self, sourceuri):
+        sourceref = URIRef(sourceuri)
+        query = SPARQL_PREFIXES + """
+SELECT ?uri
+WHERE {
+    <%s> a deb:UnversionedSource ;
+             rdfs:seeAlso ?uri .
+}""" % sourceref
+        self.processor.execute_query(query)
+
+        results = self.processor.results['results']['bindings']
+        return [result['uri']['value'] for result in results]
+
+
+
 ## Other tools ##
 
 # Inspired by: http://www.peterbe.com/plog/uniqifiers-benchmark

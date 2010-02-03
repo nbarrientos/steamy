@@ -9,7 +9,7 @@ from rdflib import Namespace, URIRef, Literal, Variable
 
 import debian.services
 from debian.sparql.miniast import Triple
-from debian.services import SPARQLQueryBuilder, FeedFinder
+from debian.services import SPARQLQueryBuilder, FeedFinder, SeeAlsoFinder
 from debian.services import SPARQLQueryProcessor, RSSFeed
 from debian.errors import SPARQLQueryBuilderUnexpectedFieldValueError, SPARQLQueryBuilderError
 from debian.sparql.helpers import SelectQueryHelper
@@ -666,3 +666,58 @@ class SPARQLQueryProcessorTest(unittest.TestCase):
         input = "SELECT * FROM NAMED <uriref> WHERE { ?s ?p ?o }"
         expected = "SELECT *  FROM <http://example.org> WHERE { ?s ?p ?o }"
         self.assertEqual(expected, self.processor._clean_query(input))
+
+
+class SeeAlsoFinderTest(unittest.TestCase):
+    def setUp(self):
+        self.finder = SeeAlsoFinder()
+        self.mox = Mox()
+        debian.services.RES_BASEURI = "base"
+        debian.services.FROM_GRAPH = None
+
+    def test__fetch_seealso_uris(self):
+        sourcename = "pkg"
+        unversionedsourceuri = "base/source/%s" % sourcename
+        mock = self.mox.CreateMock(SPARQLQueryProcessor)
+        expectedarg = \
+            r".+SELECT\s*\?uri.+\<%s\>\sa\sdeb:UnversionedSource\s*;\s*rdfs:seeAlso\s\?uri" % \
+            re.escape(unversionedsourceuri)
+        mock.execute_query(Regex(expectedarg, flags=re.DOTALL))
+        binding1 = {'uri': {'value': "http://example.org/1"}}
+        binding2 = {'uri': {'value': "http://example.org/2"}}
+        bindings = [binding1, binding2]
+        fakeresults = {'results': {'bindings': bindings}}
+        self.finder.processor = mock
+        self.mox.ReplayAll()
+        self.finder.processor.results = fakeresults
+        uris = self.finder._fetch_seealso_uris(unversionedsourceuri)
+        self.mox.VerifyAll()
+        self.assertEqual(2, len(uris))
+        self.assertTrue("http://example.org/1" in uris)
+        self.assertTrue("http://example.org/2" in uris)
+
+    def test_find_forbidden_characters(self):
+        self.assertRaises(SPARQLQueryBuilderError, self.finder.find, "{}@")
+
+    def test_find(self):
+        srcpkgname = "source"
+        srcpkguri = "base/source/%s" % srcpkgname
+        self.mox.StubOutWithMock(self.finder, "_fetch_seealso_uris")
+        returnvals = ["http://example.org/1", "http://example.org/2"]
+        self.finder._fetch_seealso_uris(srcpkguri).AndReturn(returnvals)
+        self.mox.ReplayAll()
+        uris = self.finder.find(srcpkgname)
+        self.mox.VerifyAll()
+        self.assertEqual(2, len(uris))
+        self.assertTrue("http://example.org/1" in uris)
+        self.assertTrue("http://example.org/2" in uris)
+
+    def test_find_escape(self):
+        srcpkgname = "source.+-"
+        srcpkguri = "base/source/%s" % "source.%2B-"
+        self.mox.StubOutWithMock(self.finder, "_fetch_seealso_uris")
+        returnvals = ["http://example.org/1", "http://example.org/2"]
+        self.finder._fetch_seealso_uris(srcpkguri).AndReturn(returnvals)
+        self.mox.ReplayAll()
+        uris = self.finder.find(srcpkgname)
+        self.mox.VerifyAll()
