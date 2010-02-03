@@ -12,6 +12,7 @@ from debian.sparql.miniast import Triple
 from debian.services import SPARQLQueryBuilder, FeedFinder, SeeAlsoFinder
 from debian.services import SPARQLQueryProcessor, RSSFeed
 from debian.errors import SPARQLQueryBuilderUnexpectedFieldValueError, SPARQLQueryBuilderError
+from debian.errors import SPARQLQueryBuilderPackageNameSchemeError
 from debian.sparql.helpers import SelectQueryHelper
 
 RDFS = Namespace(u"http://www.w3.org/2000/01/rdf-schema#")
@@ -455,6 +456,7 @@ class FeedFinderTest(unittest.TestCase):
     def setUp(self):
         self.finder = FeedFinder()
         self.mox = Mox()
+        debian.services.RES_BASEURI = "base"
 
     def test__fetch_feeduris(self):
         unversionedsourceuri = "http://example.org/p"
@@ -607,6 +609,21 @@ class FeedFinderTest(unittest.TestCase):
         self.mox.VerifyAll()
         self.assertEqual(None, channel)
 
+    def test_populate_feeds_forbidden_characters(self):
+        self.assertRaises(SPARQLQueryBuilderPackageNameSchemeError, self.finder.populate_feeds, "{}@")
+
+    def test_populate_feeds_escape(self):
+        srcpkgname = "source.+-"
+        srcpkguri = "base/source/%s" % "source.%2B-"
+        self.mox.StubOutWithMock(self.finder, "_fetch_feeduris")
+        self.finder._fetch_feeduris(srcpkguri).AndReturn([])
+        self.mox.StubOutWithMock(self.finder, "_fill_feeds")
+        self.finder._fill_feeds([]).AndReturn([])
+        self.mox.ReplayAll()
+        data = self.finder.populate_feeds(srcpkgname)
+        self.mox.VerifyAll()
+        self.assertEqual(0, len(data))
+
 
 class SPARQLQueryProcessorTest(unittest.TestCase):
     def setUp(self):
@@ -697,7 +714,7 @@ class SeeAlsoFinderTest(unittest.TestCase):
         self.assertTrue("http://example.org/2" in uris)
 
     def test_find_forbidden_characters(self):
-        self.assertRaises(SPARQLQueryBuilderError, self.finder.find, "{}@")
+        self.assertRaises(SPARQLQueryBuilderPackageNameSchemeError, self.finder.find, "{}@")
 
     def test_find(self):
         srcpkgname = "source"

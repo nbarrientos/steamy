@@ -524,6 +524,7 @@ class FeedFinder():
         if re.match("^[-a-zA-Z0-9+.]+$", sourcename) is None:
             raise SPARQLQueryBuilderPackageNameSchemeError()
 
+        sourcename = urlquote_plus(sourcename)
         unversionedsourceuri = "%s/source/%s" % (RES_BASEURI, sourcename)
         partial = self._fetch_feeduris(unversionedsourceuri)
 
