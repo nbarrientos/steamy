@@ -164,7 +164,7 @@ def source_detail(request, source, version):
 
         processor = SPARQLQueryProcessor()
         try:
-            processor.execute_sanitized_query(query)
+            processor.execute_query(query)
         except SPARQLQueryProcessorError, e:
             return render_to_response('debian/error.html', {'reason': e})
 
