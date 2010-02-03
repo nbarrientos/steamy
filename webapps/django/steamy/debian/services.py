@@ -168,6 +168,7 @@ class SPARQLQueryProcessor():
 
     def execute_sanitized_query(self, query):
         self._init_endpoint()
+        print query
         self.results = self._query_endpoint(query)
 
     def execute_query(self, query):
@@ -546,7 +547,7 @@ WHERE {
     ?source foaf:page ?homepage .
     ?homepage xhv:alternate ?feeduri .
 }""" % unversionedsourceuri
-        self.processor.execute_sanitized_query(query)
+        self.processor.execute_query(query)
 
         feeds = []
         for result in self.processor.results['results']['bindings']:
@@ -570,7 +571,7 @@ WHERE {
     OPTIONAL { ?item dc:date ?date }
 }
 ORDER BY DESC(?date)""" % feeduri
-        self.processor.execute_sanitized_query(query)
+        self.processor.execute_query(query)
 
         items = []
         for result in self.processor.results['results']['bindings']:
@@ -599,7 +600,7 @@ WHERE {
              rdfs:seeAlso <%s> .
     OPTIONAL { ?channel dc:title ?title } .
 }""" % feeduri
-        self.processor.execute_sanitized_query(query)
+        self.processor.execute_query(query)
 
         results = self.processor.results['results']['bindings']
         if results:

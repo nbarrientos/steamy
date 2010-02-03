@@ -460,7 +460,7 @@ class FeedFinderTest(unittest.TestCase):
         unversionedsourceuri = "http://example.org/p"
         mock = self.mox.CreateMock(SPARQLQueryProcessor)
         expectedarg = r"SELECT.+\<%s\>.+" % re.escape(unversionedsourceuri)
-        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        mock.execute_query(Regex(expectedarg, flags=re.DOTALL))
         binding1 = {'feeduri': {'value': "feed1"}}
         binding2 = {'feeduri': {'value': "feed2"}}
         bindings = [binding1, binding2]
@@ -480,7 +480,7 @@ class FeedFinderTest(unittest.TestCase):
         unversionedsourceuri = "http://example.org/p"
         mock = self.mox.CreateMock(SPARQLQueryProcessor)
         expectedarg = r"SELECT.+\<%s\>.+" % re.escape(unversionedsourceuri)
-        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        mock.execute_query(Regex(expectedarg, flags=re.DOTALL))
         binding1 = {}
         binding2 = {}
         bindings = [binding1, binding2]
@@ -496,7 +496,7 @@ class FeedFinderTest(unittest.TestCase):
         unversionedsourceuri = "http://example.org/p"
         mock = self.mox.CreateMock(SPARQLQueryProcessor)
         expectedarg = r"SELECT.+\<%s\>.+" % re.escape(unversionedsourceuri)
-        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        mock.execute_query(Regex(expectedarg, flags=re.DOTALL))
         bindings = []
         fakeresults = {'results': {'bindings': bindings}}
         self.finder.processor = mock
@@ -510,7 +510,7 @@ class FeedFinderTest(unittest.TestCase):
         feeduri = "http://example.org/p"
         mock = self.mox.CreateMock(SPARQLQueryProcessor)
         expectedarg = r"SELECT.+\<%s\>.+" % re.escape(feeduri)
-        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        mock.execute_query(Regex(expectedarg, flags=re.DOTALL))
         binding1 = {'title': {'value': "title1"}, 'link': {'value': "link1"}}
         binding2 = {'title': {'value': "title2"}}
         bindings = [binding1, binding2]
@@ -530,7 +530,7 @@ class FeedFinderTest(unittest.TestCase):
         feeduri = "http://example.org/p"
         mock = self.mox.CreateMock(SPARQLQueryProcessor)
         expectedarg = r"SELECT.+\<%s\>.+" % re.escape(feeduri)
-        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        mock.execute_query(Regex(expectedarg, flags=re.DOTALL))
         bindings = []
         fakeresults = {'results': {'bindings': bindings}}
         self.finder.processor = mock
@@ -567,7 +567,7 @@ class FeedFinderTest(unittest.TestCase):
         feeduri = "http://example.org/p"
         mock = self.mox.CreateMock(SPARQLQueryProcessor)
         expectedarg = r"SELECT.+\<%s\>.+" % re.escape(feeduri)
-        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        mock.execute_query(Regex(expectedarg, flags=re.DOTALL))
         binding1 = {'title': {'value': "title1"}}
         bindings = [binding1]
         fakeresults = {'results': {'bindings': bindings}}
@@ -582,7 +582,7 @@ class FeedFinderTest(unittest.TestCase):
         feeduri = "http://example.org/p"
         mock = self.mox.CreateMock(SPARQLQueryProcessor)
         expectedarg = r"SELECT.+\<%s\>.+" % re.escape(feeduri)
-        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        mock.execute_query(Regex(expectedarg, flags=re.DOTALL))
         binding1 = {}
         bindings = [binding1]
         fakeresults = {'results': {'bindings': bindings}}
@@ -597,7 +597,7 @@ class FeedFinderTest(unittest.TestCase):
         feeduri = "http://example.org/p"
         mock = self.mox.CreateMock(SPARQLQueryProcessor)
         expectedarg = r"SELECT.+\<%s\>.+" % re.escape(feeduri)
-        mock.execute_sanitized_query(Regex(expectedarg, flags=re.DOTALL))
+        mock.execute_query(Regex(expectedarg, flags=re.DOTALL))
         bindings = []
         fakeresults = {'results': {'bindings': bindings}}
         self.finder.processor = mock
