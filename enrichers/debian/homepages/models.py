@@ -81,5 +81,5 @@ class Stats():
 \t* Total websites count: %(homepages)s (%(broken_homepages)s not responding)
 \t* Valid markups: %(w3cok)s
 \t* RSS feeds processed: %(feeds)s (%(invalidfeeds)s invalid)
-\t\t RSS1: %(rss1feeds) RSS2: %(rss2feeds) Atom: %(atomfeeds)
+\t\t RSS1: %(rss1feeds)s RSS2: %(rss2feeds)s Atom: %(atomfeeds)s
 \t* RDF files fetched: %(rdf)s (%(invalidrdf)s invalid)""" % self.__dict__
