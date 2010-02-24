@@ -158,6 +158,7 @@ class HomepageEnricher():
             result = w3c_validator(uri)
         except W3CValidatorError, e:
             logging.error(str(e))
+            return
 
         if result is True:
             logging.debug("Validation passed")

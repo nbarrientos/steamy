@@ -4,6 +4,7 @@
 <!DOCTYPE rdf:RDF [
     <!ENTITY terms "http://purl.org/dc/terms/" >
     <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY dc "http://purl.org/dc/elements/1.1/" >
     <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
     <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
     <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
@@ -14,6 +15,7 @@
 
 <rdf:RDF xmlns="http://idi.fundacionctic.org/steamy/debian.owl#"
      xml:base="http://idi.fundacionctic.org/steamy/debian.owl"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
      xmlns:terms="http://purl.org/dc/terms/"
@@ -26,8 +28,22 @@
             >Debian Archive Ontology</rdfs:label>
         <rdfs:label xml:lang="es"
             >Ontolog&#237;a del archivo de Debian</rdfs:label>
+        <dc:creator
+            >Ignacio Barrientos</dc:creator>
         <owl:imports rdf:resource="http://purl.org/dc/terms/"/>
     </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <owl:AnnotationProperty rdf:about="&dc;creator"/>
     
 
 
@@ -362,14 +378,6 @@
 
     <owl:ObjectProperty rdf:about="#version">
         <rdfs:subPropertyOf rdf:resource="&terms;hasVersion"/>
-        <rdfs:domain>
-            <owl:Class>
-                <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="#UnversionedBinary"/>
-                    <rdf:Description rdf:about="#UnversionedSource"/>
-                </owl:unionOf>
-            </owl:Class>
-        </rdfs:domain>
         <rdfs:range>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
@@ -378,6 +386,14 @@
                 </owl:unionOf>
             </owl:Class>
         </rdfs:range>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="#UnversionedBinary"/>
+                    <rdf:Description rdf:about="#UnversionedSource"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
     </owl:ObjectProperty>
     
 
@@ -423,18 +439,8 @@
     <owl:DatatypeProperty rdf:about="#debianRevision">
         <rdfs:label xml:lang="en">debian revision</rdfs:label>
         <rdfs:comment xml:lang="en"
-            >Zero assumed if not value is given.</rdfs:comment>
+            >Debian revision of a version number (zero assumed if not value is given)</rdfs:comment>
         <rdfs:domain rdf:resource="#VersionNumber"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#description -->
-
-    <owl:DatatypeProperty rdf:about="#description">
-        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
-        <rdfs:domain rdf:resource="#Binary"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
 
@@ -442,6 +448,8 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#epoch -->
 
     <owl:DatatypeProperty rdf:about="#epoch">
+        <rdfs:comment xml:lang="en"
+            >The epoch of a version number</rdfs:comment>
         <rdfs:domain rdf:resource="#VersionNumber"/>
         <rdfs:range rdf:resource="&xsd;nonNegativeInteger"/>
     </owl:DatatypeProperty>
@@ -452,15 +460,20 @@
 
     <owl:DatatypeProperty rdf:about="#extendedDescription">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >Long description for a package</rdfs:comment>
         <rdfs:domain rdf:resource="#Binary"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#facetName -->
+    <!-- http://idi.fundacionctic.org/steamy/debian.owl#facet -->
 
-    <owl:DatatypeProperty rdf:about="#facetName">
+    <owl:DatatypeProperty rdf:about="#facet">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >Facet a tag applies to</rdfs:comment>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
@@ -470,6 +483,8 @@
 
     <owl:DatatypeProperty rdf:about="#format">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >Format revision for the control file</rdfs:comment>
         <rdfs:domain rdf:resource="#Source"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
@@ -480,6 +495,8 @@
 
     <owl:DatatypeProperty rdf:about="#fullVersion">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >Complete version string, including epoch, upstream version and debian revision</rdfs:comment>
         <rdfs:domain rdf:resource="#VersionNumber"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
@@ -489,6 +506,8 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#installed-size -->
 
     <owl:DatatypeProperty rdf:about="#installed-size">
+        <rdfs:comment xml:lang="en"
+            >Estimated total amount of disk space required to install the package</rdfs:comment>
         <rdfs:domain rdf:resource="#BinaryBuild"/>
         <rdfs:range rdf:resource="&xsd;nonNegativeInteger"/>
     </owl:DatatypeProperty>
@@ -497,7 +516,11 @@
 
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#packageName -->
 
-    <owl:DatatypeProperty rdf:about="#packageName"/>
+    <owl:DatatypeProperty rdf:about="#packageName">
+        <rdfs:comment xml:lang="en"
+            >Name of a package</rdfs:comment>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
     
 
 
@@ -571,6 +594,8 @@
 
     <owl:DatatypeProperty rdf:about="#standards-version">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >The most recent version of the standards with which the package compiles</rdfs:comment>
         <rdfs:domain rdf:resource="#Source"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
@@ -581,16 +606,9 @@
 
     <owl:DatatypeProperty rdf:about="#synopsis">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
+        <rdfs:comment xml:lang="en"
+            >Short description for a package</rdfs:comment>
         <rdfs:domain rdf:resource="#Binary"/>
-        <rdfs:range rdf:resource="&xsd;string"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#tagName -->
-
-    <owl:DatatypeProperty rdf:about="#tagName">
-        <rdf:type rdf:resource="&owl;FunctionalProperty"/>
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
     
@@ -599,6 +617,8 @@
     <!-- http://idi.fundacionctic.org/steamy/debian.owl#upstreamVersion -->
 
     <owl:DatatypeProperty rdf:about="#upstreamVersion">
+        <rdfs:comment xml:lang="en"
+            >Upstream version of a version number</rdfs:comment>
         <rdfs:domain rdf:resource="#VersionNumber"/>
     </owl:DatatypeProperty>
     
@@ -824,6 +844,8 @@
     <owl:Thing rdf:about="#contrib">
         <rdf:type rdf:resource="#ArchiveArea"/>
         <rdfs:label xml:lang="en">Area: contrib</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >Contrib archive area</rdfs:comment>
     </owl:Thing>
     
 
@@ -852,6 +874,8 @@
     <ArchiveArea rdf:about="#main">
         <rdf:type rdf:resource="&owl;Thing"/>
         <rdfs:label xml:lang="en">Area: main</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >Main archive area</rdfs:comment>
     </ArchiveArea>
     
 
@@ -861,6 +885,8 @@
     <owl:Thing rdf:about="#non-free">
         <rdf:type rdf:resource="#ArchiveArea"/>
         <rdfs:label xml:lang="en">Area: non-free</rdfs:label>
+        <rdfs:comment xml:lang="en"
+            >Non-free archive area</rdfs:comment>
     </owl:Thing>
     
 
