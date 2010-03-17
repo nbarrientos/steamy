@@ -687,6 +687,7 @@
     <owl:Class rdf:about="#BuildEssentialBinary">
         <rdfs:label xml:lang="en"
             >Build Essential Binary</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#Binary"/>
         <rdfs:comment xml:lang="en"
             >A binary package inside the set of build essential packages</rdfs:comment>
     </owl:Class>
@@ -698,6 +699,7 @@
     <owl:Class rdf:about="#DMUploadAllowedSource">
         <rdfs:label xml:lang="en"
             >DM Upload Allowed Source</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#Source"/>
         <rdfs:subClassOf rdf:resource="&owl;Thing"/>
         <rdfs:comment xml:lang="en"
             >A source package that can be uploaded to the archive without being signed by a Debian Developer</rdfs:comment>
@@ -731,6 +733,7 @@
     <owl:Class rdf:about="#EssentialBinary">
         <rdfs:label xml:lang="en"
             >Essential Binary</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#Binary"/>
         <owl:disjointWith rdf:resource="#Source"/>
         <rdfs:comment xml:lang="en"
             >A binary package marked as essential</rdfs:comment>
