@@ -6,6 +6,7 @@
 # License: MIT
 
 import random
+import logging
 
 from rdflib.Graph import ConjunctiveGraph
 
