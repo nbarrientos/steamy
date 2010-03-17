@@ -127,7 +127,6 @@ class LinkRetrieval(SGMLParser):
         rels = [value.lower() for key, value in attrs if key=='rel']
         types = [value.lower() for key, value in attrs if key=='type']
         hrefs = [value for key, value in attrs if key=='href']
-        # SGMLParser does not ignore newlines and could lead to broken URIs
         hrefs = map(lambda x: re.sub("\s", "", x), hrefs)
         if 'alternate' in rels:
             self.results.append(AlternateLink(types, hrefs))
