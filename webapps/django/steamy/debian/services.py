@@ -159,6 +159,7 @@ class SPARQLQueryProcessor():
         return (variables, resultlist)
 
     def _clean_query(self, query):
+        # FIXME: Case-insensitive
         query = re.sub(r"((LIMIT|OFFSET)\s*\d+)|(FROM(\sNAMED)?\s*<.*>)", "", query) 
         if RESULTS_PER_PAGE:
             query = "%s LIMIT %s" % (query, RESULTS_PER_PAGE)

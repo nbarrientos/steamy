@@ -292,6 +292,7 @@ class HomepageEnricher():
         self.triples.push_meta(homepage, candidate)
         self.stats.count_rdf()
         logging.debug("Analyzing '%s'" % candidate)
+        # FIXME: Not a good idea, think about it.
         if re.match(r".*\.rdf$", candidate) is not None:
             graph = ConjunctiveGraph()
             try:
