@@ -212,6 +212,65 @@ ORDER BY ASC(?rdependname)
     <a href="#" onclick="javascript:execute_example_query('#help-example8')">Run Example</a>
     </div>
 
+    <h5 class="help-subsection">
+    People part of both Debian and University of Oviedo
+    </h5>
+    <div id="help-example9" class="querystring">
+    <pre>
+SELECT ?source ?name ?school 
+WHERE { 
+{
+    ?person foaf:schoolHomepage ?school.
+    ?rdf foaf:primaryTopic ?person.
+    ?homepage xhv:meta ?rdf .
+    ?source foaf:page ?homepage.
+    FILTER(regex(str(?school), "uniovi")) . 
+}
+UNION
+{
+    {?source deb:maintainer ?person} UNION {?source deb:uploader ?person}.
+    ?person foaf:mbox ?debmbox.
+    FILTER(regex(str(?debmbox), "uniovi")).
+}
+?person foaf:name ?name .
+}
+    </pre>
+    </div>
+    <div class="run-example-link">
+    <a href="#" onclick="javascript:execute_example_query('#help-example9')">Run Example</a>
+    </div>
+
+    <h5 class="help-subsection">
+    Top 5 of devel-oriented and console based editors merged with their respective authors.
+    </h5>
+    <div id="help-example10" class="querystring">
+    <pre>
+SELECT DISTINCT ?sourcename ?author
+WHERE
+{
+    ?binary a deb:Binary.
+    ?binary tag:taggedWithTag &lt;http://rdf.debian.net/tag/devel/editor&gt;;
+            tag:taggedWithTag &lt;http://rdf.debian.net/tag/role/program&gt;;
+            tag:taggedWithTag &lt;http://rdf.debian.net/tag/interface/text-mode&gt;.
+
+    ?ubinary deb:version ?binary .
+    ?ubinary deb:popconUsedRegularly ?used.
+
+    ?source deb:binary ?binary.
+    ?source deb:packageName ?sourcename.
+    ?usource deb:version ?source.
+    OPTIONAL {
+     ?usource rdfs:seeAlso ?dbpedia .
+     ?dbpedia dbpprop:author ?author
+    }
+}
+ORDER BY DESC(?used)
+    </pre>
+    </div>
+    <div class="run-example-link">
+    <a href="#" onclick="javascript:execute_example_query('#help-example10')">Run Example</a>
+    </div>
+
     <h4 class="help-section">What about ASK, CONSTRUCT and DESCRIBE queries?</h4>
     <p>Unfortunately it is not possible to perform this kind of queries using
     this web interface. However, the endpoint is public and can be  

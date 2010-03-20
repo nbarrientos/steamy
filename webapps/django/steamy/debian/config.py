@@ -7,7 +7,7 @@
 #SPARQL_ENDPOINT = "http://data.fundacionctic.org/sparql"
 #FROM_GRAPH = "http://data.fundacionctic.org/idi/debian"
 
-SPARQL_ENDPOINT = "http://wopr:8890/sparql"
+SPARQL_ENDPOINT = "http://localhost:8890/sparql"
 FROM_GRAPH = "http://wopr/debian"
 
 #SPARQL_ENDPOINT = "http://localhost:8180/openrdf-sesame/repositories/STEAMY"
@@ -23,6 +23,7 @@ PREFIX xhv:<http://www.w3.org/1999/xhtml/vocab#>
 PREFIX doap:<http://usefulinc.com/ns/doap#>
 PREFIX dc:<http://purl.org/dc/terms/>
 PREFIX rss:<http://purl.org/rss/1.0/>
+PREFIX dbpprop:<http://dbpedia.org/property/>
 PREFIX foaf:<http://xmlns.com/foaf/0.1/>"""
 
 #FROM <http://data.fundacionctic.org/idi/debian>
