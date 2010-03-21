@@ -234,6 +234,7 @@ UNION
 }
 ?person foaf:name ?name .
 }
+LIMIT 50
     </pre>
     </div>
     <div class="run-example-link">
@@ -241,23 +242,22 @@ UNION
     </div>
 
     <h5 class="help-subsection">
-    Top 5 of devel-oriented and console based editors merged with their respective authors.
+    Top 5 of devel-oriented editors merged with their respective authors.
     </h5>
     <div id="help-example10" class="querystring">
     <pre>
-SELECT DISTINCT ?sourcename ?author
+SELECT ?binaryname ?author
 WHERE
 {
     ?binary a deb:Binary.
     ?binary tag:taggedWithTag &lt;http://rdf.debian.net/tag/devel/editor&gt;;
-            tag:taggedWithTag &lt;http://rdf.debian.net/tag/role/program&gt;;
-            tag:taggedWithTag &lt;http://rdf.debian.net/tag/interface/text-mode&gt;.
+            tag:taggedWithTag &lt;http://rdf.debian.net/tag/role/program&gt;.
+    ?binary deb:packageName ?binaryname.
 
     ?ubinary deb:version ?binary .
     ?ubinary deb:popconUsedRegularly ?used.
 
     ?source deb:binary ?binary.
-    ?source deb:packageName ?sourcename.
     ?usource deb:version ?source.
     OPTIONAL {
      ?usource rdfs:seeAlso ?dbpedia .
@@ -265,6 +265,7 @@ WHERE
     }
 }
 ORDER BY DESC(?used)
+LIMIT 10
     </pre>
     </div>
     <div class="run-example-link">
