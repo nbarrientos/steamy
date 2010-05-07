@@ -6,7 +6,7 @@
 # License: MIT
 
 
-BASEURI="http://rdf.debian.net"
+BASEURI="http://linkeddata.debian.net/resource"
 DEAR="./dear" # FIXME
 
 AREAS="non-free contrib main"
