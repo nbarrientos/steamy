@@ -47,7 +47,7 @@ class BaseParser():
   def parseVersionNumber(self, raw):
     try:
       return VersionNumber(raw.strip())
-    except VersionError:
+    except ValueError:
       raise ParserError("parseVersionNumber", raw)
 
   def parseConstraints(self, raw):
