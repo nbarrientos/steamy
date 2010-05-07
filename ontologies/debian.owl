@@ -9,12 +9,12 @@
     <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
     <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
     <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
-    <!ENTITY debian "http://idi.fundacionctic.org/steamy/debian.owl#" >
+    <!ENTITY debian "http://idi.fundacionctic.org/steamy/debian#" >
 ]>
 
 
-<rdf:RDF xmlns="http://idi.fundacionctic.org/steamy/debian.owl#"
-     xml:base="http://idi.fundacionctic.org/steamy/debian.owl"
+<rdf:RDF xmlns="http://idi.fundacionctic.org/steamy/debian#"
+     xml:base="http://idi.fundacionctic.org/steamy/debian"
      xmlns:dc="http://purl.org/dc/elements/1.1/"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
@@ -22,7 +22,7 @@
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:debian="http://idi.fundacionctic.org/steamy/debian.owl#">
+     xmlns:debian="http://idi.fundacionctic.org/steamy/debian#">
     <owl:Ontology rdf:about="">
         <rdfs:label xml:lang="en"
             >Debian Archive Ontology</rdfs:label>
@@ -58,7 +58,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#alternative -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#alternative -->
 
     <owl:ObjectProperty rdf:about="#alternative">
         <rdfs:comment xml:lang="en"
@@ -69,7 +69,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#architecture -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#architecture -->
 
     <owl:ObjectProperty rdf:about="#architecture">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
@@ -80,7 +80,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#area -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#area -->
 
     <owl:ObjectProperty rdf:about="#area">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
@@ -92,7 +92,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#binary -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#binary -->
 
     <owl:ObjectProperty rdf:about="#binary">
         <rdf:type rdf:resource="&owl;InverseFunctionalProperty"/>
@@ -104,7 +104,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#binaryPackageRelationship -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#binaryPackageRelationship -->
 
     <owl:ObjectProperty rdf:about="#binaryPackageRelationship">
         <rdfs:domain rdf:resource="#Binary"/>
@@ -113,7 +113,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#breaks -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#breaks -->
 
     <owl:ObjectProperty rdf:about="#breaks">
         <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
@@ -121,7 +121,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#build -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#build -->
 
     <owl:ObjectProperty rdf:about="#build">
         <rdf:type rdf:resource="&owl;InverseFunctionalProperty"/>
@@ -133,7 +133,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#build-conflicts -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#build-conflicts -->
 
     <owl:ObjectProperty rdf:about="#build-conflicts">
         <rdfs:subPropertyOf rdf:resource="#sourcePackageRelationship"/>
@@ -141,7 +141,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#build-conflicts-indep -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#build-conflicts-indep -->
 
     <owl:ObjectProperty rdf:about="#build-conflicts-indep">
         <rdfs:subPropertyOf rdf:resource="#sourcePackageRelationship"/>
@@ -149,7 +149,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#build-depends -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#build-depends -->
 
     <owl:ObjectProperty rdf:about="#build-depends">
         <rdfs:subPropertyOf rdf:resource="#sourcePackageRelationship"/>
@@ -157,7 +157,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#build-depends-indep -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#build-depends-indep -->
 
     <owl:ObjectProperty rdf:about="#build-depends-indep">
         <rdfs:subPropertyOf rdf:resource="#sourcePackageRelationship"/>
@@ -165,7 +165,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#conflicts -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#conflicts -->
 
     <owl:ObjectProperty rdf:about="#conflicts">
         <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
@@ -173,7 +173,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#container -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#container -->
 
     <owl:ObjectProperty rdf:about="#container">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
@@ -183,7 +183,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#depends -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#depends -->
 
     <owl:ObjectProperty rdf:about="#depends">
         <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
@@ -191,7 +191,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#distribution -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#distribution -->
 
     <owl:ObjectProperty rdf:about="#distribution">
         <rdfs:comment xml:lang="en"
@@ -201,7 +201,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#enhances -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#enhances -->
 
     <owl:ObjectProperty rdf:about="#enhances">
         <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
@@ -209,7 +209,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#exceptInArchitecture -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#exceptInArchitecture -->
 
     <owl:ObjectProperty rdf:about="#exceptInArchitecture">
         <rdfs:comment xml:lang="en"
@@ -220,7 +220,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#maintainer -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#maintainer -->
 
     <owl:ObjectProperty rdf:about="#maintainer">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
@@ -231,7 +231,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#onlyInArchitecture -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#onlyInArchitecture -->
 
     <owl:ObjectProperty rdf:about="#onlyInArchitecture">
         <rdfs:comment xml:lang="en"
@@ -242,7 +242,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#package -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#package -->
 
     <owl:ObjectProperty rdf:about="#package">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
@@ -253,7 +253,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#packageRelationship -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#packageRelationship -->
 
     <owl:ObjectProperty rdf:about="#packageRelationship">
         <rdfs:range rdf:resource="#DisjunctivePackageConstraint"/>
@@ -261,7 +261,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#pre-depends -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#pre-depends -->
 
     <owl:ObjectProperty rdf:about="#pre-depends">
         <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
@@ -269,7 +269,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#priority -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#priority -->
 
     <owl:ObjectProperty rdf:about="#priority">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
@@ -280,7 +280,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#provides -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#provides -->
 
     <owl:ObjectProperty rdf:about="#provides">
         <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
@@ -288,7 +288,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#recommends -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#recommends -->
 
     <owl:ObjectProperty rdf:about="#recommends">
         <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
@@ -296,7 +296,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#replaces -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#replaces -->
 
     <owl:ObjectProperty rdf:about="#replaces">
         <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
@@ -304,7 +304,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#repository -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#repository -->
 
     <owl:ObjectProperty rdf:about="#repository">
         <rdfs:comment xml:lang="en"
@@ -314,7 +314,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#satisfies -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#satisfies -->
 
     <owl:ObjectProperty rdf:about="#satisfies">
         <rdfs:comment xml:lang="en"
@@ -325,7 +325,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#section -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#section -->
 
     <owl:ObjectProperty rdf:about="#section">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
@@ -336,7 +336,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#shouldBuildIn -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#shouldBuildIn -->
 
     <owl:ObjectProperty rdf:about="#shouldBuildIn">
         <rdfs:comment xml:lang="en"
@@ -347,7 +347,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#sourcePackageRelationship -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#sourcePackageRelationship -->
 
     <owl:ObjectProperty rdf:about="#sourcePackageRelationship">
         <rdfs:domain rdf:resource="#Source"/>
@@ -356,7 +356,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#suggests -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#suggests -->
 
     <owl:ObjectProperty rdf:about="#suggests">
         <rdfs:subPropertyOf rdf:resource="#binaryPackageRelationship"/>
@@ -364,7 +364,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#uploader -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#uploader -->
 
     <owl:ObjectProperty rdf:about="#uploader">
         <rdfs:comment xml:lang="en"
@@ -374,7 +374,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#version -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#version -->
 
     <owl:ObjectProperty rdf:about="#version">
         <rdfs:subPropertyOf rdf:resource="&terms;hasVersion"/>
@@ -398,7 +398,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#versionNumber -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#versionNumber -->
 
     <owl:ObjectProperty rdf:about="#versionNumber">
         <rdfs:comment xml:lang="en"
@@ -425,7 +425,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#constraintOperator -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#constraintOperator -->
 
     <owl:DatatypeProperty rdf:about="#constraintOperator">
         <rdfs:comment
@@ -434,7 +434,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#debianRevision -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#debianRevision -->
 
     <owl:DatatypeProperty rdf:about="#debianRevision">
         <rdfs:label xml:lang="en">debian revision</rdfs:label>
@@ -445,7 +445,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#epoch -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#epoch -->
 
     <owl:DatatypeProperty rdf:about="#epoch">
         <rdfs:comment xml:lang="en"
@@ -456,7 +456,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#extendedDescription -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#extendedDescription -->
 
     <owl:DatatypeProperty rdf:about="#extendedDescription">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
@@ -468,7 +468,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#facet -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#facet -->
 
     <owl:DatatypeProperty rdf:about="#facet">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
@@ -479,7 +479,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#format -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#format -->
 
     <owl:DatatypeProperty rdf:about="#format">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
@@ -491,7 +491,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#fullVersion -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#fullVersion -->
 
     <owl:DatatypeProperty rdf:about="#fullVersion">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
@@ -503,7 +503,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#installed-size -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#installed-size -->
 
     <owl:DatatypeProperty rdf:about="#installed-size">
         <rdfs:comment xml:lang="en"
@@ -514,7 +514,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#packageName -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#packageName -->
 
     <owl:DatatypeProperty rdf:about="#packageName">
         <rdfs:comment xml:lang="en"
@@ -524,7 +524,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#popconInstalled -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#popconInstalled -->
 
     <owl:DatatypeProperty rdf:about="#popconInstalled">
         <rdfs:comment xml:lang="en"
@@ -535,7 +535,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#popconInstalledButNotInUse -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#popconInstalledButNotInUse -->
 
     <owl:DatatypeProperty rdf:about="#popconInstalledButNotInUse">
         <rdfs:comment xml:lang="en"
@@ -546,7 +546,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#popconNoFiles -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#popconNoFiles -->
 
     <owl:DatatypeProperty rdf:about="#popconNoFiles">
         <rdfs:comment xml:lang="en"
@@ -557,7 +557,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#popconUpgradedRecently -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#popconUpgradedRecently -->
 
     <owl:DatatypeProperty rdf:about="#popconUpgradedRecently">
         <rdfs:comment xml:lang="en"
@@ -568,7 +568,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#popconUsedRegularly -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#popconUsedRegularly -->
 
     <owl:DatatypeProperty rdf:about="#popconUsedRegularly">
         <rdfs:comment xml:lang="en"
@@ -579,7 +579,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#releaseDate -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#releaseDate -->
 
     <owl:DatatypeProperty rdf:about="#releaseDate">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
@@ -590,7 +590,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#standards-version -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#standards-version -->
 
     <owl:DatatypeProperty rdf:about="#standards-version">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
@@ -602,7 +602,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#synopsis -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#synopsis -->
 
     <owl:DatatypeProperty rdf:about="#synopsis">
         <rdf:type rdf:resource="&owl;FunctionalProperty"/>
@@ -614,7 +614,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#upstreamVersion -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#upstreamVersion -->
 
     <owl:DatatypeProperty rdf:about="#upstreamVersion">
         <rdfs:comment xml:lang="en"
@@ -641,7 +641,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#Architecture -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#Architecture -->
 
     <owl:Class rdf:about="#Architecture">
         <rdfs:label xml:lang="en">Architecture</rdfs:label>
@@ -651,7 +651,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#ArchiveArea -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#ArchiveArea -->
 
     <owl:Class rdf:about="#ArchiveArea">
         <rdfs:label xml:lang="en">Area</rdfs:label>
@@ -661,7 +661,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#Binary -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#Binary -->
 
     <owl:Class rdf:about="#Binary">
         <rdfs:label xml:lang="en">Binary Package</rdfs:label>
@@ -671,7 +671,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#BinaryBuild -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#BinaryBuild -->
 
     <owl:Class rdf:about="#BinaryBuild">
         <rdfs:label xml:lang="en"
@@ -682,7 +682,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#BuildEssentialBinary -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#BuildEssentialBinary -->
 
     <owl:Class rdf:about="#BuildEssentialBinary">
         <rdfs:label xml:lang="en"
@@ -694,7 +694,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#DMUploadAllowedSource -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#DMUploadAllowedSource -->
 
     <owl:Class rdf:about="#DMUploadAllowedSource">
         <rdfs:label xml:lang="en"
@@ -707,7 +707,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#DisjunctivePackageConstraint -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#DisjunctivePackageConstraint -->
 
     <owl:Class rdf:about="#DisjunctivePackageConstraint">
         <rdfs:label xml:lang="en"
@@ -718,7 +718,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#Distribution -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#Distribution -->
 
     <owl:Class rdf:about="#Distribution">
         <rdfs:label xml:lang="en">Distribution</rdfs:label>
@@ -728,7 +728,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#EssentialBinary -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#EssentialBinary -->
 
     <owl:Class rdf:about="#EssentialBinary">
         <rdfs:label xml:lang="en"
@@ -741,7 +741,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#Priority -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#Priority -->
 
     <owl:Class rdf:about="#Priority">
         <rdfs:label xml:lang="en">Priority</rdfs:label>
@@ -751,7 +751,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#Section -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#Section -->
 
     <owl:Class rdf:about="#Section">
         <rdfs:label xml:lang="en">Section</rdfs:label>
@@ -761,7 +761,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#SimplePackageConstraint -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#SimplePackageConstraint -->
 
     <owl:Class rdf:about="#SimplePackageConstraint">
         <rdfs:label xml:lang="en"
@@ -772,7 +772,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#Source -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#Source -->
 
     <owl:Class rdf:about="#Source">
         <rdfs:label xml:lang="en">Source Package</rdfs:label>
@@ -782,7 +782,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#UnversionedBinary -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#UnversionedBinary -->
 
     <owl:Class rdf:about="#UnversionedBinary">
         <rdfs:label xml:lang="en"
@@ -793,7 +793,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#UnversionedSource -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#UnversionedSource -->
 
     <owl:Class rdf:about="#UnversionedSource">
         <rdfs:label xml:lang="en"
@@ -805,7 +805,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#VersionNumber -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#VersionNumber -->
 
     <owl:Class rdf:about="#VersionNumber">
         <rdfs:label xml:lang="en">Version Number</rdfs:label>
@@ -832,7 +832,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#all -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#all -->
 
     <owl:Thing rdf:about="#all">
         <rdf:type rdf:resource="#Architecture"/>
@@ -842,7 +842,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#contrib -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#contrib -->
 
     <owl:Thing rdf:about="#contrib">
         <rdf:type rdf:resource="#ArchiveArea"/>
@@ -853,7 +853,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#extra -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#extra -->
 
     <owl:Thing rdf:about="#extra">
         <rdf:type rdf:resource="#Priority"/>
@@ -862,7 +862,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#important -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#important -->
 
     <Priority rdf:about="#important">
         <rdf:type rdf:resource="&owl;Thing"/>
@@ -872,7 +872,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#main -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#main -->
 
     <ArchiveArea rdf:about="#main">
         <rdf:type rdf:resource="&owl;Thing"/>
@@ -883,7 +883,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#non-free -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#non-free -->
 
     <owl:Thing rdf:about="#non-free">
         <rdf:type rdf:resource="#ArchiveArea"/>
@@ -894,7 +894,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#optional -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#optional -->
 
     <Priority rdf:about="#optional">
         <rdf:type rdf:resource="&owl;Thing"/>
@@ -904,7 +904,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#required -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#required -->
 
     <owl:Thing rdf:about="#required">
         <rdf:type rdf:resource="#Priority"/>
@@ -914,7 +914,7 @@
     
 
 
-    <!-- http://idi.fundacionctic.org/steamy/debian.owl#standard -->
+    <!-- http://idi.fundacionctic.org/steamy/debian#standard -->
 
     <Priority rdf:about="#standard">
         <rdf:type rdf:resource="&owl;Thing"/>
