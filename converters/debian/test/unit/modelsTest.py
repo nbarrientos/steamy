@@ -81,7 +81,7 @@ class ArchitectureTest(unittest.TestCase):
 
 class BinaryPackageTest(unittest.TestCase):
   def setUp(self):
-    self.b = BinaryPackage("testpkgname", "1.0-1")
+    self.b = BinaryPackage("testpkgname", VersionNumber("1.0-1"))
 
   def testAsURI(self):
     baseURI = "http://example.org"
@@ -110,7 +110,7 @@ class BinaryPackageBuildTest(unittest.TestCase):
   def setUp(self):
     self.b = BinaryPackageBuild()
     self.b.architecture = Architecture("testarch")
-    self.b.ancestor = BinaryPackage("parent", "4:4.5")
+    self.b.ancestor = BinaryPackage("parent", VersionNumber("4:4.5"))
   
   def testAsURINoAncestor(self):
     baseURI = "http://example.org"
@@ -132,7 +132,7 @@ class BinaryPackageBuildTest(unittest.TestCase):
 
 class SourcePackageTest(unittest.TestCase):
   def setUp(self):
-    self.b = SourcePackage("testpkgname", "1.0-1")
+    self.b = SourcePackage("testpkgname", VersionNumber("1.0-1"))
 
   def testAsLabel(self):
     self.assertEqual("Source: testpkgname (1.0-1)", self.b.asLabel('en'))
@@ -165,7 +165,7 @@ class ConstraintTest(unittest.TestCase):
     self.c = Constraint()
     self.c.package = "testpackage"
     self.c.operator = ">="
-    self.c.version = "4:4.5"
+    self.c.version = VersionNumber("4:4.5")
 
   def testAsURI(self):
     baseURI = "http://example.org"
