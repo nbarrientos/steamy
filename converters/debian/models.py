@@ -52,7 +52,7 @@ class SourcePackage(BasePackage, Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def asURI(self, base):
-    return composeURI(base, "source", *(self.package, self.version))
+    return composeURI(base, "source", self.package, self.version)
 
   @checklang
   def asLabel(self, lang):
@@ -75,7 +75,7 @@ class BinaryPackage(BasePackage, Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def asURI(self, base):
-    return composeURI(base, "binary", *(self.package, self.version))
+    return composeURI(base, "binary", self.package, self.version)
 
   @checklang
   def asLabel(self, lang):
@@ -91,7 +91,7 @@ class BinaryPackageBuild(Labelable):
 
   def asURI(self, base):
     return composeURI(base, "binary",\
-            *(self.ancestor.package, self.ancestor.version, str(self.architecture)))
+            self.ancestor.package, self.ancestor.version, str(self.architecture))
 
   @checklang
   def asLabel(self, lang):
@@ -215,7 +215,7 @@ class File(Labelable):
     self.ancestor = ancestor
 
   def asURI(self, base):
-    return composeURI(base, "path", *(self.ancestor.path, self.name))
+    return composeURI(base, "path", self.ancestor.path, self.name)
 
   @checklang
   def asLabel(self, lang):
@@ -255,7 +255,7 @@ class Tag(Labelable):
     self.tag = tag
 
   def asURI(self, base):
-    return composeURI(base, "tag", *(self.facet, self.tag))
+    return composeURI(base, "tag", self.facet, self.tag)
 
   @checklang
   def asLabel(self, lang):
