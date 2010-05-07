@@ -119,7 +119,7 @@ class BinaryPackageBuildTest(unittest.TestCase):
 
   def testAsURIAncestor(self):
     baseURI = "http://example.org"
-    expected = baseURI + urllib.quote_plus("/binary/parent/4:4.5/testarch", '/')
+    expected = baseURI + "/binary/parent/4:4.5/testarch"
     self.assertEqual(expected, self.b.asURI(baseURI))
 
   def testAsLabelNoAncestor(self):
@@ -169,25 +169,23 @@ class ConstraintTest(unittest.TestCase):
 
   def testAsURI(self):
     baseURI = "http://example.org"
-    expected = urllib.quote_plus("/constraint/testpackage LaterOrEqual 4:4.5", '/')
+    expected = "/constraint/testpackage LaterOrEqual 4:4.5"
     self.assertEqual(baseURI + expected, self.c.asURI(baseURI))
 
     self.c.exceptin = [Architecture("i386"), Architecture("amd64")]
     expected = "/constraint/testpackage LaterOrEqual 4:4.5 ExceptIn_i386 ExceptIn_amd64"
-    expected = urllib.quote_plus(expected, '/')
     self.assertEqual(baseURI + expected, self.c.asURI(baseURI))
     
     self.c.exceptin = []
     self.c.onlyin = [Architecture("a1")]
     self.c.version = "4:4.5+svn1"
     expected = "/constraint/testpackage LaterOrEqual 4:4.5+svn1 OnlyIn_a1"
-    expected = urllib.quote_plus(expected, '/')
     self.assertEqual(baseURI + expected, self.c.asURI(baseURI))
     
     self.c.operator = None
     self.c.version = None
     self.c.onlyin = []
-    expected = urllib.quote_plus("/constraint/testpackage", '/')
+    expected = "/constraint/testpackage"
     self.assertEqual(baseURI + expected, self.c.asURI(baseURI))
 
   def testAsLabel(self):
@@ -316,7 +314,7 @@ class ContributorTest(unittest.TestCase):
                      self.c.asLabel('en'))
 
   def testAsURI(self):
-    expected = urllib.quote_plus("b/contributor/mail@example.com", '/')
+    expected = "b/contributor/mail@example.com"
     self.assertEqual(expected, self.c.asURI("b"))
 
    
@@ -329,7 +327,7 @@ class HumanTest(unittest.TestCase):
                      self.h.asLabel('en'))
 
   def testAsURI(self):
-    expected = urllib.quote_plus("b/people/mail@example.com", '/')
+    expected = "b/people/mail@example.com"
     self.assertEqual(expected, self.h.asURI("b"))
 
 class TeamTest(unittest.TestCase):
@@ -341,7 +339,7 @@ class TeamTest(unittest.TestCase):
                      self.t.asLabel('en'))
 
   def testAsURI(self):
-    expected = urllib.quote_plus("b/people/mail@d.example.com", '/')
+    expected = "b/people/mail@d.example.com"
     self.assertEqual(expected, self.t.asURI("b"))
 
 class AreaTest(unittest.TestCase):
@@ -430,14 +428,11 @@ class ToolsTest(unittest.TestCase):
     self.assertEqual(1, teamRating(self.name5, self.email5))
     self.assertEqual(1, humanRating(self.name5, self.email5))
 
-  def testescapeURI(self):
+  def testcomposeURI(self):
     base = "http://rdf.debian.net"
-    expected1 = "http://rdf.debian.net/" + \
-      urllib.quote_plus("binary/binname/3.4-2", '/')
-    expected2 = "http://rdf.debian.net/" + \
-      urllib.quote_plus("distribution/lenny", '/')
-    expected3 = "http://rdf.debian.net/" + \
-      urllib.quote_plus("foo", '/')
-    self.assertEqual(expected1, escapeURI(base, "binary", "binname", "3.4-2"))
-    self.assertEqual(expected2, escapeURI(base, "distribution", "lenny"))
-    self.assertEqual(expected3, escapeURI(base, "foo"))
+    expected1 = "http://rdf.debian.net/binary/binname/3.4-2"
+    expected2 = "http://rdf.debian.net/distribution/lenny"
+    expected3 = "http://rdf.debian.net/foo"
+    self.assertEqual(expected1, composeURI(base, "binary", "binname", "3.4-2"))
+    self.assertEqual(expected2, composeURI(base, "distribution", "lenny"))
+    self.assertEqual(expected3, composeURI(base, "foo"))

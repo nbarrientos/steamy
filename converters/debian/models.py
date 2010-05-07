@@ -40,7 +40,7 @@ class UnversionedSourcePackage(BaseUnversionedPackage, Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def asURI(self, base):
-    return escapeURI(base, "source", self.package)
+    return composeURI(base, "source", self.package)
 
   @checklang
   def asLabel(self, lang):
@@ -52,7 +52,7 @@ class SourcePackage(BasePackage, Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def asURI(self, base):
-    return escapeURI(base, "source", *(self.package, self.version))
+    return composeURI(base, "source", *(self.package, self.version))
 
   @checklang
   def asLabel(self, lang):
@@ -64,7 +64,7 @@ class UnversionedBinaryPackage(BaseUnversionedPackage, Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def asURI(self, base):
-    return escapeURI(base, "binary", self.package)
+    return composeURI(base, "binary", self.package)
 
   @checklang
   def asLabel(self, lang):
@@ -75,7 +75,7 @@ class BinaryPackage(BasePackage, Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def asURI(self, base):
-    return escapeURI(base, "binary", *(self.package, self.version))
+    return composeURI(base, "binary", *(self.package, self.version))
 
   @checklang
   def asLabel(self, lang):
@@ -90,8 +90,8 @@ class BinaryPackageBuild(Labelable):
     self.ancestor = ancestor  # Cycles are OK in Python! :)
 
   def asURI(self, base):
-    return escapeURI(base, "binary",\
-            *(self.ancestor.package, self.ancestor.version, self.architecture))
+    return composeURI(base, "binary",\
+            *(self.ancestor.package, self.ancestor.version, str(self.architecture)))
 
   @checklang
   def asLabel(self, lang):
@@ -104,7 +104,7 @@ class VersionNumber(Version, Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def asURI(self, base):
-    return escapeURI(base, "version", str(self))
+    return composeURI(base, "version", str(self))
 
   @checklang
   def asLabel(self, lang):
@@ -167,7 +167,7 @@ class Constraint(Labelable):
     for arch in self.onlyin:
       postfix = postfix + " OnlyIn_%s" % arch.name
 
-    return escapeURI(base, "constraint", postfix)
+    return composeURI(base, "constraint", postfix)
 
   @checklang
   def asLabel(self, lang):
@@ -215,7 +215,7 @@ class File(Labelable):
     self.ancestor = ancestor
 
   def asURI(self, base):
-    return escapeURI(base, "path", *(self.ancestor.path, self.name))
+    return composeURI(base, "path", *(self.ancestor.path, self.name))
 
   @checklang
   def asLabel(self, lang):
@@ -241,7 +241,7 @@ class Directory(Labelable):
     return "%s: %s" % (map[lang], self.path)
 
   def asURI(self, base):
-    return escapeURI(base, "path", self.path)
+    return composeURI(base, "path", self.path)
 
   def __eq__(self, other):
     return self.path.__eq__(other.path)
@@ -255,7 +255,7 @@ class Tag(Labelable):
     self.tag = tag
 
   def asURI(self, base):
-    return escapeURI(base, "tag", *(self.facet, self.tag))
+    return composeURI(base, "tag", *(self.facet, self.tag))
 
   @checklang
   def asLabel(self, lang):
@@ -298,7 +298,7 @@ class Architecture(SimpleDataHolderResources, Labelable):
   INSTANCES = ("all")
 
   def asURI(self, base):
-    return escapeURI(base, "arch", self.name)
+    return composeURI(base, "arch", self.name)
 
   @checklang
   def asLabel(self, lang):
@@ -313,7 +313,7 @@ class Section(SimpleDataHolderResources, Labelable):
   AVAILABLE_LANGS = ('en',)
 
   def asURI(self, base):
-    return escapeURI(base, "section", self.name)
+    return composeURI(base, "section", self.name)
 
   @checklang
   def asLabel(self, lang):
@@ -361,7 +361,7 @@ class Contributor(Labelable):
     return "Agent"
 
   def asURI(self, base):
-    return escapeURI(base, "contributor", self.email)
+    return composeURI(base, "contributor", self.email)
 
   @checklang
   def asLabel(self, lang):
@@ -379,7 +379,7 @@ class Human(Contributor, Labelable):
     Contributor.__init__(self, name, email)
 
   def asURI(self, base):
-    return escapeURI(base, "people", self.email)
+    return composeURI(base, "people", self.email)
 
   @checklang
   def asLabel(self, lang):
@@ -400,7 +400,7 @@ class Team(Contributor, Labelable):
     Contributor.__init__(self, name, email)
 
   def asURI(self, base):
-    return escapeURI(base, "team", self.email)
+    return composeURI(base, "team", self.email)
 
   @checklang
   def asLabel(self, lang):
@@ -509,9 +509,8 @@ def computeRating(name, email, eregex, nregex):
 
   return rating
 
-def escapeURI(base, prefix, *args):
-  uri = prefix
-  for element in args:
-    uri = "%s/%s" % (uri, element)
-
-  return "%s/%s" % (base, urllib.quote_plus(uri, '/'))
+def composeURI(base, prefix, *args):
+  if args:
+    return "%s/%s/%s" % (base, prefix, "/".join(args))
+  else:
+    return "%s/%s" % (base, prefix)

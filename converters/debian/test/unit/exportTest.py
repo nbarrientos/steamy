@@ -83,7 +83,7 @@ class TriplifierTest(unittest.TestCase):
         self.mockTriplifyVersionNumber(constraint.version)
     self.t.triplifyUnversionedBinaryPackage =\
         self.mockUnversionedBinaryPackage(constraint.package)
-    uriref = URIRef(urllib.quote_plus("b/constraint/pkg StrictlyLater 1.0-1", "/"))
+    uriref = URIRef("b/constraint/pkg StrictlyLater 1.0-1")
     self.assertEqual(uriref, self.t.triplifyConstraint(constraint))
     self.mox.VerifyAll()
     self.assertEqual(5, len(self.graph))
@@ -130,7 +130,7 @@ class TriplifierTest(unittest.TestCase):
 
   def testTriplifyTag(self):
     t = Tag("facet", "tag:tag")
-    uriref = URIRef("b/tag/facet/tag%3Atag")
+    uriref = URIRef("b/tag/facet/tag:tag")
     self.assertEqual(uriref, self.t.triplifyTag(t))
     self.assertEqual(4, len(self.graph))
     expected = [(uriref, RDF.type, TAG['Tag']),\
@@ -155,7 +155,7 @@ class TriplifierTest(unittest.TestCase):
 
   def testTriplifyContributorHuman(self):
     c = Human("Jon Doe", "joe@debian.org")
-    uriref = URIRef("b/people/joe%40debian.org")
+    uriref = URIRef("b/people/joe@debian.org")
     self.assertEqual(uriref, self.t.triplifyContributor(c))
     self.assertEqual(4, len(self.graph))
     expected = [(uriref, RDF.type, FOAF['Person']),\
@@ -166,7 +166,7 @@ class TriplifierTest(unittest.TestCase):
 
   def testTriplifyContributorHumanNoName(self):
     c = Human(None, "joe@debian.org")
-    uriref = URIRef("b/people/joe%40debian.org")
+    uriref = URIRef("b/people/joe@debian.org")
     self.assertEqual(uriref, self.t.triplifyContributor(c))
     self.assertEqual(3, len(self.graph))
     expected = [(uriref, RDF.type, FOAF['Person']),\
@@ -176,7 +176,7 @@ class TriplifierTest(unittest.TestCase):
 
   def testTriplifyContributorTeam(self):
     c = Team("Debian Love Team", "love@lists.debian.org")
-    uriref = URIRef("b/team/love%40lists.debian.org")
+    uriref = URIRef("b/team/love@lists.debian.org")
     self.assertEqual(uriref, self.t.triplifyContributor(c))
     self.assertEqual(4, len(self.graph))
     expected = [(uriref, RDF.type, FOAF['Group']),\
@@ -188,8 +188,8 @@ class TriplifierTest(unittest.TestCase):
   def testTriplifyTeamAddMemberHumanToGroup(self):
     t = Team("Debian Love Team", "love@lists.debian.org")
     h = Human("Jon Doe", "joe@debian.org")
-    tRef = URIRef("b/team/love%40lists.debian.org")
-    hRef = URIRef("b/people/joe%40debian.org")
+    tRef = URIRef("b/team/love@lists.debian.org")
+    hRef = URIRef("b/people/joe@debian.org")
     self.t.triplifyTeamAddMember(t,h)
     self.assertEqual(1, len(self.graph))
     expected = [(tRef, FOAF['member'], hRef)]
